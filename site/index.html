@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>项目入口 | example.com</title>
+    <meta
+      name="description"
+      content="HireMate 与 AI-Interview（智面）统一项目入口。"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">PROJECT PORTAL</p>
+          <h1>统一项目入口</h1>
+          <p class="lead">
+            主域名仅作为项目选择页，不直接承载业务。当前提供 HireMate 与
+            AI-Interview（智面）两个入口，后续需要新增第三个项目时，复制一张项目卡片并修改标题、说明和链接即可。
+          </p>
+        </div>
+
+        <aside class="hero-panel" aria-label="部署摘要">
+          <div class="metric">
+            <span class="metric-label">当前项目</span>
+            <strong>2</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">统一入口</span>
+            <strong>Caddy + HTTPS</strong>
+          </div>
+          <div class="metric">
+            <span class="metric-label">扩展方式</span>
+            <strong>复制卡片 + 新增子域</strong>
+          </div>
+        </aside>
+      </section>
+
+      <section class="projects" aria-label="项目列表">
+        <!-- 新增第三个项目时，复制整个 article.project-card 即可。 -->
+        <article class="project-card">
+          <div class="card-head">
+            <span class="tag tag-stable">稳定运行</span>
+            <h2>HireMate</h2>
+          </div>
+
+          <p class="summary">
+            现有招聘辅助项目，建议保持现有容器、数据和运行链路不变，仅把公网入口统一交给 Caddy 管理。
+          </p>
+
+          <ul class="details">
+            <li>域名：<code>hiremate.example.com</code></li>
+            <li>定位：现有生产项目</li>
+            <li>建议：保持原服务不动，仅切换统一 HTTPS 入口</li>
+          </ul>
+
+          <div class="actions">
+            <a class="button button-primary" href="https://hiremate.example.com">
+              进入 HireMate
+            </a>
+          </div>
+        </article>
+
+        <article class="project-card featured">
+          <div class="card-head">
+            <span class="tag tag-new">新增部署</span>
+            <h2>AI-Interview（智面）</h2>
+          </div>
+
+          <p class="summary">
+            面向求职场景的 AI 面试平台，按用户端、管理后台、API 三个子域拆分，结构清晰，便于后续独立扩展。
+          </p>
+
+          <ul class="details">
+            <li>用户端：<code>interview.example.com</code></li>
+            <li>后台端：<code>admin.interview.example.com</code></li>
+            <li>API：<code>api.interview.example.com</code></li>
+          </ul>
+
+          <div class="actions">
+            <a class="button button-primary" href="https://interview.example.com">
+              用户端
+            </a>
+            <a
+              class="button button-secondary"
+              href="https://admin.interview.example.com"
+            >
+              管理后台
+            </a>
+            <a class="button button-ghost" href="https://api.interview.example.com">
+              API
+            </a>
+          </div>
+        </article>
+      </section>
+
+      <footer class="footer">
+        <p>部署建议：主域名只做门户，业务系统全部走独立子域，新增项目时同步补一段 Caddy 站点配置即可。</p>
+      </footer>
+    </main>
+  </body>
+</html>
