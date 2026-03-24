@@ -23,6 +23,7 @@
         </div>
 
         <aside class="hero-panel" aria-label="部署摘要">
+          <!-- 新增或删除项目时，记得同步修改这里的数量。 -->
           <div class="metric">
             <span class="metric-label">当前项目</span>
             <strong>2</strong>
@@ -51,13 +52,15 @@
           </p>
 
           <ul class="details">
+            <!-- 把下面显示的域名文本与按钮 href 一起替换，避免“显示一个地址、实际跳另一个地址”。 -->
             <li>域名：<code>hiremate.example.com</code></li>
             <li>定位：现有生产项目</li>
             <li>建议：保持原服务不动，仅切换统一 HTTPS 入口</li>
           </ul>
 
           <div class="actions">
-            <a class="button button-primary" href="https://hiremate.example.com">
+            <!-- 修改 HireMate 入口时，优先改这里。 -->
+            <a class="button button-primary" href="https://hiremate.zenithy.art">
               进入 HireMate
             </a>
           </div>
@@ -74,22 +77,24 @@
           </p>
 
           <ul class="details">
+            <!-- 把下面显示的域名文本与按钮 href 一起替换，三处保持一致。 -->
             <li>用户端：<code>interview.example.com</code></li>
             <li>后台端：<code>admin.interview.example.com</code></li>
             <li>API：<code>api.interview.example.com</code></li>
           </ul>
 
           <div class="actions">
-            <a class="button button-primary" href="https://interview.example.com">
+            <!-- 修改智面入口时，优先改这里三个 href。 -->
+            <a class="button button-primary" href="https://interview.zenithy.art">
               用户端
             </a>
             <a
               class="button button-secondary"
-              href="https://admin.interview.example.com"
+              href="https://admin.interview.zenithy.art"
             >
               管理后台
             </a>
-            <a class="button button-ghost" href="https://api.interview.example.com">
+            <a class="button button-ghost" href="https://api.interview.zenithy.art">
               API
             </a>
           </div>
