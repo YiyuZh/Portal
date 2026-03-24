@@ -3,106 +3,114 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>项目入口 | example.com</title>
+    <title>Zenithy</title>
     <meta
       name="description"
-      content="HireMate 与 AI-Interview（智面）统一项目入口。"
+      content="Zenithy 项目展示页，统一访问 HireMate 与 AI-Interview（智面）。"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="page">
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">PROJECT PORTAL</p>
-          <h1>统一项目入口</h1>
-          <p class="lead">
-            主域名仅作为项目选择页，不直接承载业务。当前提供 HireMate 与
-            AI-Interview（智面）两个入口，后续需要新增第三个项目时，复制一张项目卡片并修改标题、说明和链接即可。
-          </p>
+    <div class="page-bg" aria-hidden="true">
+      <span class="glow glow-one"></span>
+      <span class="glow glow-two"></span>
+      <span class="grid"></span>
+    </div>
+
+    <main class="shell">
+      <header class="hero">
+        <div class="brand-row">
+          <span class="brand-mark">Z</span>
+          <div class="brand-copy">
+            <p class="brand-name">Zenithy</p>
+            <p class="brand-meta">Project Showcase</p>
+          </div>
         </div>
 
-        <aside class="hero-panel" aria-label="部署摘要">
-          <!-- 新增或删除项目时，记得同步修改这里的数量。 -->
-          <div class="metric">
-            <span class="metric-label">当前项目</span>
-            <strong>2</strong>
-          </div>
-          <div class="metric">
-            <span class="metric-label">统一入口</span>
-            <strong>Caddy + HTTPS</strong>
-          </div>
-          <div class="metric">
-            <span class="metric-label">扩展方式</span>
-            <strong>复制卡片 + 新增子域</strong>
-          </div>
-        </aside>
-      </section>
-
-      <section class="projects" aria-label="项目列表">
-        <!-- 新增第三个项目时，复制整个 article.project-card 即可。 -->
-        <article class="project-card">
-          <div class="card-head">
-            <span class="tag tag-stable">稳定运行</span>
-            <h2>HireMate</h2>
-          </div>
-
-          <p class="summary">
-            现有招聘辅助项目，建议保持现有容器、数据和运行链路不变，仅把公网入口统一交给 Caddy 管理。
+        <section class="hero-panel">
+          <p class="eyebrow">Product Hub</p>
+          <h1>Zenithy 项目展示</h1>
+          <p class="subtitle">统一入口 · 快速访问 · 持续扩展</p>
+          <p class="hero-note">
+            面向外部展示的轻量产品入口，聚合核心项目，保持清晰、专业与可扩展。
           </p>
+          <a class="hero-link" href="#products">查看项目</a>
+        </section>
+      </header>
 
-          <ul class="details">
-            <!-- 把下面显示的域名文本与按钮 href 一起替换，避免“显示一个地址、实际跳另一个地址”。 -->
-            <li>域名：<code>hiremate.example.com</code></li>
-            <li>定位：现有生产项目</li>
-            <li>建议：保持原服务不动，仅切换统一 HTTPS 入口</li>
-          </ul>
+      <section id="products" class="products" aria-label="项目列表">
+        <article class="product-card">
+          <div class="card-top">
+            <span class="card-badge">Core Product</span>
+            <span class="card-icon">H</span>
+          </div>
+
+          <div class="card-copy">
+            <p class="card-kicker">HireMate</p>
+            <h2>AI 招聘辅助平台</h2>
+            <p class="card-desc">支持简历解析、候选人评估、批量初筛</p>
+          </div>
 
           <div class="actions">
-            <!-- 修改 HireMate 入口时，优先改这里。 -->
-            <a class="button button-primary" href="https://hiremate.zenithy.art">
+            <a
+              class="button button-primary"
+              href="https://hiremate.zenithy.art"
+              target="_blank"
+              rel="noreferrer"
+            >
               进入 HireMate
             </a>
+            <!-- 后续可将手册按钮替换为真实文档地址 -->
+            <a class="button button-secondary" href="#">查看手册</a>
           </div>
         </article>
 
-        <article class="project-card featured">
-          <div class="card-head">
-            <span class="tag tag-new">新增部署</span>
-            <h2>AI-Interview（智面）</h2>
+        <article class="product-card featured">
+          <div class="card-top">
+            <span class="card-badge">Featured Product</span>
+            <span class="card-icon">AI</span>
           </div>
 
-          <p class="summary">
-            面向求职场景的 AI 面试平台，按用户端、管理后台、API 三个子域拆分，结构清晰，便于后续独立扩展。
-          </p>
+          <div class="card-copy">
+            <p class="card-kicker">AI-Interview（智面）</p>
+            <h2>AI 模拟面试系统</h2>
+            <p class="card-desc">支持简历解析、多轮对话面试与评估报告</p>
+          </div>
 
-          <ul class="details">
-            <!-- 把下面显示的域名文本与按钮 href 一起替换，三处保持一致。 -->
-            <li>用户端：<code>interview.example.com</code></li>
-            <li>后台端：<code>admin.interview.example.com</code></li>
-            <li>API：<code>api.interview.example.com</code></li>
-          </ul>
-
-          <div class="actions">
-            <!-- 修改智面入口时，优先改这里三个 href。 -->
-            <a class="button button-primary" href="https://interview.zenithy.art">
+          <div class="actions actions-multi">
+            <a
+              class="button button-primary"
+              href="https://interview.zenithy.art"
+              target="_blank"
+              rel="noreferrer"
+            >
               用户端
             </a>
             <a
               class="button button-secondary"
               href="https://admin.interview.zenithy.art"
+              target="_blank"
+              rel="noreferrer"
             >
               管理后台
             </a>
-            <a class="button button-ghost" href="https://api.interview.zenithy.art">
+            <a
+              class="button button-ghost"
+              href="https://api.interview.zenithy.art"
+              target="_blank"
+              rel="noreferrer"
+            >
               API
             </a>
+            <!-- 后续可将部署手册按钮替换为真实文档地址 -->
+            <a class="button button-outline" href="#">部署手册</a>
           </div>
         </article>
       </section>
 
       <footer class="footer">
-        <p>部署建议：主域名只做门户，业务系统全部走独立子域，新增项目时同步补一段 Caddy 站点配置即可。</p>
+        <p>Zenithy</p>
+        <span>Clean entry for focused products.</span>
       </footer>
     </main>
   </body>
