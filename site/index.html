@@ -699,8 +699,8 @@
           </a>
 
           <nav class="topnav" aria-label="主导航">
-            <a class="is-active" href="#projects">Projects</a>
-            <a href="#about">About</a>
+            <a class="is-active" href="#projects" data-scroll-target="projects">Projects</a>
+            <a href="#about" data-scroll-target="about">About</a>
           </nav>
 
           <div class="topbar-action">
@@ -897,5 +897,58 @@
         </div>
       </footer>
     </div>
+    <script>
+      (function () {
+        var managedHashes = {
+          "#projects": true,
+          "#about": true,
+        };
+
+        function resetToTop() {
+          if (managedHashes[window.location.hash]) {
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+          }
+
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "auto",
+          });
+        }
+
+        if ("scrollRestoration" in history) {
+          history.scrollRestoration = "manual";
+        }
+
+        window.addEventListener("load", function () {
+          requestAnimationFrame(resetToTop);
+        });
+
+        window.addEventListener("pageshow", function (event) {
+          if (event.persisted) {
+            requestAnimationFrame(resetToTop);
+          }
+        });
+
+        document.addEventListener("click", function (event) {
+          var trigger = event.target.closest("[data-scroll-target]");
+          if (!trigger) {
+            return;
+          }
+
+          var targetId = trigger.getAttribute("data-scroll-target");
+          var target = document.getElementById(targetId);
+          if (!target) {
+            return;
+          }
+
+          event.preventDefault();
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
