@@ -4,10 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zenithy</title>
+    <meta name="theme-color" content="#fcfcfd" />
     <meta
       name="description"
       content="Zenithy 项目展示页，统一进入 HireMate 与 AI-Interview（智面）。"
     />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="alternate icon" href="./favicon.svg" />
+    <script>
+      (function () {
+        var managedHashes = {
+          "#projects": true,
+          "#about": true,
+        };
+
+        try {
+          if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+          }
+
+          if (managedHashes[window.location.hash]) {
+            history.replaceState(null, "", window.location.pathname + window.location.search);
+          }
+
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+          window.scrollTo(0, 0);
+        } catch (error) {
+          // Ignore early scroll reset failures in embedded browsers.
+        }
+      })();
+    </script>
     <style>
       :root {
         --surface: #fcfcfd;
@@ -66,6 +93,10 @@
       a {
         color: inherit;
         text-decoration: none;
+      }
+
+      button {
+        font: inherit;
       }
 
       img {
@@ -153,9 +184,13 @@
         gap: 34px;
       }
 
-      .topnav a {
+      .topnav a,
+      .topnav button {
         position: relative;
         padding: 4px 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.15em;
@@ -163,11 +198,13 @@
         color: var(--text-muted);
       }
 
-      .topnav a.is-active {
+      .topnav a.is-active,
+      .topnav button.is-active {
         color: var(--text-strong);
       }
 
-      .topnav a.is-active::after {
+      .topnav a.is-active::after,
+      .topnav button.is-active::after {
         content: "";
         position: absolute;
         left: 0;
@@ -471,10 +508,12 @@
         justify-content: center;
         min-height: 50px;
         padding: 0 18px;
+        border: 0;
         border-radius: 999px;
         font-size: 14px;
         font-weight: 800;
         letter-spacing: -0.01em;
+        cursor: pointer;
         transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
       }
 
@@ -554,12 +593,19 @@
         gap: 10px;
       }
 
-      .footer-links a {
+      .footer-links a,
+      .footer-links button {
         color: #7c8894;
         font-size: 14px;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
       }
 
-      .footer-links a:hover {
+      .footer-links a:hover,
+      .footer-links button:hover {
         color: var(--accent);
       }
 
@@ -699,8 +745,8 @@
           </a>
 
           <nav class="topnav" aria-label="主导航">
-            <a class="is-active" href="#projects" data-scroll-target="projects">Projects</a>
-            <a href="#about" data-scroll-target="about">About</a>
+            <button class="is-active" type="button" data-scroll-target="projects">Projects</button>
+            <button type="button" data-scroll-target="about">About</button>
           </nav>
 
           <div class="topbar-action">
@@ -773,8 +819,8 @@
                 >
                   进入 HireMate
                 </a>
-                <!-- 后续可替换为真实手册地址 -->
-                <a class="button button-secondary" href="#">查看手册</a>
+                <!-- 后续可替换成真实手册链接 -->
+                <button class="button button-secondary" type="button">查看手册</button>
               </div>
             </article>
 
@@ -849,8 +895,8 @@
                 >
                   API Documentation
                 </a>
-                <!-- 后续可替换为真实部署手册地址 -->
-                <a class="button button-soft" href="#">Deployment Guide</a>
+                <!-- 后续可替换成真实部署手册链接 -->
+                <button class="button button-soft" type="button">Deployment Guide</button>
               </div>
             </article>
           </div>
@@ -874,15 +920,15 @@
               <h4>Connect</h4>
               <div class="footer-links">
                 <a href="https://zenithy.art" target="_blank" rel="noreferrer">zenithy.art</a>
-                <a href="#" aria-disabled="true">LinkedIn</a>
+                <button type="button">LinkedIn</button>
               </div>
             </section>
 
             <section class="footer-group">
               <h4>Legal</h4>
               <div class="footer-links">
-                <a href="#">Terms</a>
-                <a href="#">Privacy</a>
+                <button type="button">Terms</button>
+                <button type="button">Privacy</button>
               </div>
             </section>
           </div>
@@ -922,11 +968,13 @@
 
         window.addEventListener("load", function () {
           requestAnimationFrame(resetToTop);
+          setTimeout(resetToTop, 160);
         });
 
         window.addEventListener("pageshow", function (event) {
           if (event.persisted) {
             requestAnimationFrame(resetToTop);
+            setTimeout(resetToTop, 160);
           }
         });
 
