@@ -384,10 +384,12 @@
                 <div class="col-span-2 flex justify-end gap-2">
                   <a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="${
                     post.adminEdit || "https://blog.zenithy.art/admin/editor.html"
-                  }">
+                  }" title="编辑">
                     <span class="material-symbols-outlined">edit</span>
                   </a>
-                  <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error">
+                  <button class="delete-post flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error" data-slug="${
+                    post.slug || ""
+                  }" title="删除">
                     <span class="material-symbols-outlined">delete</span>
                   </button>
                 </div>
@@ -396,6 +398,36 @@
           );
         });
       }
+
+      function downloadFile(filename, content) {
+        const blob = new Blob([content], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      adminList.addEventListener("click", (event) => {
+        const btn = event.target.closest(".delete-post");
+        if (!btn) return;
+        const slug = btn.dataset.slug;
+        if (!slug) return;
+        const ok = confirm("确认删除该文章？删除后请用新的 manifest.json 覆盖原文件。");
+        if (!ok) return;
+
+        fetch(manifestUrl)
+          .then((res) => res.json())
+          .then((manifest) => {
+            const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+            const next = posts.filter((post) => post.slug !== slug);
+            const updated = { pageSize: manifest.pageSize || 4, posts: next };
+            downloadFile("manifest.json", JSON.stringify(updated, null, 2));
+            alert(
+              "已生成更新后的 manifest.json。请替换 /portal/site/blog/posts/manifest.json 并提交到 Git。"
+            );
+          });
+      });
 
       fetch(manifestUrl)
         .then((res) => res.json())
