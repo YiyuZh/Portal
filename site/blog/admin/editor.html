@@ -143,9 +143,9 @@
       <div class="px-6 mb-10">
         <div class="flex items-center gap-2">
           <span class="brand-mark" aria-hidden="true"></span>
-          <h1 class="text-lg font-bold text-slate-900">Zenithy Slate</h1>
+          <h1 class="text-lg font-bold text-slate-900">Zenithy 编辑器</h1>
         </div>
-        <p class="text-slate-500 text-xs">Editor Workspace</p>
+        <p class="text-slate-500 text-xs">内容创作空间</p>
       </div>
       <nav class="flex-1 space-y-1">
         <a
@@ -153,19 +153,19 @@
           href="https://blog.zenithy.art/admin/"
         >
           <span class="material-symbols-outlined">edit_note</span>
-          <span>Posts</span>
+          <span>文章</span>
         </a>
         <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="#">
           <span class="material-symbols-outlined">category</span>
-          <span>Categories</span>
+          <span>分类</span>
         </a>
         <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="#">
           <span class="material-symbols-outlined">perm_media</span>
-          <span>Media</span>
+          <span>媒体</span>
         </a>
         <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="#">
           <span class="material-symbols-outlined">settings</span>
-          <span>Settings</span>
+          <span>设置</span>
         </a>
       </nav>
       <div class="px-6 mt-auto">
@@ -176,8 +176,8 @@
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJLBiHTBOmvJ7HC5Ho2CobFzUeBjzol1g-m1sndxfJRYmHwdoAebogU10KLUSIHfaI7b2FG8741Qnis-FvR8iqXy2T7_pQLgmeDHrH4p_r9WIo6O_TMD0HYymt9WIAMdxLjDn7W2r6AcsdRXkUE6A91pungzR2xm7eEyzCvgqogmTJIddDhoXseazHndicgALdngqkP5KQwP6MIPaAzdDmz46YKqmKq8hRvErLE0_wmD8s50l2zhLmk9hAfeFnGcYYcoo2bGIk5lGg"
           />
           <div class="overflow-hidden">
-            <p class="font-bold text-slate-900 truncate">Zenithy Admin</p>
-            <p class="text-[10px] text-slate-500">Content Manager</p>
+            <p class="font-bold text-slate-900 truncate">Zenithy 管理员</p>
+            <p class="text-[10px] text-slate-500">内容管理</p>
           </div>
         </div>
       </div>
@@ -188,11 +188,11 @@
         class="flex justify-between items-center h-16 w-full px-8 border-b border-slate-100 bg-white/80 backdrop-blur-xl shadow-sm font-manrope text-sm font-medium sticky top-0 z-10"
       >
         <div class="flex items-center gap-6">
-          <span class="text-xl font-black text-slate-900">Zenithy Editor</span>
+          <span class="text-xl font-black text-slate-900">Zenithy 编辑器</span>
           <nav class="hidden lg:flex gap-6 items-center">
-            <a class="text-slate-500 hover:text-teal-600" href="#">Drafts</a>
-            <a class="text-slate-500 hover:text-teal-600" href="#">Published</a>
-            <a class="text-slate-500 hover:text-teal-600" href="#">Scheduled</a>
+            <a class="text-slate-500 hover:text-teal-600" href="#">草稿</a>
+            <a class="text-slate-500 hover:text-teal-600" href="#">已发布</a>
+            <a class="text-slate-500 hover:text-teal-600" href="#">定时发布</a>
           </nav>
         </div>
         <div class="flex items-center gap-3">
@@ -200,14 +200,14 @@
             <button
               id="saveDraft"
               class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-full"
-              title="Save draft"
+              title="保存草稿"
             >
               <span class="material-symbols-outlined">save</span>
             </button>
             <button
               id="previewBtn"
               class="p-2 text-slate-500 hover:text-teal-600 hover:bg-slate-100 rounded-full"
-              title="Preview"
+              title="预览"
             >
               <span class="material-symbols-outlined">visibility</span>
             </button>
@@ -216,13 +216,13 @@
             </button>
           </div>
           <button id="previewText" class="px-5 py-2 text-slate-600 hover:text-teal-800 font-semibold">
-            Preview
+            预览
           </button>
           <button
             id="publishBtn"
             class="px-6 py-2 bg-tertiary text-on-tertiary rounded-full font-bold hover:bg-tertiary-dim shadow-lg shadow-tertiary/10"
           >
-            Publish
+            发布
           </button>
         </div>
       </header>
@@ -239,8 +239,8 @@
             >
               <span class="material-symbols-outlined text-3xl">add_photo_alternate</span>
             </div>
-            <p class="mt-4 font-manrope font-semibold text-on-surface-variant">Add Cover Image</p>
-            <p class="text-xs text-outline mt-1">1600 x 900px recommended</p>
+            <p class="mt-4 font-manrope font-semibold text-on-surface-variant">添加封面图</p>
+            <p class="text-xs text-outline mt-1">建议尺寸 1600 x 900px</p>
             <input id="coverInput" type="file" accept="image/*" class="hidden" />
           </label>
 
@@ -248,13 +248,13 @@
             <input
               id="titleInput"
               class="w-full bg-transparent border-none p-0 text-5xl font-extrabold font-manrope placeholder:text-surface-dim focus:ring-0 text-on-surface"
-              placeholder="Enter your title..."
+              placeholder="请输入标题..."
               type="text"
             />
             <input
               id="subtitleInput"
               class="w-full bg-transparent border-none p-0 text-xl font-medium text-on-surface-variant placeholder:text-surface-dim focus:ring-0"
-              placeholder="Add a subtitle or excerpt to hook your readers..."
+              placeholder="添加副标题或摘要..."
               type="text"
             />
 
@@ -281,20 +281,25 @@
                 class="min-h-[500px] text-lg leading-relaxed text-on-surface editor-prose max-w-none focus:outline-none"
                 contenteditable="true"
               >
-                <p class="text-surface-dim">Start typing your story here...</p>
+                <p class="text-surface-dim">在这里开始写作...</p>
               </div>
             </div>
+            <p class="text-xs text-on-surface-variant">
+              发布会生成文章 HTML 和 manifest.json 下载包。请在本地放入
+              <code>/portal/site/blog/posts/</code> 并提交到 Git，再部署到服务器，避免云端产生本地修改导致无法
+              <code>git pull</code>。
+            </p>
           </div>
         </div>
 
         <aside class="w-80 border-l border-slate-100 bg-surface-container-low hidden xl:block p-8 overflow-y-auto">
           <div class="flex items-center justify-between mb-8">
-            <h2 class="font-manrope font-bold text-lg text-on-surface">Post Settings</h2>
+            <h2 class="font-manrope font-bold text-lg text-on-surface">文章设置</h2>
           </div>
           <div class="space-y-8">
             <div class="space-y-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                >URL Slug</label
+                >文章路径</label
               >
               <input
                 id="slugInput"
@@ -305,7 +310,7 @@
             </div>
             <div class="space-y-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                >Category</label
+                >分类</label
               >
               <select
                 id="categoryInput"
@@ -319,34 +324,55 @@
             </div>
             <div class="space-y-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                >Tags</label
+                >标签</label
               >
               <input
                 id="tagsInput"
                 class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10"
-                placeholder="Add tag..."
+                placeholder="添加标签..."
                 type="text"
               />
             </div>
             <div class="space-y-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                >SEO Description</label
+                >SEO 描述</label
               >
               <textarea
                 id="seoInput"
                 class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10 resize-none"
-                placeholder="Briefly describe your post for search engines..."
+                placeholder="简单描述文章内容..."
                 rows="4"
               ></textarea>
             </div>
             <div class="pt-6 mt-6 border-t border-outline-variant/10">
               <button id="clearDraft" class="w-full text-error hover:bg-error/5 p-2 rounded-lg text-xs font-bold uppercase">
-                Delete Draft
+                删除草稿
               </button>
             </div>
           </div>
         </aside>
       </main>
+      <div
+        id="previewModal"
+        class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50"
+      >
+        <div class="bg-white rounded-2xl w-[90vw] h-[85vh] shadow-2xl flex flex-col">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+            <span class="font-manrope font-semibold text-slate-700">文章预览</span>
+            <button
+              id="closePreview"
+              class="px-3 py-1 text-sm text-slate-500 hover:text-slate-900"
+            >
+              关闭
+            </button>
+          </div>
+          <iframe
+            id="previewFrame"
+            class="flex-1 w-full rounded-b-2xl"
+            title="预览"
+          ></iframe>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -396,6 +422,13 @@
         };
         reader.readAsDataURL(file);
       });
+
+      function estimateReadTime(html) {
+        const text = html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+        const words = text ? text.split(" ").length : 0;
+        const minutes = Math.max(1, Math.ceil(words / 200));
+        return `${minutes} min read`;
+      }
 
       function collectDraft() {
         return {
@@ -484,30 +517,72 @@
       }
 
       document.getElementById("saveDraft").addEventListener("click", saveDraft);
-      document.getElementById("previewBtn").addEventListener("click", () => {
+      const previewModal = document.getElementById("previewModal");
+      const previewFrame = document.getElementById("previewFrame");
+      const closePreview = document.getElementById("closePreview");
+
+      function openPreview() {
         const html = generateHtml();
-        const win = window.open();
-        if (win) {
-          win.document.write(html);
-          win.document.close();
+        const blob = new Blob([html], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        previewFrame.src = url;
+        previewModal.classList.remove("hidden");
+        previewModal.classList.add("flex");
+        previewModal.dataset.url = url;
+      }
+
+      function closePreviewModal() {
+        const url = previewModal.dataset.url;
+        if (url) {
+          URL.revokeObjectURL(url);
         }
-      });
-      document.getElementById("previewText").addEventListener("click", () => {
-        const html = generateHtml();
-        const win = window.open();
-        if (win) {
-          win.document.write(html);
-          win.document.close();
-        }
-      });
+        previewFrame.src = "about:blank";
+        previewModal.classList.add("hidden");
+        previewModal.classList.remove("flex");
+      }
+
+      document.getElementById("previewBtn").addEventListener("click", openPreview);
+      document.getElementById("previewText").addEventListener("click", openPreview);
+      closePreview.addEventListener("click", closePreviewModal);
       document.getElementById("publishBtn").addEventListener("click", () => {
         const slug = slugInput.value || "new-post";
         const html = generateHtml();
         downloadFile(`${slug}.html`, html);
+
+        fetch("../posts/manifest.json")
+          .then((res) => res.json())
+          .then((manifest) => {
+            const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+            const now = new Date().toISOString();
+            const entry = {
+              title: titleInput.value || "Untitled Post",
+              excerpt: subtitleInput.value || "",
+              date: now,
+              category: categoryInput.value || "Blog",
+              tags: tagsInput.value || "",
+              cover: coverData || "",
+              readTime: estimateReadTime(bodyInput.innerHTML || ""),
+              status: "已发布",
+              url: `https://blog.zenithy.art/posts/${slug}/`,
+              adminEdit: "https://blog.zenithy.art/admin/editor.html",
+            };
+            const updated = {
+              pageSize: manifest.pageSize || 4,
+              posts: [entry, ...posts],
+            };
+            downloadFile("manifest.json", JSON.stringify(updated, null, 2));
+          })
+          .catch(() => {
+            downloadFile(
+              "manifest.json",
+              JSON.stringify({ pageSize: 4, posts: [] }, null, 2)
+            );
+          });
+
         alert(
-          "已生成文章文件。请把下载的 HTML 放入 /portal/site/blog/posts/" +
+          "已生成文章文件和 manifest.json。请把下载的 HTML 放入 /portal/site/blog/posts/" +
             slug +
-            "/index.html，然后提交并部署。"
+            "/index.html，并用新的 manifest.json 替换 /portal/site/blog/posts/manifest.json，然后在本地 Git 提交并部署。这样云端不会出现未提交文件，避免 git pull 冲突。"
         );
       });
       document.getElementById("clearDraft").addEventListener("click", () => {

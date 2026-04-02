@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Zenithy - Blog Admin</title>
+    <title>Zenithy - 博客后台</title>
     <meta name="theme-color" content="#f8f9fa" />
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
     <link rel="alternate icon" href="../../favicon.svg" />
@@ -127,7 +127,7 @@
           <div>
             <h1 class="text-xl font-bold tracking-tight text-slate-800">Zenithy</h1>
             <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
-              Admin Dashboard
+              博客后台
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@
           href="https://blog.zenithy.art/admin/editor.html"
         >
           <span class="material-symbols-outlined">add</span>
-          New Post
+          新建文章
         </a>
         <nav class="space-y-1">
           <a
@@ -144,39 +144,39 @@
             href="#"
           >
             <span class="material-symbols-outlined">article</span>
-            Posts
+            文章列表
           </a>
           <a
             class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
             href="#"
           >
             <span class="material-symbols-outlined">category</span>
-            Categories
+            分类管理
           </a>
           <a
             class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
             href="#"
           >
             <span class="material-symbols-outlined">perm_media</span>
-            Media
+            媒体库
           </a>
           <a
             class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
             href="#"
           >
             <span class="material-symbols-outlined">settings</span>
-            Settings
+            设置
           </a>
         </nav>
       </div>
       <div class="mt-auto space-y-1 p-8">
         <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
           <span class="material-symbols-outlined">help_outline</span>
-          Help
+          帮助
         </a>
         <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
           <span class="material-symbols-outlined">logout</span>
-          Sign Out
+          退出
         </a>
       </div>
     </aside>
@@ -185,7 +185,7 @@
       class="fixed top-0 z-40 flex h-16 w-full items-center justify-between bg-white/80 px-8 pl-64 backdrop-blur-xl"
     >
       <div class="flex items-center gap-6">
-        <span class="font-headline text-lg font-semibold text-slate-900">Blog Manager</span>
+        <span class="font-headline text-lg font-semibold text-slate-900">博客管理</span>
         <div class="relative group">
           <span
             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
@@ -193,7 +193,7 @@
           >
           <input
             class="w-64 rounded-full border-0 bg-surface-container-low py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-tertiary"
-            placeholder="Search articles..."
+            placeholder="搜索文章..."
             type="text"
           />
         </div>
@@ -208,9 +208,9 @@
         <div class="mx-2 h-8 w-px bg-outline-variant/20"></div>
         <div class="flex items-center gap-3">
           <div class="text-right">
-            <p class="text-xs font-bold text-on-surface">Zenithy Admin</p>
+            <p class="text-xs font-bold text-on-surface">Zenithy 管理员</p>
             <p class="text-[10px] uppercase tracking-tighter text-on-surface-variant">
-              Content Manager
+              内容管理
             </p>
           </div>
           <img
@@ -227,27 +227,26 @@
         <div class="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
           <div class="max-w-2xl">
             <span class="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-tertiary"
-              >Content Repository</span
+            >内容库</span
             >
             <h2 class="font-headline mb-4 text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
-              Article Management
+              文章管理
             </h2>
             <p class="text-lg leading-relaxed text-on-surface-variant">
-              Refine your narrative. Manage published insights, draft future perspectives, and
-              archive historical content from your centralized editorial hub.
+              管理已发布文章、草稿与归档内容，统一维护你的个人博客内容库。
             </p>
           </div>
           <div class="flex gap-3">
             <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
-              <span class="font-headline text-3xl font-bold text-on-surface">124</span>
+              <span id="totalPosts" class="font-headline text-3xl font-bold text-on-surface">0</span>
               <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
-                >Total Posts</span
+                >文章数量</span
               >
             </div>
             <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
-              <span class="font-headline text-3xl font-bold text-tertiary">8.2k</span>
+              <span class="font-headline text-3xl font-bold text-tertiary">—</span>
               <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
-                >Monthly Reads</span
+                >阅读量</span
               >
             </div>
           </div>
@@ -256,87 +255,35 @@
         <div class="mb-8 flex items-center justify-between rounded-xl bg-surface-container-lowest p-4 shadow-sm">
           <div class="flex gap-2">
             <button class="rounded-full bg-tertiary px-5 py-2 text-sm font-semibold text-on-tertiary">
-              All Posts
+              全部文章
             </button>
             <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              Published
+              已发布
             </button>
             <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              Drafts
+              草稿
             </button>
             <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              Archived
+              已归档
             </button>
           </div>
           <div class="flex gap-4">
             <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
               <span class="material-symbols-outlined text-lg">filter_list</span>
-              Filter
+              筛选
             </button>
             <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
               <span class="material-symbols-outlined text-lg">sort</span>
-              Sort
+              排序
             </button>
           </div>
         </div>
 
-        <div class="space-y-4">
-          <div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">
-            <div class="grid grid-cols-12 items-center gap-6">
-              <div class="col-span-1">
-                <img
-                  alt="Post Thumbnail"
-                  class="h-16 w-16 rounded-lg object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT"
-                />
-              </div>
-              <div class="col-span-5">
-                <div class="mb-1 flex items-center gap-2">
-                  <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">
-                    Digital Design
-                  </span>
-                  <span class="text-[10px] font-medium uppercase text-on-surface-variant">5 min read</span>
-                </div>
-                <h3 class="text-lg font-bold text-on-surface group-hover:text-tertiary transition-colors">
-                  The Future of Minimalism in SaaS Interface Design
-                </h3>
-                <p class="line-clamp-1 text-sm text-on-surface-variant">
-                  Exploring how reductionist aesthetics are shaping user retention and psychological comfort...
-                </p>
-              </div>
-              <div class="col-span-2">
-                <div class="flex flex-col">
-                  <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Status</span>
-                  <div class="flex items-center gap-2 text-sm font-semibold text-emerald-600">
-                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Published
-                  </div>
-                </div>
-              </div>
-              <div class="col-span-2">
-                <div class="flex flex-col">
-                  <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Last Updated</span>
-                  <span class="text-sm font-medium text-on-surface">Oct 12, 2023</span>
-                </div>
-              </div>
-              <div class="col-span-2 flex justify-end gap-2">
-                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary">
-                  <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error">
-                  <span class="material-symbols-outlined">delete</span>
-                </button>
-                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container">
-                  <span class="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div id="adminPostList" class="space-y-4"></div>
 
         <div class="mt-12 flex items-center justify-between">
-          <p class="text-sm font-medium text-on-surface-variant">
-            Showing <span class="font-bold text-on-surface">1-4</span> of 124 articles
+          <p class="text-sm font-medium text-on-surface-variant" id="postCount">
+            当前显示 <span class="font-bold text-on-surface">0</span> / 0 篇
           </p>
           <div class="flex items-center gap-2">
             <button class="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low">
@@ -357,7 +304,7 @@
 
         <footer class="mt-24 border-t border-outline-variant/10 pt-12 pb-8 text-center">
           <p class="mb-2 text-[10px] uppercase tracking-[0.3em] text-on-surface-variant">
-            Powered by Zenithy Editorial Cloud
+            Zenithy 博客管理中心
           </p>
           <p class="text-xs text-on-surface-variant/60">
             Version 4.2.1-stable · © 2026 Zenithy Archive. All rights reserved.
@@ -365,5 +312,97 @@
         </footer>
       </div>
     </main>
+    <script>
+      const adminList = document.getElementById("adminPostList");
+      const totalPosts = document.getElementById("totalPosts");
+      const postCount = document.getElementById("postCount");
+      const manifestUrl = "../posts/manifest.json";
+
+      function formatDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toISOString().slice(0, 10);
+      }
+
+      function renderAdmin(posts) {
+        totalPosts.textContent = posts.length;
+        postCount.innerHTML = `当前显示 <span class="font-bold text-on-surface">1-${Math.min(
+          posts.length,
+          4
+        )}</span> / ${posts.length} 篇`;
+        adminList.innerHTML = "";
+
+        if (!posts.length) {
+          adminList.innerHTML =
+            '<div class="rounded-xl bg-surface-container-lowest p-6 text-on-surface-variant">暂无文章，请点击“新建文章”开始发布。</div>';
+          return;
+        }
+
+        posts.slice(0, 4).forEach((post) => {
+          const cover = post.cover || "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
+          const status = post.status || "已发布";
+          const statusColor = status === "已发布" ? "text-emerald-600" : "text-slate-500";
+          adminList.insertAdjacentHTML(
+            "beforeend",
+            `<div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">
+              <div class="grid grid-cols-12 items-center gap-6">
+                <div class="col-span-1">
+                  <img alt="Post Thumbnail" class="h-16 w-16 rounded-lg object-cover" src="${cover}" />
+                </div>
+                <div class="col-span-5">
+                  <div class="mb-1 flex items-center gap-2">
+              <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">${
+                      post.category || "博客"
+                    }</span>
+                    <span class="text-[10px] font-medium uppercase text-on-surface-variant">${
+                      post.readTime || "5 分钟"
+                    }</span>
+                  </div>
+                  <h3 class="text-lg font-bold text-on-surface group-hover:text-tertiary transition-colors">${
+                    post.title || "Untitled Post"
+                  }</h3>
+                  <p class="line-clamp-1 text-sm text-on-surface-variant">${
+                    post.excerpt || ""
+                  }</p>
+                </div>
+                <div class="col-span-2">
+                  <div class="flex flex-col">
+                    <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">状态</span>
+                    <div class="flex items-center gap-2 text-sm font-semibold ${statusColor}">
+                      <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                      ${status}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-span-2">
+                  <div class="flex flex-col">
+                    <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">更新日期</span>
+                    <span class="text-sm font-medium text-on-surface">${formatDate(post.date)}</span>
+                  </div>
+                </div>
+                <div class="col-span-2 flex justify-end gap-2">
+                  <a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="${
+                    post.adminEdit || "https://blog.zenithy.art/admin/editor.html"
+                  }">
+                    <span class="material-symbols-outlined">edit</span>
+                  </a>
+                  <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+            </div>`
+          );
+        });
+      }
+
+      fetch(manifestUrl)
+        .then((res) => res.json())
+        .then((manifest) => {
+          renderAdmin(Array.isArray(manifest.posts) ? manifest.posts : []);
+        })
+        .catch(() => renderAdmin([]));
+    </script>
   </body>
 </html>

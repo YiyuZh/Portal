@@ -308,6 +308,10 @@
         grid-column: span 6;
       }
 
+      .span-12 {
+        grid-column: span 12;
+      }
+
       .pagination {
         margin-top: 64px;
         display: flex;
@@ -432,108 +436,10 @@
             <button class="pill">Strategy</button>
           </section>
 
-          <section class="grid">
-            <article class="card span-8">
-              <div style="aspect-ratio: 16 / 8; overflow: hidden">
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBViQHsu7KaL7-U3JvvK-J0Ut279Y_WUtYT5b1az1KfNk-BhTaMGWrM0FDHN25ZFKnsJPPDckrryi3vG3kbDwZyQDjv69YWb38q1eexIpivmOQhGss9Rb-n7mJZO-rzKBYA_Li0NF6KAc4GCxM1MGztkK8vDl76AfPPZwVCpAwX4mZsUpQpQ5ldcX6L7BdbVMUDqG7uasFT3oEJL19f0DMTrAXthwl3FDlf8Kr76F9M7R-CAlvhRCWnUVyEXDs-vXCQmGvWOVQ2sCSn"
-                  alt="Minimalist modern office interior with clean lines, large glass windows, concrete walls, and warm wooden accents in soft natural lighting"
-                />
-              </div>
-              <div class="card-body">
-                <div class="meta">
-                  <span class="tag">Strategy</span>
-                  <span class="dot"></span>
-                  <span>May 12, 2024</span>
-                </div>
-                <h2>The Architecture of Intent: How We Build Digital Spaces for Depth</h2>
-                <p>
-                  Beyond pixels and grids lies a deeper structure of human intent. In this long-form
-                  reflection, we dismantle the traditional SaaS dashboard to find something more
-                  tactile.
-                </p>
-                <a class="read-more" href="https://blog.zenithy.art/post.html">
-                  Read More
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </a>
-              </div>
-            </article>
-
-            <article class="card span-4">
-              <div style="aspect-ratio: 4 / 3; overflow: hidden">
-                <img
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbV_fUn3G23Eu4_AJ1smkmt7aVOOjXc7h-mkaCT4H5aam4Vfm-2dZv419EyD2xthGKlwe5cNi62Ph27xuFtutK2V_PXVDvkqpGyom8vb5bRf8d5VbN0CYfNx-I-eNOmbx8RhQIW9shhnJblzZ-Twuz4JNSWsHOZbaGPiqz7K9AAkXRIiYJTHvMOZPHm68XkMi7ltsfNFZGmINuTYzdWtPkPgqYBTI6HaB5I-a1bl0yJeyYV6WZUAKzXNtMkjPXgnUeoJ8T_ZW8g2fB"
-                  alt="Close-up of a high-end mechanical keyboard and minimalist workstation on a light gray desk with soft morning shadows"
-                />
-              </div>
-              <div class="card-body">
-                <div class="meta">
-                  <span class="tag">Culture</span>
-                  <span>May 08, 2024</span>
-                </div>
-                <h3>Finding Stillness in High-Speed Engineering</h3>
-                <p>
-                  How our team balances rapid deployment with a culture of meditative focus and
-                  precision code.
-                </p>
-                <a class="read-more" href="https://blog.zenithy.art/post.html">
-                  Read More
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </a>
-              </div>
-            </article>
-
-            <article class="card span-6">
-              <div class="card-body">
-                <div class="meta">
-                  <span class="tag">Design</span>
-                  <span>April 24, 2024</span>
-                </div>
-                <h3>The Tonal Palette: Emotional Resonance in Interface Design</h3>
-                <p>
-                  Exploring why we chose "Atmospheric Grays" and "Optical Whites" to define the
-                  Zenithy experience over vibrant, noisy branding.
-                </p>
-                <a class="read-more" href="https://blog.zenithy.art/post.html">
-                  Read More
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </a>
-              </div>
-            </article>
-
-            <article class="card span-6">
-              <div class="card-body">
-                <div class="meta">
-                  <span class="tag">Engineering</span>
-                  <span>April 19, 2024</span>
-                </div>
-                <h3>Scaling Minimalist Infrastructure</h3>
-                <p>
-                  Maintaining extreme performance and low latency while the Zenithy Portal scales to
-                  accommodate global enterprise traffic.
-                </p>
-                <a class="read-more" href="https://blog.zenithy.art/post.html">
-                  Read More
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </a>
-              </div>
-            </article>
-          </section>
+          <section class="grid" id="postGrid"></section>
 
           <nav class="pagination">
-            <div class="pager">
-              <button class="page-btn" aria-label="Previous page">
-                <span class="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button class="page-btn active">1</button>
-              <button class="page-btn">2</button>
-              <button class="page-btn">3</button>
-              <span style="padding: 0 8px; color: #737c7f">...</span>
-              <button class="page-btn">12</button>
-              <button class="page-btn" aria-label="Next page">
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
+            <div class="pager" id="pager"></div>
           </nav>
         </div>
       </main>
@@ -557,5 +463,117 @@
         </div>
       </footer>
     </div>
+    <script>
+      const grid = document.getElementById("postGrid");
+      const pager = document.getElementById("pager");
+      const manifestUrl = "./posts/manifest.json";
+
+      function formatDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toISOString().slice(0, 10);
+      }
+
+      function renderPosts(posts, pageSize, page) {
+        grid.innerHTML = "";
+        if (!posts.length) {
+          grid.innerHTML = `
+            <article class="card span-12" style="padding:32px;text-align:center;">
+              <h3 style="margin:0 0 12px;font-family:Manrope, sans-serif;">暂无文章</h3>
+              <p style="margin:0;color:#586064;">发布第一篇文章后，这里会自动排版展示。</p>
+            </article>
+          `;
+          pager.innerHTML = "";
+          return;
+        }
+
+        const start = (page - 1) * pageSize;
+        const slice = posts.slice(start, start + pageSize);
+
+        slice.forEach((post, index) => {
+          const isFeatured = page === 1 && index === 0;
+          const spanClass = isFeatured ? "span-8" : index === 1 ? "span-4" : "span-6";
+          const cover = post.cover || "";
+          const readMore = post.url || "#";
+          const tag = post.category || "Blog";
+          const date = formatDate(post.date);
+          const excerpt = post.excerpt || "";
+          const title = post.title || "Untitled Post";
+          const imgBlock = cover
+            ? `<div style="aspect-ratio: ${isFeatured ? "16 / 8" : "4 / 3"}; overflow: hidden">
+                <img src="${cover}" alt="${title}" />
+              </div>`
+            : "";
+
+          grid.insertAdjacentHTML(
+            "beforeend",
+            `<article class="card ${spanClass}">
+              ${imgBlock}
+              <div class="card-body">
+                <div class="meta">
+                  <span class="tag">${tag}</span>
+                  ${date ? `<span class="dot"></span><span>${date}</span>` : ""}
+                </div>
+                <h3>${title}</h3>
+                <p>${excerpt}</p>
+                <a class="read-more" href="${readMore}">
+                  Read More
+                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+              </div>
+            </article>`
+          );
+        });
+      }
+
+      function renderPager(total, pageSize, page, onChange) {
+        pager.innerHTML = "";
+        const pages = Math.max(1, Math.ceil(total / pageSize));
+        const makeBtn = (label, p, isActive) => {
+          const btn = document.createElement("button");
+          btn.className = `page-btn${isActive ? " active" : ""}`;
+          btn.textContent = label;
+          btn.disabled = isActive;
+          btn.addEventListener("click", () => onChange(p));
+          return btn;
+        };
+
+        const prev = document.createElement("button");
+        prev.className = "page-btn";
+        prev.innerHTML = `<span class="material-symbols-outlined">chevron_left</span>`;
+        prev.disabled = page === 1;
+        prev.addEventListener("click", () => onChange(page - 1));
+        pager.appendChild(prev);
+
+        for (let i = 1; i <= pages; i++) {
+          pager.appendChild(makeBtn(String(i), i, i === page));
+        }
+
+        const next = document.createElement("button");
+        next.className = "page-btn";
+        next.innerHTML = `<span class="material-symbols-outlined">chevron_right</span>`;
+        next.disabled = page === pages;
+        next.addEventListener("click", () => onChange(page + 1));
+        pager.appendChild(next);
+      }
+
+      fetch(manifestUrl)
+        .then((res) => res.json())
+        .then((manifest) => {
+          const pageSize = manifest.pageSize || 4;
+          const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+          let page = 1;
+          const update = (p) => {
+            page = p;
+            renderPosts(posts, pageSize, page);
+            renderPager(posts.length, pageSize, page, update);
+          };
+          update(1);
+        })
+        .catch(() => {
+          renderPosts([], 4, 1);
+        });
+    </script>
   </body>
 </html>
