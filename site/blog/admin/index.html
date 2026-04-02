@@ -252,21 +252,8 @@
           </div>
         </div>
 
-        <div class="mb-8 flex items-center justify-between rounded-xl bg-surface-container-lowest p-4 shadow-sm">
-          <div class="flex gap-2">
-            <button class="rounded-full bg-tertiary px-5 py-2 text-sm font-semibold text-on-tertiary">
-              全部文章
-            </button>
-            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              已发布
-            </button>
-            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              草稿
-            </button>
-            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
-              已归档
-            </button>
-          </div>
+        <div class="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm">
+          <div id="adminTagFilters" class="flex flex-wrap gap-2"></div>
           <div class="flex gap-4">
             <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
               <span class="material-symbols-outlined text-lg">filter_list</span>
@@ -317,6 +304,7 @@
       const totalPosts = document.getElementById("totalPosts");
       const postCount = document.getElementById("postCount");
       const manifestUrl = "../posts/manifest.json";
+      const adminTagFilters = document.getElementById("adminTagFilters");
 
       function formatDate(value) {
         if (!value) return "";
@@ -325,21 +313,57 @@
         return date.toISOString().slice(0, 10);
       }
 
-      function renderAdmin(posts) {
+      function renderTagFilters(posts, activeTag, onSelect) {
+        const tagSet = new Set();
+        posts.forEach((post) => {
+          const tags = Array.isArray(post.tags)
+            ? post.tags
+            : typeof post.tags === "string"
+              ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
+              : [];
+          tags.forEach((t) => tagSet.add(t));
+        });
+        const tags = ["全部", ...Array.from(tagSet)];
+        adminTagFilters.innerHTML = "";
+        tags.forEach((tag) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "rounded-full px-5 py-2 text-sm font-semibold " +
+            (tag === activeTag
+              ? "bg-tertiary text-on-tertiary"
+              : "text-on-surface-variant hover:bg-surface-container-low");
+          btn.textContent = tag;
+          btn.addEventListener("click", () => onSelect(tag));
+          adminTagFilters.appendChild(btn);
+        });
+      }
+
+      function renderAdmin(posts, activeTag) {
+        const filtered = activeTag && activeTag !== "全部"
+          ? posts.filter((post) => {
+              const tags = Array.isArray(post.tags)
+                ? post.tags
+                : typeof post.tags === "string"
+                  ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
+                  : [];
+              return tags.includes(activeTag);
+            })
+          : posts;
+
         totalPosts.textContent = posts.length;
         postCount.innerHTML = `当前显示 <span class="font-bold text-on-surface">1-${Math.min(
-          posts.length,
+          filtered.length,
           4
-        )}</span> / ${posts.length} 篇`;
+        )}</span> / ${filtered.length} 篇`;
         adminList.innerHTML = "";
 
-        if (!posts.length) {
+        if (!filtered.length) {
           adminList.innerHTML =
             '<div class="rounded-xl bg-surface-container-lowest p-6 text-on-surface-variant">暂无文章，请点击“新建文章”开始发布。</div>';
           return;
         }
 
-        posts.slice(0, 4).forEach((post) => {
+        filtered.slice(0, 4).forEach((post) => {
           const cover = post.cover || "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
           const status = post.status || "已发布";
           const statusColor = status === "已发布" ? "text-emerald-600" : "text-slate-500";
@@ -432,7 +456,13 @@
       fetch(manifestUrl)
         .then((res) => res.json())
         .then((manifest) => {
-          renderAdmin(Array.isArray(manifest.posts) ? manifest.posts : []);
+          const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+          let activeTag = "全部";
+          renderTagFilters(posts, activeTag, (tag) => {
+            activeTag = tag;
+            renderAdmin(posts, activeTag);
+          });
+          renderAdmin(posts, activeTag);
         })
         .catch(() => renderAdmin([]));
     </script>

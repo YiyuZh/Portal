@@ -127,6 +127,7 @@
       .editor-prose p {
         margin-bottom: 1.5rem;
         line-height: 1.8;
+        color: #2b3437;
       }
       .editor-prose h2 {
         margin-top: 2.5rem;
@@ -281,7 +282,7 @@
                 class="min-h-[500px] text-lg leading-relaxed text-on-surface editor-prose max-w-none focus:outline-none"
                 contenteditable="true"
               >
-                <p class="text-surface-dim">在这里开始写作...</p>
+                <p class="text-on-surface-variant">在这里开始写作...</p>
               </div>
             </div>
             <p class="text-xs text-on-surface-variant">
@@ -324,12 +325,12 @@
             </div>
             <div class="space-y-2">
               <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                >标签</label
+                >标签（逗号分隔）</label
               >
               <input
                 id="tagsInput"
                 class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10"
-                placeholder="添加标签..."
+                placeholder="AI, 计算机, 面试"
                 type="text"
               />
             </div>
@@ -431,13 +432,17 @@
       }
 
       function collectDraft() {
+        const tagList = tagsInput.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
         return {
           title: titleInput.value,
           subtitle: subtitleInput.value,
           body: bodyInput.innerHTML,
           slug: slugInput.value,
           category: categoryInput.value,
-          tags: tagsInput.value,
+          tags: tagList,
           seo: seoInput.value,
           cover: coverData,
           updatedAt: new Date().toISOString(),
@@ -547,7 +552,7 @@
       document.getElementById("publishBtn").addEventListener("click", () => {
         const slug = slugInput.value || "new-post";
         const html = generateHtml();
-        downloadFile(`${slug}.html`, html);
+        downloadFile("index.html", html);
 
         fetch("../posts/manifest.json")
           .then((res) => res.json())
@@ -559,7 +564,7 @@
               excerpt: subtitleInput.value || "",
               date: now,
               category: categoryInput.value || "Blog",
-              tags: tagsInput.value || "",
+              tags: tagList,
               cover: coverData || "",
               readTime: estimateReadTime(bodyInput.innerHTML || ""),
               status: "已发布",
@@ -581,7 +586,7 @@
           });
 
         alert(
-          "已生成文章文件和 manifest.json。请把下载的 HTML 放入 /portal/site/blog/posts/" +
+          "已生成 index.html 和 manifest.json。请把 index.html 放入 /portal/site/blog/posts/" +
             slug +
             "/index.html，并用新的 manifest.json 替换 /portal/site/blog/posts/manifest.json，然后在本地 Git 提交并部署。这样云端不会出现未提交文件，避免 git pull 冲突。"
         );
