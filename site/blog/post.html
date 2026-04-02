@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Architecture of Intent | Zenithy Blog</title>
+    <meta name="theme-color" content="#f8f9fa" />
+    <meta
+      name="description"
+      content="The Architecture of Intent: How We Build Digital Spaces for Depth - Zenithy Blog."
+    />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <link rel="alternate icon" href="../favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --background: #f8f9fa;
+        --surface: #f8f9fa;
+        --surface-container-lowest: #ffffff;
+        --surface-container-low: #f1f4f6;
+        --surface-container: #eaeff1;
+        --surface-container-high: #e3e9ec;
+        --surface-variant: #dbe4e7;
+        --on-surface: #2b3437;
+        --on-surface-variant: #586064;
+        --outline-variant: rgba(171, 179, 183, 0.15);
+        --tertiary: #03687e;
+        --tertiary-dim: #005b6f;
+        --on-tertiary: #f1faff;
+        --shadow-soft: 0 4px 24px rgba(43, 52, 55, 0.05);
+        --radius-lg: 2rem;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--on-surface);
+        background: var(--background);
+        -webkit-font-smoothing: antialiased;
+        scroll-behavior: smooth;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(248, 249, 250, 0.85);
+        backdrop-filter: blur(16px);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 48px;
+        height: 80px;
+      }
+
+      .brand {
+        font-family: "Manrope", sans-serif;
+        font-weight: 800;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .nav-links a {
+        color: var(--on-surface-variant);
+      }
+
+      .nav-links a.active {
+        color: var(--tertiary);
+        border-bottom: 2px solid var(--tertiary);
+        padding-bottom: 6px;
+      }
+
+      .nav-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--surface-container);
+        border: 1px solid var(--outline-variant);
+        font-size: 13px;
+      }
+
+      .nav-search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 13px;
+        width: 140px;
+      }
+
+      .nav-cta {
+        background: var(--tertiary);
+        color: var(--on-tertiary);
+        border: none;
+        padding: 10px 22px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .progress {
+        height: 4px;
+        background: var(--surface-container-high);
+      }
+
+      .progress span {
+        display: block;
+        height: 100%;
+        width: 35%;
+        background: var(--tertiary);
+        border-radius: 0 999px 999px 0;
+      }
+
+      main {
+        padding: 88px 0 96px;
+      }
+
+      .container {
+        width: min(800px, 92vw);
+        margin: 0 auto;
+      }
+
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--on-surface-variant);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--on-surface-variant);
+        margin-bottom: 16px;
+      }
+
+      .hero-tag span:first-child {
+        background: rgba(3, 104, 126, 0.1);
+        color: var(--tertiary);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-family: "Manrope", sans-serif;
+        font-size: clamp(32px, 4vw, 56px);
+        margin: 0 0 24px;
+        letter-spacing: -0.03em;
+      }
+
+      .author {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 40px;
+      }
+
+      .author img {
+        width: 48px;
+        height: 48px;
+        border-radius: 999px;
+        object-fit: cover;
+      }
+
+      .feature {
+        width: min(1200px, 92vw);
+        margin: 0 auto 64px;
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        background: var(--surface-container-low);
+      }
+
+      .feature img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .article p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: var(--on-surface-variant);
+        margin-bottom: 28px;
+      }
+
+      .article p.lead {
+        font-size: 22px;
+        border-left: 4px solid var(--tertiary);
+        padding-left: 20px;
+      }
+
+      .article h2 {
+        font-family: "Manrope", sans-serif;
+        font-size: 28px;
+        margin: 48px 0 20px;
+      }
+
+      .quote {
+        background: var(--surface-container-low);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        position: relative;
+        margin: 40px 0;
+      }
+
+      .quote p {
+        font-size: 22px;
+        font-style: italic;
+        color: var(--on-surface);
+        margin: 0 0 12px;
+      }
+
+      .quote cite {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--tertiary);
+      }
+
+      .list {
+        display: grid;
+        gap: 16px;
+        margin: 24px 0 40px;
+      }
+
+      .list-item {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 12px;
+      }
+
+      .list-index {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: rgba(3, 104, 126, 0.1);
+        color: var(--tertiary);
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .engage {
+        border-top: 1px solid rgba(171, 179, 183, 0.1);
+        padding-top: 32px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 48px;
+      }
+
+      .engage .actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(171, 179, 183, 0.2);
+        background: transparent;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+
+      .tags {
+        display: flex;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--on-surface-variant);
+      }
+
+      .tags span {
+        background: var(--surface-container);
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+
+      .author-card {
+        margin-top: 64px;
+        background: var(--surface-container-low);
+        border-radius: var(--radius-lg);
+        padding: 32px;
+        display: grid;
+        grid-template-columns: 88px 1fr;
+        gap: 24px;
+        align-items: center;
+      }
+
+      .author-card img {
+        width: 88px;
+        height: 88px;
+        border-radius: 20px;
+        object-fit: cover;
+      }
+
+      .author-links {
+        display: flex;
+        gap: 12px;
+        font-size: 13px;
+        color: var(--tertiary);
+        font-weight: 700;
+      }
+
+      .next-prev {
+        width: min(1200px, 92vw);
+        margin: 80px auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      .next-card {
+        background: var(--surface-container-lowest);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(171, 179, 183, 0.1);
+      }
+
+      footer {
+        background: var(--surface-container);
+        padding: 48px 0;
+        margin-top: 64px;
+      }
+
+      .footer-inner {
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--on-surface-variant);
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 900px) {
+        .nav {
+          padding: 0 20px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .nav-search {
+          display: none;
+        }
+
+        .author-card {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="nav">
+        <div class="brand">Zenithy</div>
+        <div class="nav-links">
+          <a href="https://zenithy.art">Projects</a>
+          <a class="active" href="https://blog.zenithy.art">Blog</a>
+          <a href="#">About</a>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center">
+          <div class="nav-search">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" placeholder="Search insights..." />
+          </div>
+          <button class="nav-cta">Subscribe</button>
+        </div>
+      </nav>
+      <div class="progress"><span></span></div>
+    </header>
+
+    <main>
+      <div class="container">
+        <a class="back-link" href="https://blog.zenithy.art">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Back to Insights
+        </a>
+
+        <div class="hero-tag">
+          <span>Strategy</span>
+          <span>•</span>
+          <span>12 Min Read</span>
+        </div>
+
+        <h1>The Architecture of Intent: How We Build Digital Spaces for Depth</h1>
+
+        <div class="author">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYSqkm2M_VOw77HwVhvduGLYr_LbAhQ4FLK9V64Fc5EQLka8rpyJ5U3qFDsgrEEa1VWnfRKJDGbhcx7dzLln-1HalHiEpWID7B24t-0o7sgzZcW_jRmq8qjGiP8puocloj-ab-TjWXPzNJJXA33hPv_bhOgH5TK95_lonlUxsSDXNcAz8AzE0H4ThkXynFjsKs7XtdeOWfZBV_IT4noM_hy54KlZor-9N2Lw-d9mn3HrEiCMX1sPnn-k2BItWI9QwHXO5OuCzC83BZ"
+            alt="Marcus Chen"
+          />
+          <div>
+            <div style="font-family: Manrope, sans-serif; font-weight: 700">
+              Marcus Chen
+            </div>
+            <div style="font-size: 12px; color: var(--on-surface-variant)">
+              Design Director · March 14, 2024
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR6DoWo8ogxCIpbjXpoOWTS1sMXMRtg0uR4vNuTXdemvnTEM3N8LUK-0H-GoIhnoslLZ9FQjB2PxFoHzksJCkzuPP0pnOU9MHXDmYDk724QeT4STNPcCco_irI584wy9WZ3EglM0o_xFIJSSWQLRFZscXiNsVWmJBTU_1wV2FR1OIocyIokmepL2if5n0ubZozgfTanoo5Aytn7OAwO9I5FL7DYHPIg8DYXZAbkRxUkMech46-MmzLpd33JoqhJoq5WMtJ2_kTx28j"
+          alt="Minimalist architectural detail"
+        />
+      </div>
+
+      <div class="container article">
+        <p class="lead">
+          In an era of relentless notification pings and infinite scrolling, the most radical act a
+          designer can perform is the creation of silence. At Zenithy, we believe digital
+          architecture isn't just about utility—it's about intentional depth.
+        </p>
+
+        <h2>The Myth of the "Empty" Space</h2>
+        <p>
+          Many modern interfaces suffer from a fear of the void. We fill every pixel with a button,
+          a badge, or a recommendation engine. But true clarity emerges from what we leave out.
+          Whitespace isn't empty; it's structural.
+        </p>
+
+        <div class="quote">
+          <p>
+            "Architecture is the learned game, correct and magnificent, of forms assembled in the
+            light."
+          </p>
+          <cite>— Le Corbusier</cite>
+        </div>
+
+        <h2>Designing for Cognitive Ease</h2>
+        <p>
+          When we build digital spaces, we look at cognitive load as a finite currency. To minimize
+          this, we've developed three core pillars for our curation process:
+        </p>
+
+        <div class="list">
+          <div class="list-item">
+            <div class="list-index">1</div>
+            <p>
+              <strong>Tonal Layering:</strong> Using background shifts instead of rigid 1px lines to
+              define hierarchy.
+            </p>
+          </div>
+          <div class="list-item">
+            <div class="list-index">2</div>
+            <p>
+              <strong>Asymmetric Balance:</strong> Moving away from the 12-column grid to create
+              "editorial" tension.
+            </p>
+          </div>
+          <div class="list-item">
+            <div class="list-index">3</div>
+            <p>
+              <strong>Contextual Reveal:</strong> Only showing tools when the user's intent requires
+              them.
+            </p>
+          </div>
+        </div>
+
+        <h2>The Future of Curation</h2>
+        <p>
+          As AI begins to generate interfaces on the fly, the role of the architect becomes even
+          more vital. We are no longer just arranging boxes; we are curating experiences that respect
+          the human mind's need for order and beauty.
+        </p>
+
+        <div class="engage">
+          <div class="actions">
+            <button class="icon-btn">
+              <span class="material-symbols-outlined">favorite</span>
+            </button>
+            <button class="icon-btn">
+              <span class="material-symbols-outlined">share</span>
+            </button>
+            <button class="icon-btn">
+              <span class="material-symbols-outlined">bookmark</span>
+            </button>
+          </div>
+          <div class="tags">
+            <span>Design</span>
+            <span>Productivity</span>
+          </div>
+        </div>
+
+        <div class="author-card">
+          <img
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1hMMFK7TifO2aLmgSGM6lTasYafFTyG_D9nMLvuglKWDhdwkBPiRNjYpaPwfG0bApQNd41dN0Pz5pzHLqDKRIED2nzL9qRtCzQs5FnpsVfPgMvmvuJyl-VLNld1a3I3ZCACW4pdf98GBXUWn6jNVGMW3Xh9P541Iw_RaPyd3N2QeYGz_R-iT4TrJQPK3fK_uLM_EmG0zTzAizJiCfvj3UW3T0inym09fdIzNI_tdXTyYaKZdVaswePoo7t0kF1di0xjgsKLTHtZNv"
+            alt="Marcus Chen"
+          />
+          <div>
+            <h3 style="margin: 0 0 8px">Written by Marcus Chen</h3>
+            <p style="margin: 0 0 12px; color: var(--on-surface-variant)">
+              Marcus leads the Design and Curation team at Zenithy, focusing on digital ecosystems
+              that feel human and enduring.
+            </p>
+            <div class="author-links">
+              <a href="#">Follow on Twitter</a>
+              <span style="color: #abb3b7">•</span>
+              <a href="#">View Portfolio</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <section class="next-prev">
+        <a class="next-card" href="#">
+          <p style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase">
+            Previous Article
+          </p>
+          <h4 style="margin: 12px 0 0; font-family: Manrope, sans-serif">
+            The Physics of Typography: Weight and Motion
+          </h4>
+        </a>
+        <a class="next-card" href="#" style="text-align: right">
+          <p style="font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase">
+            Next Article
+          </p>
+          <h4 style="margin: 12px 0 0; font-family: Manrope, sans-serif">
+            Monochromatic Systems and Emotional Clarity
+          </h4>
+        </a>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div>
+          <div class="brand">Zenithy</div>
+          <div style="margin-top: 8px">
+            Building the architecture of digital intent through precise curation.
+          </div>
+        </div>
+        <div class="footer-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Contact</a>
+          <a href="#">RSS</a>
+        </div>
+      </div>
+      <div
+        style="
+          margin-top: 24px;
+          text-align: center;
+          font-size: 11px;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: #9aa3a8;
+        "
+      >
+        © 2024 Zenithy Architecture &amp; Curation. All rights reserved.
+      </div>
+    </footer>
+  </body>
+</html>

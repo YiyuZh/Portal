@@ -1,42 +1,59 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zenithy Blog</title>
-    <meta name="theme-color" content="#fcfcfd" />
+    <title>Insights &amp; Reflections | Zenithy</title>
+    <meta name="theme-color" content="#f8f9fa" />
     <meta
       name="description"
-      content="Zenithy Blog - 个人经验与产品洞察沉淀。"
+      content="Zenithy Blog - Insights & Reflections. A curated space for architectural clarity, purposeful design, and professional growth."
     />
     <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <link rel="alternate icon" href="../favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&amp;display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --bg: #fbfcfd;
-        --surface: #ffffff;
-        --surface-soft: #f2f5f7;
-        --text: #142030;
-        --muted: #637080;
-        --accent: #0d9488;
-        --accent-deep: #0a7a70;
-        --shadow: 0 18px 40px rgba(20, 32, 48, 0.06);
-        --radius: 24px;
-        --max-width: 1040px;
+        color-scheme: light;
+        --background: #f8f9fa;
+        --surface: #f8f9fa;
+        --surface-container-lowest: #ffffff;
+        --surface-container-low: #f1f4f6;
+        --surface-container-high: #e3e9ec;
+        --surface-container: #eaeff1;
+        --surface-variant: #dbe4e7;
+        --on-surface: #2b3437;
+        --on-surface-variant: #586064;
+        --outline-variant: rgba(171, 179, 183, 0.15);
+        --tertiary: #03687e;
+        --tertiary-dim: #005b6f;
+        --on-tertiary: #f1faff;
+        --shadow-soft: 0 4px 24px rgba(43, 52, 55, 0.04);
+        --shadow-hover: 0 10px 40px rgba(43, 52, 55, 0.08);
+        --radius-lg: 2rem;
+        --radius-xl: 3rem;
+        --max-width: 1200px;
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html,
       body {
         margin: 0;
-        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(circle at 10% 0%, rgba(13, 148, 136, 0.06), transparent 36%),
-          radial-gradient(circle at 90% 20%, rgba(15, 23, 42, 0.04), transparent 32%),
-          var(--bg);
+        padding: 0;
+        font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--on-surface);
+        background: var(--background);
+        -webkit-font-smoothing: antialiased;
       }
 
       a {
@@ -44,164 +61,476 @@
         text-decoration: none;
       }
 
-      .shell {
-        width: min(var(--max-width), calc(100% - 32px));
-        margin: 0 auto;
+      .grain-texture {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.03;
+        z-index: 60;
+        background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOrNarvj8dkgSB1LveB-EWf1olDUKAqbMVBJck6cIGdIu18X6amhxYoOMXvkzSvZ5xo3Gsh90eLzsG3_YFcNokYmhZ-ycEV7AKTEchh99Ou3N6OKR5SeqR5gk6mRGk19QitaHxMuVnAKz0xeABxDouq1bi6XZMn8tQupgvPM0ysYLRNintsN4rKOMWKgnM1h-_m7eMt0uI18RyrQsn6ZvfGnOb9zAowVP0wk2ZNmmACduzUl0Y5t5rxf9DmC7h8bSkPanHLs4X1PEr");
       }
 
-      .topbar {
+      .page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(248, 249, 250, 0.98);
+        backdrop-filter: blur(8px);
+      }
+
+      .nav {
+        max-width: 1400px;
+        margin: 0 auto;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 24px 0;
+        padding: 0 48px;
       }
 
       .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
+        font-family: "Manrope", sans-serif;
+        font-size: 24px;
         font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        font-size: 12px;
+        letter-spacing: -0.02em;
       }
 
-      .brand-mark {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: var(--text);
-        position: relative;
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 36px;
+        font-size: 14px;
+        font-weight: 600;
       }
 
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 5px;
-        border-radius: 50%;
-        background: #fff;
+      .nav-links a {
+        color: var(--on-surface-variant);
+        transition: color 0.2s ease;
       }
 
-      .hero {
-        padding: 60px 0 40px;
-        text-align: left;
+      .nav-links a:hover {
+        color: var(--on-surface);
       }
 
-      .hero h1 {
+      .nav-links .active {
+        color: var(--tertiary);
+        border-bottom: 2px solid var(--tertiary);
+        padding-bottom: 6px;
+      }
+
+      .nav-cta {
+        background: linear-gradient(135deg, var(--tertiary), var(--tertiary-dim));
+        color: var(--on-tertiary);
+        border: none;
+        border-radius: 999px;
+        padding: 10px 24px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+
+      .nav-cta:active {
+        transform: scale(0.98);
+      }
+
+      main {
+        flex: 1;
+        padding: 80px 0 96px;
+      }
+
+      .container {
+        width: min(var(--max-width), calc(100% - 64px));
+        margin: 0 auto;
+      }
+
+      .page-header h1 {
+        margin: 0 0 16px;
+        font-family: "Manrope", sans-serif;
+        font-size: clamp(36px, 5vw, 60px);
+        letter-spacing: -0.03em;
+      }
+
+      .page-header p {
         margin: 0;
-        font-size: clamp(36px, 6vw, 64px);
-        letter-spacing: -0.04em;
+        max-width: 680px;
+        color: var(--on-surface-variant);
+        font-size: 18px;
+        line-height: 1.7;
       }
 
-      .hero p {
-        margin: 14px 0 0;
-        color: var(--muted);
-        max-width: 640px;
-        line-height: 1.8;
-      }
-
-      .post-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 18px;
-        padding-bottom: 80px;
-      }
-
-      .post-card {
-        background: var(--surface);
-        border-radius: var(--radius);
-        padding: 24px;
-        box-shadow: var(--shadow);
-        min-height: 190px;
-        display: grid;
+      .filters {
+        margin: 40px 0;
+        display: flex;
+        flex-wrap: wrap;
         gap: 12px;
       }
 
-      .post-tag {
-        display: inline-flex;
-        align-items: center;
-        height: 26px;
-        padding: 0 12px;
+      .pill {
         border-radius: 999px;
-        background: rgba(13, 148, 136, 0.1);
-        color: var(--accent-deep);
+        padding: 8px 20px;
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
+        border: none;
+        background: var(--surface-container-high);
+        color: #47535b;
+        cursor: pointer;
+        transition: background 0.2s ease;
       }
 
-      .post-title {
-        margin: 0;
-        font-size: 20px;
+      .pill.active {
+        background: var(--on-surface);
+        color: var(--surface);
       }
 
-      .post-meta {
-        color: var(--muted);
-        font-size: 13px;
+      .pill:hover {
+        background: #d1dce0;
       }
 
-      .cta {
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 28px;
+      }
+
+      .card {
+        background: var(--surface-container-lowest);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid var(--outline-variant);
+        overflow: hidden;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .card:hover {
+        box-shadow: var(--shadow-hover);
+        transform: translateY(-2px);
+      }
+
+      .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s ease;
+      }
+
+      .card:hover img {
+        transform: scale(1.04);
+      }
+
+      .card-body {
+        padding: 32px;
+      }
+
+      .meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--on-surface-variant);
+        margin-bottom: 16px;
+      }
+
+      .meta .tag {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--tertiary);
+        font-weight: 700;
+      }
+
+      .meta .dot {
+        width: 4px;
+        height: 4px;
+        background: #abb3b7;
+        border-radius: 999px;
+      }
+
+      .card h2,
+      .card h3 {
+        margin: 0 0 16px;
+        font-family: "Manrope", sans-serif;
+        color: var(--on-surface);
+      }
+
+      .card p {
+        margin: 0 0 20px;
+        color: var(--on-surface-variant);
+        line-height: 1.7;
+      }
+
+      .read-more {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        height: 44px;
-        padding: 0 18px;
-        border-radius: 999px;
-        background: var(--text);
-        color: #fff;
+        gap: 6px;
         font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.05em;
+        color: var(--tertiary);
+        font-weight: 600;
       }
 
-      .footer {
-        padding: 24px 0 36px;
-        color: #95a1ad;
+      .span-8 {
+        grid-column: span 8;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .span-6 {
+        grid-column: span 6;
+      }
+
+      .pagination {
+        margin-top: 64px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .pager {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px;
+        border-radius: 999px;
+        background: var(--surface-container-low);
+      }
+
+      .page-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: none;
+        background: transparent;
+        color: var(--on-surface-variant);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .page-btn.active {
+        background: var(--on-surface);
+        color: var(--surface);
+      }
+
+      .page-btn:hover {
+        background: var(--surface-container-high);
+      }
+
+      footer {
+        padding: 36px 0;
+        background: var(--surface-container);
+      }
+
+      .footer-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 48px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 24px;
         font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
+        color: var(--on-surface-variant);
+      }
+
+      @media (max-width: 960px) {
+        .nav {
+          padding: 0 24px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .container {
+          width: min(100%, 92vw);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .span-8,
+        .span-6,
+        .span-4 {
+          grid-column: span 1;
+        }
+
+        .card-body {
+          padding: 24px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="shell">
-      <header class="topbar">
-        <div class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
-          Zenithy Blog
-        </div>
-        <a class="cta" href="https://zenithy.art">Back to Portal</a>
+    <div class="grain-texture" aria-hidden="true"></div>
+    <div class="page">
+      <header>
+        <nav class="nav">
+          <div class="brand">Zenithy</div>
+          <div class="nav-links">
+            <a href="https://zenithy.art">Projects</a>
+            <a class="active" href="https://blog.zenithy.art">Blog</a>
+            <a href="#">About</a>
+          </div>
+          <a class="nav-cta" href="https://zenithy.art">Get Started</a>
+        </nav>
       </header>
 
-      <section class="hero">
-        <h1>经验与洞察</h1>
-        <p>
-          这里记录产品思考、面试案例与系统迭代经验。内容保持克制、可复用、可执行。
-        </p>
-      </section>
+      <main>
+        <div class="container">
+          <section class="page-header">
+            <h1>Insights &amp; Reflections</h1>
+            <p>
+              An exploration of architectural clarity, purposeful design, and the subtle art of
+              personal and professional growth within the digital landscape.
+            </p>
+          </section>
 
-      <section class="post-grid">
-        <article class="post-card">
-          <span class="post-tag">Experience</span>
-          <h2 class="post-title">从 0 到 1 搭建面试系统的关键决策</h2>
-          <div class="post-meta">2026-03-27 · Product Notes</div>
-        </article>
+          <section class="filters">
+            <button class="pill active">All Posts</button>
+            <button class="pill">Design</button>
+            <button class="pill">Engineering</button>
+            <button class="pill">Culture</button>
+            <button class="pill">Strategy</button>
+          </section>
 
-        <article class="post-card">
-          <span class="post-tag">RAG</span>
-          <h2 class="post-title">如何降低 AI 面试官的幻觉率</h2>
-          <div class="post-meta">2026-03-27 · Tech Notes</div>
-        </article>
+          <section class="grid">
+            <article class="card span-8">
+              <div style="aspect-ratio: 16 / 8; overflow: hidden">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBViQHsu7KaL7-U3JvvK-J0Ut279Y_WUtYT5b1az1KfNk-BhTaMGWrM0FDHN25ZFKnsJPPDckrryi3vG3kbDwZyQDjv69YWb38q1eexIpivmOQhGss9Rb-n7mJZO-rzKBYA_Li0NF6KAc4GCxM1MGztkK8vDl76AfPPZwVCpAwX4mZsUpQpQ5ldcX6L7BdbVMUDqG7uasFT3oEJL19f0DMTrAXthwl3FDlf8Kr76F9M7R-CAlvhRCWnUVyEXDs-vXCQmGvWOVQ2sCSn"
+                  alt="Minimalist modern office interior with clean lines, large glass windows, concrete walls, and warm wooden accents in soft natural lighting"
+                />
+              </div>
+              <div class="card-body">
+                <div class="meta">
+                  <span class="tag">Strategy</span>
+                  <span class="dot"></span>
+                  <span>May 12, 2024</span>
+                </div>
+                <h2>The Architecture of Intent: How We Build Digital Spaces for Depth</h2>
+                <p>
+                  Beyond pixels and grids lies a deeper structure of human intent. In this long-form
+                  reflection, we dismantle the traditional SaaS dashboard to find something more
+                  tactile.
+                </p>
+                <a class="read-more" href="https://blog.zenithy.art/post.html">
+                  Read More
+                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+              </div>
+            </article>
 
-        <article class="post-card">
-          <span class="post-tag">Iteration</span>
-          <h2 class="post-title">短期升级路线与里程碑拆解</h2>
-          <div class="post-meta">2026-03-27 · Roadmap</div>
-        </article>
-      </section>
+            <article class="card span-4">
+              <div style="aspect-ratio: 4 / 3; overflow: hidden">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbV_fUn3G23Eu4_AJ1smkmt7aVOOjXc7h-mkaCT4H5aam4Vfm-2dZv419EyD2xthGKlwe5cNi62Ph27xuFtutK2V_PXVDvkqpGyom8vb5bRf8d5VbN0CYfNx-I-eNOmbx8RhQIW9shhnJblzZ-Twuz4JNSWsHOZbaGPiqz7K9AAkXRIiYJTHvMOZPHm68XkMi7ltsfNFZGmINuTYzdWtPkPgqYBTI6HaB5I-a1bl0yJeyYV6WZUAKzXNtMkjPXgnUeoJ8T_ZW8g2fB"
+                  alt="Close-up of a high-end mechanical keyboard and minimalist workstation on a light gray desk with soft morning shadows"
+                />
+              </div>
+              <div class="card-body">
+                <div class="meta">
+                  <span class="tag">Culture</span>
+                  <span>May 08, 2024</span>
+                </div>
+                <h3>Finding Stillness in High-Speed Engineering</h3>
+                <p>
+                  How our team balances rapid deployment with a culture of meditative focus and
+                  precision code.
+                </p>
+                <a class="read-more" href="https://blog.zenithy.art/post.html">
+                  Read More
+                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+              </div>
+            </article>
 
-      <footer class="footer">Zenithy · Blog</footer>
+            <article class="card span-6">
+              <div class="card-body">
+                <div class="meta">
+                  <span class="tag">Design</span>
+                  <span>April 24, 2024</span>
+                </div>
+                <h3>The Tonal Palette: Emotional Resonance in Interface Design</h3>
+                <p>
+                  Exploring why we chose "Atmospheric Grays" and "Optical Whites" to define the
+                  Zenithy experience over vibrant, noisy branding.
+                </p>
+                <a class="read-more" href="https://blog.zenithy.art/post.html">
+                  Read More
+                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+              </div>
+            </article>
+
+            <article class="card span-6">
+              <div class="card-body">
+                <div class="meta">
+                  <span class="tag">Engineering</span>
+                  <span>April 19, 2024</span>
+                </div>
+                <h3>Scaling Minimalist Infrastructure</h3>
+                <p>
+                  Maintaining extreme performance and low latency while the Zenithy Portal scales to
+                  accommodate global enterprise traffic.
+                </p>
+                <a class="read-more" href="https://blog.zenithy.art/post.html">
+                  Read More
+                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </a>
+              </div>
+            </article>
+          </section>
+
+          <nav class="pagination">
+            <div class="pager">
+              <button class="page-btn" aria-label="Previous page">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <span style="padding: 0 8px; color: #737c7f">...</span>
+              <button class="page-btn">12</button>
+              <button class="page-btn" aria-label="Next page">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+      </main>
+
+      <footer>
+        <div class="footer-inner">
+          <div>
+            <div class="brand">Zenithy</div>
+            <div style="font-size: 12px; color: var(--on-surface-variant)">
+              © 2024 Zenithy Portal. All rights reserved.
+            </div>
+          </div>
+          <div class="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Contact</a>
+          </div>
+        </div>
+      </footer>
     </div>
   </body>
 </html>
