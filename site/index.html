@@ -790,34 +790,37 @@
                   </div>
 
                   <div class="card-title-group">
-                    <h2>HireMate</h2>
-                    <p class="project-english">Recruitment Intelligence</p>
+                    <h2 id="project-hiremate-name">HireMate</h2>
+                    <p id="project-hiremate-english" class="project-english">Recruitment Intelligence</p>
                   </div>
                 </div>
 
-                <div class="card-index">01 / Archive</div>
+                <div id="project-hiremate-index" class="card-index">01 / Archive</div>
               </div>
 
               <div class="card-body">
-                <h3>AI 招聘助手平台</h3>
+                <h3 id="project-hiremate-title">AI 招聘助手平台</h3>
                 <p>
-                  支持简历解析、候选人评估、批量初筛，为人力资源团队提供更清晰的筛选洞察与决策支持。
+                  <span id="project-hiremate-desc">支持简历解析、候选人评估、批量初筛，为人力资源团队提供更清晰的筛选洞察与决策支持。</span>
                 </p>
 
                 <div class="visual-panel visual-panel--dashboard">
-                  <img src="./assets/hiremate-dashboard.jpg" alt="HireMate 产品界面预览" />
+                  <img id="project-hiremate-image" src="./assets/hiremate-dashboard.jpg" alt="HireMate 产品界面预览" />
                 </div>
               </div>
 
               <div class="card-actions">
                 <a
+                  id="project-hiremate-primary"
                   class="button button-primary"
                   href="https://hiremate.zenithy.art"
                 >
                   进入 HireMate
                 </a>
                 <!-- 后续可替换成真实手册链接 -->
-                <button class="button button-secondary" type="button">查看手册</button>
+                <a id="project-hiremate-secondary" class="button button-secondary" href="#">
+                  查看手册
+                </a>
               </div>
             </article>
 
@@ -833,61 +836,64 @@
                   </div>
 
                   <div class="card-title-group">
-                    <h2>AI-Interview <span style="color: #d1d7de; font-weight: 300">智面</span></h2>
-                    <p class="project-english">Simulated Evaluation System</p>
+                    <h2 id="project-ai-name">AI-Interview <span style="color: #d1d7de; font-weight: 300">智面</span></h2>
+                    <p id="project-ai-english" class="project-english">Simulated Evaluation System</p>
                   </div>
                 </div>
 
-                <div class="card-index">02 / Core</div>
+                <div id="project-ai-index" class="card-index">02 / Core</div>
               </div>
 
               <div class="card-body">
                 <div class="card-layout">
                   <div>
-                    <h3>AI 模拟面试系统</h3>
+                    <h3 id="project-ai-title">AI 模拟面试系统</h3>
                     <p>
-                      支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。
+                      <span id="project-ai-desc">支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。</span>
                     </p>
 
                     <ul class="feature-list">
                       <li>
                         <span class="feature-dot" aria-hidden="true"></span>
-                        动态多轮对话生成
+                        <span id="project-ai-feature-1">动态多轮对话生成</span>
                       </li>
                       <li>
                         <span class="feature-dot" aria-hidden="true"></span>
-                        实时反馈与评估结果
+                        <span id="project-ai-feature-2">实时反馈与评估结果</span>
                       </li>
                     </ul>
                   </div>
 
                   <div class="visual-panel visual-panel--portrait">
-                    <img src="./assets/ai-interview-portrait.jpg" alt="AI-Interview 场景视觉图" />
+                    <img id="project-ai-image" src="./assets/ai-interview-portrait.jpg" alt="AI-Interview 场景视觉图" />
                   </div>
                 </div>
               </div>
 
               <div class="card-actions card-actions--split">
                 <a
+                  id="project-ai-primary"
                   class="button button-primary"
                   href="https://interview.zenithy.art"
                 >
                   用户端
                 </a>
                 <a
+                  id="project-ai-secondary"
                   class="button button-secondary"
                   href="https://admin.interview.zenithy.art"
                 >
                   管理后台
                 </a>
                 <a
+                  id="project-ai-tertiary"
                   class="button button-soft"
                   href="https://api.interview.zenithy.art"
                 >
                   API Documentation
                 </a>
                 <!-- 后续可替换成真实部署手册链接 -->
-                <button class="button button-soft" type="button">Deployment Guide</button>
+                <a id="project-ai-quaternary" class="button button-soft" href="#">Deployment Guide</a>
               </div>
             </article>
           </div>
@@ -987,6 +993,77 @@
             block: "start",
           });
         });
+      })();
+    </script>
+    <script>
+      (function () {
+        function setText(id, value) {
+          var el = document.getElementById(id);
+          if (el && value) {
+            el.textContent = value;
+          }
+        }
+
+        function setHtml(id, value) {
+          var el = document.getElementById(id);
+          if (el && value) {
+            el.innerHTML = value;
+          }
+        }
+
+        function setLink(id, label, url) {
+          var el = document.getElementById(id);
+          if (!el) return;
+          if (label) el.textContent = label;
+          if (url) {
+            el.setAttribute("href", url);
+          } else {
+            el.setAttribute("href", "#");
+          }
+        }
+
+        fetch("./assets/projects.json")
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (data) {
+            if (!data || !data.projects) return;
+            var hiremate = data.projects.find(function (p) {
+              return p.id === "hiremate";
+            });
+            var ai = data.projects.find(function (p) {
+              return p.id === "ai-interview";
+            });
+
+            if (hiremate) {
+              setText("project-hiremate-name", hiremate.name);
+              setText("project-hiremate-english", hiremate.english);
+              setText("project-hiremate-title", hiremate.title);
+              setText("project-hiremate-desc", hiremate.description);
+              setText("project-hiremate-index", hiremate.index);
+              setLink("project-hiremate-primary", hiremate.primaryLabel, hiremate.primaryUrl);
+              setLink("project-hiremate-secondary", hiremate.secondaryLabel, hiremate.secondaryUrl);
+              var img = document.getElementById("project-hiremate-image");
+              if (img && hiremate.image) img.src = hiremate.image;
+            }
+
+            if (ai) {
+              setHtml("project-ai-name", ai.name);
+              setText("project-ai-english", ai.english);
+              setText("project-ai-title", ai.title);
+              setText("project-ai-desc", ai.description);
+              setText("project-ai-index", ai.index);
+              setText("project-ai-feature-1", ai.features && ai.features[0]);
+              setText("project-ai-feature-2", ai.features && ai.features[1]);
+              setLink("project-ai-primary", ai.primaryLabel, ai.primaryUrl);
+              setLink("project-ai-secondary", ai.secondaryLabel, ai.secondaryUrl);
+              setLink("project-ai-tertiary", ai.tertiaryLabel, ai.tertiaryUrl);
+              setLink("project-ai-quaternary", ai.quaternaryLabel, ai.quaternaryUrl);
+              var img2 = document.getElementById("project-ai-image");
+              if (img2 && ai.image) img2.src = ai.image;
+            }
+          })
+          .catch(function () {});
       })();
     </script>
   </body>

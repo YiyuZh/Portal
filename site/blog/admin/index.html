@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html class="light" lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -8,11 +8,11 @@
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
     <link rel="alternate icon" href="../../favicon.svg" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -26,7 +26,7 @@
               "inverse-primary": "#f9f9fc",
               "inverse-on-surface": "#9b9d9e",
               "on-primary-container": "#505254",
-              "surface": "#f8f9fa",
+              surface: "#f8f9fa",
               "on-tertiary": "#f1faff",
               "on-surface": "#2b3437",
               "on-surface-variant": "#586064",
@@ -38,8 +38,8 @@
               "on-secondary-container": "#47535b",
               "tertiary-fixed-dim": "#83cee7",
               "on-tertiary-fixed-variant": "#00586c",
-              "secondary": "#556169",
-              "error": "#9f403d",
+              secondary: "#556169",
+              error: "#9f403d",
               "on-secondary-fixed": "#354148",
               "tertiary-container": "#91dcf6",
               "primary-container": "#e2e2e5",
@@ -56,12 +56,12 @@
               "tertiary-dim": "#005b6f",
               "surface-variant": "#dbe4e7",
               "on-tertiary-container": "#004e60",
-              "background": "#f8f9fa",
+              background: "#f8f9fa",
               "secondary-fixed": "#d8e4ee",
               "tertiary-fixed": "#91dcf6",
-              "outline": "#737c7f",
+              outline: "#737c7f",
               "surface-container": "#eaeff1",
-              "tertiary": "#03687e",
+              tertiary: "#03687e",
               "on-error": "#fff7f6",
               "error-dim": "#4e0309",
               "on-error-container": "#752121",
@@ -72,7 +72,7 @@
               "on-secondary": "#f4faff",
               "on-background": "#2b3437",
               "surface-container-low": "#f1f4f6",
-              "primary": "#5d5e61",
+              primary: "#5d5e61",
             },
             fontFamily: {
               headline: ["Manrope"],
@@ -132,7 +132,7 @@
           </div>
         </div>
         <a
-          class="mb-8 flex w-full items-center justify-center gap-2 rounded-full bg-tertiary py-4 font-semibold text-on-tertiary shadow-lg shadow-tertiary/10 transition-all active:scale-90"
+          class="mb-8 flex w-full items-center justify-center gap-2 rounded-full bg-tertiary py-4 font-semibold text-on-tertiary shadow-lg shadow-tertiary/10 transition-all active:scale-95"
           href="https://blog.zenithy.art/admin/editor.html"
         >
           <span class="material-symbols-outlined">add</span>
@@ -141,43 +141,35 @@
         <nav class="space-y-1">
           <a
             class="flex items-center gap-3 border-r-2 border-cyan-800 bg-slate-100/50 px-4 py-3 font-semibold text-cyan-800"
-            href="#"
+            href="https://blog.zenithy.art/admin/"
           >
             <span class="material-symbols-outlined">article</span>
             文章列表
           </a>
           <a
             class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="#"
+            href="https://blog.zenithy.art/admin/projects.html"
           >
-            <span class="material-symbols-outlined">category</span>
-            分类管理
-          </a>
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="#"
-          >
-            <span class="material-symbols-outlined">perm_media</span>
-            媒体库
-          </a>
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="#"
-          >
-            <span class="material-symbols-outlined">settings</span>
-            设置
+            <span class="material-symbols-outlined">dashboard</span>
+            项目管理
           </a>
         </nav>
       </div>
       <div class="mt-auto space-y-1 p-8">
-        <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
+        <button
+          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+          type="button"
+        >
           <span class="material-symbols-outlined">help_outline</span>
           帮助
-        </a>
-        <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
+        </button>
+        <button
+          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+          type="button"
+        >
           <span class="material-symbols-outlined">logout</span>
           退出
-        </a>
+        </button>
       </div>
     </aside>
 
@@ -186,7 +178,7 @@
     >
       <div class="flex items-center gap-6">
         <span class="font-headline text-lg font-semibold text-slate-900">博客管理</span>
-        <div class="relative group">
+        <div class="relative">
           <span
             class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
             >search</span
@@ -202,71 +194,39 @@
         <button class="p-2 text-slate-600 hover:text-cyan-800">
           <span class="material-symbols-outlined">notifications</span>
         </button>
-        <button class="p-2 text-slate-600 hover:text-cyan-800">
-          <span class="material-symbols-outlined">apps</span>
-        </button>
-        <div class="mx-2 h-8 w-px bg-outline-variant/20"></div>
-        <div class="flex items-center gap-3">
-          <div class="text-right">
-            <p class="text-xs font-bold text-on-surface">Zenithy 管理员</p>
-            <p class="text-[10px] uppercase tracking-tighter text-on-surface-variant">
-              内容管理
-            </p>
-          </div>
-          <img
-            alt="Administrator Profile"
-            class="h-8 w-8 rounded-full ring-2 ring-surface-container-high"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxvL1QWxAu7rJJWpKHYiYm_te_0e80euG-8kRnikZymcKUKP_DGMejrG9UmP07mOdeH3WcVhe96mA0Y0G26Rk19yKYrAyzbipORdGU-6pgW8RciZ0P1D7OxtcbDEOUrgg1yZuXw_AwwhvFoyuzJqIfLud5vXDP3xpXduDfJcTY35gp8uhFfBapsTi-cGo7f_XSsG4j_-bqy2SIk2V9v68QICU2PP6uE-OHR_s3uTUq2jgDXZz_MEPwPzeD2Tr3caCW3MH9w5fL4WUH"
-          />
+        <div class="flex items-center gap-3 rounded-full bg-surface-container-low px-3 py-1">
+          <span class="text-sm font-semibold">Alex Rivera</span>
+          <span class="text-xs text-on-surface-variant">Chief Editor</span>
         </div>
       </div>
     </header>
 
-    <main class="min-h-screen pl-64 pt-16">
-      <div class="mx-auto max-w-7xl p-8">
-        <div class="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
-          <div class="max-w-2xl">
-            <span class="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-tertiary"
-            >内容库</span
-            >
-            <h2 class="font-headline mb-4 text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
-              文章管理
-            </h2>
-            <p class="text-lg leading-relaxed text-on-surface-variant">
-              管理已发布文章、草稿与归档内容，统一维护你的个人博客内容库。
-            </p>
-          </div>
-          <div class="flex gap-3">
-            <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
-              <span id="totalPosts" class="font-headline text-3xl font-bold text-on-surface">0</span>
-              <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
-                >文章数量</span
-              >
+    <main class="min-h-screen pl-64 pt-24">
+      <div class="mx-auto max-w-6xl px-8 pb-16">
+        <section class="mb-10 rounded-3xl bg-white p-8 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.3em] text-on-surface-variant">
+                Content Repository
+              </p>
+              <h2 class="mt-2 text-3xl font-bold font-headline">文章管理中心</h2>
+              <p class="mt-2 text-sm text-on-surface-variant">
+                统一管理博客文章、标签与发布状态，确保内容始终与前台展示一致。
+              </p>
             </div>
-            <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
-              <span class="font-headline text-3xl font-bold text-tertiary">—</span>
-              <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
-                >阅读量</span
+            <div class="flex gap-2">
+              <div
+                class="flex flex-col items-center justify-center rounded-2xl border border-outline-variant/30 bg-surface-container-lowest px-6 py-4"
               >
+                <span class="text-xs text-on-surface-variant">总文章</span>
+                <span class="mt-1 text-2xl font-bold" id="totalPosts">0</span>
+              </div>
             </div>
           </div>
-        </div>
+          <div class="mt-6 flex flex-wrap gap-2" id="adminTagFilters"></div>
+        </section>
 
-        <div class="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm">
-          <div id="adminTagFilters" class="flex flex-wrap gap-2"></div>
-          <div class="flex gap-4">
-            <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
-              <span class="material-symbols-outlined text-lg">filter_list</span>
-              筛选
-            </button>
-            <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
-              <span class="material-symbols-outlined text-lg">sort</span>
-              排序
-            </button>
-          </div>
-        </div>
-
-        <div id="adminPostList" class="space-y-4"></div>
+        <section class="space-y-6" id="adminPostList"></section>
 
         <div class="mt-12 flex items-center justify-between">
           <p class="text-sm font-medium text-on-surface-variant" id="postCount">
@@ -277,11 +237,19 @@
               <span class="material-symbols-outlined">chevron_left</span>
             </button>
             <div class="flex items-center gap-1">
-              <button class="h-8 w-8 rounded-full bg-tertiary text-xs font-bold text-on-tertiary">1</button>
-              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">2</button>
-              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">3</button>
+              <button class="h-8 w-8 rounded-full bg-tertiary text-xs font-bold text-on-tertiary">
+                1
+              </button>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">
+                2
+              </button>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">
+                3
+              </button>
               <span class="mx-1 text-on-surface-variant">...</span>
-              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">31</button>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">
+                31
+              </button>
             </div>
             <button class="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low">
               <span class="material-symbols-outlined">chevron_right</span>
@@ -339,16 +307,17 @@
       }
 
       function renderAdmin(posts, activeTag) {
-        const filtered = activeTag && activeTag !== "全部"
-          ? posts.filter((post) => {
-              const tags = Array.isArray(post.tags)
-                ? post.tags
-                : typeof post.tags === "string"
-                  ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-                  : [];
-              return tags.includes(activeTag);
-            })
-          : posts;
+        const filtered =
+          activeTag && activeTag !== "全部"
+            ? posts.filter((post) => {
+                const tags = Array.isArray(post.tags)
+                  ? post.tags
+                  : typeof post.tags === "string"
+                    ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
+                    : [];
+                return tags.includes(activeTag);
+              })
+            : posts;
 
         totalPosts.textContent = posts.length;
         postCount.innerHTML = `当前显示 <span class="font-bold text-on-surface">1-${Math.min(
@@ -364,9 +333,12 @@
         }
 
         filtered.slice(0, 4).forEach((post) => {
-          const cover = post.cover || "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
+          const cover =
+            post.cover ||
+            "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
           const status = post.status || "已发布";
           const statusColor = status === "已发布" ? "text-emerald-600" : "text-slate-500";
+          const statusDot = status === "已发布" ? "bg-emerald-500" : "bg-slate-400";
           adminList.insertAdjacentHTML(
             "beforeend",
             `<div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">
@@ -376,7 +348,7 @@
                 </div>
                 <div class="col-span-5">
                   <div class="mb-1 flex items-center gap-2">
-              <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">${
+                    <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">${
                       post.category || "博客"
                     }</span>
                     <span class="text-[10px] font-medium uppercase text-on-surface-variant">${
@@ -394,7 +366,7 @@
                   <div class="flex flex-col">
                     <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">状态</span>
                     <div class="flex items-center gap-2 text-sm font-semibold ${statusColor}">
-                      <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                      <span class="h-2 w-2 rounded-full ${statusDot}"></span>
                       ${status}
                     </div>
                   </div>

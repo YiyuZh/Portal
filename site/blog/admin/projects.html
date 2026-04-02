@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zenithy - 项目管理</title>
+    <meta name="theme-color" content="#f8f9fa" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="alternate icon" href="../../favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+            },
+            colors: {
+              surface: "#f8f9fa",
+              "surface-container-low": "#f1f4f6",
+              "surface-container-lowest": "#ffffff",
+              "on-surface": "#2b3437",
+              "on-surface-variant": "#586064",
+              tertiary: "#03687e",
+              "on-tertiary": "#f1faff",
+              "tertiary-container": "#91dcf6",
+              "on-tertiary-container": "#004e60",
+              "outline-variant": "#abb3b7",
+              error: "#9f403d",
+            },
+            borderRadius: {
+              xl: "1.5rem",
+              "2xl": "2rem",
+              "3xl": "3rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Manrope", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <aside class="fixed left-0 top-0 flex h-screen w-64 flex-col bg-slate-50">
+      <div class="p-8">
+        <div class="mb-10 flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white">
+            <span class="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">Zenithy</h1>
+            <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+              项目管理
+            </p>
+          </div>
+        </div>
+        <nav class="space-y-1">
+          <a
+            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+            href="https://blog.zenithy.art/admin/"
+          >
+            <span class="material-symbols-outlined">article</span>
+            文章列表
+          </a>
+          <a
+            class="flex items-center gap-3 border-r-2 border-cyan-800 bg-slate-100/50 px-4 py-3 font-semibold text-cyan-800"
+            href="https://blog.zenithy.art/admin/projects.html"
+          >
+            <span class="material-symbols-outlined">dashboard</span>
+            项目管理
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="min-h-screen pl-64 pt-10">
+      <div class="mx-auto max-w-6xl p-8">
+        <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-3xl font-bold font-headline">首页项目管理</h2>
+            <p class="text-on-surface-variant">
+              可视化编辑门户首页的项目卡片内容，支持封面预览、按钮配置与排序。
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              id="addProjectBtn"
+              class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
+            >
+              新增项目
+            </button>
+            <button
+              id="previewBtn"
+              class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
+            >
+              预览
+            </button>
+            <button
+              id="publishBtn"
+              class="rounded-full bg-tertiary px-5 py-2 text-sm font-semibold text-on-tertiary"
+            >
+              发布
+            </button>
+          </div>
+        </div>
+
+        <div id="projectList" class="space-y-8"></div>
+      </div>
+    </main>
+
+    <div
+      id="previewModal"
+      class="fixed inset-0 hidden items-center justify-center bg-slate-900/40 backdrop-blur-sm z-50"
+    >
+      <div class="bg-white rounded-2xl w-[92vw] h-[88vh] shadow-2xl flex flex-col">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+          <span class="font-headline font-semibold text-slate-700">项目预览</span>
+          <button id="closePreview" class="px-3 py-1 text-sm text-slate-500 hover:text-slate-900">
+            关闭
+          </button>
+        </div>
+        <div class="flex-1 overflow-auto p-6" id="previewContainer"></div>
+      </div>
+    </div>
+
+    <script>
+      const dataUrl = "../../assets/projects.json";
+      const list = document.getElementById("projectList");
+      const previewModal = document.getElementById("previewModal");
+      const previewContainer = document.getElementById("previewContainer");
+      const closePreview = document.getElementById("closePreview");
+      const addProjectBtn = document.getElementById("addProjectBtn");
+      let projects = [];
+
+      const emptyProject = () => ({
+        id: "new-project",
+        name: "New Project",
+        english: "Project Subtitle",
+        title: "项目主标题",
+        description: "在这里填写项目简介，支持一句话定位与价值说明。",
+        features: ["关键能力 1", "关键能力 2"],
+        index: "03 / New",
+        primaryLabel: "进入项目",
+        primaryUrl: "https://example.com",
+        secondaryLabel: "查看手册",
+        secondaryUrl: "#",
+        tertiaryLabel: "",
+        tertiaryUrl: "",
+        quaternaryLabel: "",
+        quaternaryUrl: "",
+        image: "./assets/placeholder.jpg",
+      });
+
+      function render() {
+        list.innerHTML = "";
+        projects.forEach((p, idx) => {
+          const wrapper = document.createElement("div");
+          wrapper.className =
+            "project-card rounded-2xl bg-white shadow-sm border border-slate-100 p-6 space-y-6";
+          wrapper.setAttribute("draggable", "true");
+          wrapper.dataset.index = String(idx);
+          wrapper.innerHTML = `
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-xl font-semibold" data-preview="name">${p.name || "未命名项目"}</h3>
+                <p class="text-sm text-on-surface-variant" data-preview="title">${p.title || ""}</p>
+              </div>
+              <div class="flex gap-2">
+                <span
+                  class="flex items-center gap-1 rounded-full border border-outline-variant/40 px-3 py-1 text-xs text-on-surface-variant"
+                >
+                  <span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+                  拖拽排序
+                </span>
+                <button data-index="${idx}" class="delete-btn text-red-500 text-sm">删除</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div class="rounded-2xl border border-slate-100 bg-surface-container-lowest p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">预览卡片</span>
+                  <span class="text-xs text-on-surface-variant" data-preview="index">${p.index || ""}</span>
+                </div>
+                <div class="rounded-2xl bg-white p-4 shadow-sm">
+                  <div class="flex items-center justify-between text-xs text-on-surface-variant">
+                    <span data-preview="english">${p.english || ""}</span>
+                    <span data-preview="index">${p.index || ""}</span>
+                  </div>
+                  <h4 class="mt-2 text-lg font-bold" data-preview="name">${p.name || ""}</h4>
+                  <p class="mt-1 text-sm text-on-surface-variant" data-preview="title">${p.title || ""}</p>
+                  <p class="mt-3 text-sm text-on-surface" data-preview="description">${p.description || ""}</p>
+                  <div class="mt-4 flex flex-wrap gap-2" data-preview="buttons">
+                    ${p.primaryLabel ? `<span class="rounded-full bg-tertiary px-3 py-1 text-xs font-semibold text-on-tertiary">${p.primaryLabel}</span>` : ""}
+                    ${p.secondaryLabel ? `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${p.secondaryLabel}</span>` : ""}
+                    ${p.tertiaryLabel ? `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${p.tertiaryLabel}</span>` : ""}
+                  </div>
+                </div>
+                <div class="overflow-hidden rounded-2xl border border-slate-100">
+                  <img class="h-44 w-full object-cover" src="${p.image || ""}" alt="Project cover" data-preview="image" />
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label class="text-sm text-on-surface-variant">项目 ID（勿随意修改）
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="id" data-index="${idx}" value="${p.id || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">卡片序号
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="index" data-index="${idx}" value="${p.index || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">项目名称
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="name" data-index="${idx}" value="${p.name || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">英文副标题
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="english" data-index="${idx}" value="${p.english || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">主标题
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="title" data-index="${idx}" value="${p.title || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">封面图地址
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="image" data-index="${idx}" value="${p.image || ""}" />
+                  </label>
+                </div>
+                <label class="text-sm text-on-surface-variant">项目简介
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="description" data-index="${idx}" rows="3">${p.description || ""}</textarea>
+                </label>
+                <label class="text-sm text-on-surface-variant">亮点（每行一个）
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="features" data-index="${idx}" rows="2">${Array.isArray(p.features) ? p.features.join("\n") : ""}</textarea>
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label class="text-sm text-on-surface-variant">主按钮文案
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryLabel" data-index="${idx}" value="${p.primaryLabel || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">主按钮链接
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryUrl" data-index="${idx}" value="${p.primaryUrl || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">次按钮文案
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryLabel" data-index="${idx}" value="${p.secondaryLabel || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">次按钮链接
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryUrl" data-index="${idx}" value="${p.secondaryUrl || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">第三按钮文案
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryLabel" data-index="${idx}" value="${p.tertiaryLabel || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">第三按钮链接
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryUrl" data-index="${idx}" value="${p.tertiaryUrl || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">第四按钮文案
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryLabel" data-index="${idx}" value="${p.quaternaryLabel || ""}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">第四按钮链接
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryUrl" data-index="${idx}" value="${p.quaternaryUrl || ""}" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          `;
+          list.appendChild(wrapper);
+        });
+      }
+
+      function collect() {
+        const inputs = document.querySelectorAll(".input");
+        inputs.forEach((input) => {
+          const idx = Number(input.dataset.index);
+          const field = input.dataset.field;
+          if (!projects[idx]) return;
+          if (field === "features") {
+            projects[idx][field] = input.value
+              .split("\n")
+              .map((line) => line.trim())
+              .filter(Boolean);
+            return;
+          }
+          projects[idx][field] = input.value;
+        });
+      }
+
+      function downloadFile(name, content) {
+        const blob = new Blob([content], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = name;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      function buildPreviewCard(p) {
+        const buttons = [
+          [p.primaryLabel, p.primaryUrl],
+          [p.secondaryLabel, p.secondaryUrl],
+          [p.tertiaryLabel, p.tertiaryUrl],
+          [p.quaternaryLabel, p.quaternaryUrl],
+        ].filter((btn) => btn[0]);
+        const features = Array.isArray(p.features) ? p.features : [];
+        return `
+          <article class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between text-xs text-on-surface-variant">
+              <span>${p.english || ""}</span>
+              <span>${p.index || ""}</span>
+            </div>
+            <h3 class="mt-2 text-xl font-bold">${p.name || ""}</h3>
+            <p class="mt-1 text-sm text-on-surface-variant">${p.title || ""}</p>
+            <p class="mt-3 text-sm text-on-surface">${p.description || ""}</p>
+            ${
+              features.length
+                ? `<ul class="mt-4 space-y-2 text-sm text-on-surface-variant">
+                    ${features.map((f) => `<li>• ${f}</li>`).join("")}
+                  </ul>`
+                : ""
+            }
+            <div class="mt-5 flex flex-wrap gap-2">
+              ${buttons
+                .map(
+                  ([label, url], index) => `
+                    <a class="rounded-full px-4 py-2 text-xs font-semibold ${
+                      index === 0 ? "bg-tertiary text-on-tertiary" : "bg-slate-100 text-slate-600"
+                    }" href="${url || "#"}">${label}</a>`
+                )
+                .join("")}
+            </div>
+            <div class="mt-5 overflow-hidden rounded-2xl border border-slate-100">
+              <img class="h-40 w-full object-cover" src="${p.image || ""}" alt="Project cover" />
+            </div>
+          </article>
+        `;
+      }
+
+      function openPreview() {
+        collect();
+        previewContainer.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            ${projects.map((p) => buildPreviewCard(p)).join("")}
+          </div>
+        `;
+        previewModal.classList.remove("hidden");
+        previewModal.classList.add("flex");
+      }
+
+      function closeModal() {
+        previewModal.classList.add("hidden");
+        previewModal.classList.remove("flex");
+      }
+
+      document.getElementById("previewBtn").addEventListener("click", openPreview);
+      document.getElementById("publishBtn").addEventListener("click", () => {
+        collect();
+        downloadFile("projects.json", JSON.stringify({ projects }, null, 2));
+        alert("已生成 projects.json。请替换 /portal/site/assets/projects.json 并提交到 Git。");
+      });
+      closePreview.addEventListener("click", closeModal);
+      addProjectBtn.addEventListener("click", () => {
+        projects.push(emptyProject());
+        render();
+      });
+      list.addEventListener("click", (event) => {
+        const del = event.target.closest(".delete-btn");
+        if (!del) return;
+        const idx = Number(del.dataset.index);
+        projects.splice(idx, 1);
+        render();
+      });
+
+      list.addEventListener("input", (event) => {
+        const input = event.target.closest(".input");
+        if (!input) return;
+        const idx = Number(input.dataset.index);
+        const field = input.dataset.field;
+        if (!projects[idx]) return;
+        if (field === "features") {
+          projects[idx][field] = input.value
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+        } else {
+          projects[idx][field] = input.value;
+        }
+        updatePreview(idx);
+      });
+
+      let dragIndex = null;
+      list.addEventListener("dragstart", (event) => {
+        const card = event.target.closest(".project-card");
+        if (!card) return;
+        dragIndex = Number(card.dataset.index);
+        event.dataTransfer.effectAllowed = "move";
+        card.classList.add("ring-2", "ring-tertiary");
+      });
+
+      list.addEventListener("dragend", (event) => {
+        const card = event.target.closest(".project-card");
+        if (card) {
+          card.classList.remove("ring-2", "ring-tertiary");
+        }
+        dragIndex = null;
+      });
+
+      list.addEventListener("dragover", (event) => {
+        if (dragIndex === null) return;
+        event.preventDefault();
+      });
+
+      list.addEventListener("drop", (event) => {
+        const card = event.target.closest(".project-card");
+        if (!card || dragIndex === null) return;
+        const dropIndex = Number(card.dataset.index);
+        if (Number.isNaN(dropIndex) || dropIndex === dragIndex) return;
+        const moving = projects.splice(dragIndex, 1)[0];
+        projects.splice(dropIndex, 0, moving);
+        render();
+      });
+
+      function updatePreview(idx) {
+        const card = list.querySelector(`.project-card[data-index="${idx}"]`);
+        if (!card || !projects[idx]) return;
+        const p = projects[idx];
+        card.querySelectorAll('[data-preview="name"]').forEach((el) => (el.textContent = p.name || ""));
+        card.querySelectorAll('[data-preview="title"]').forEach((el) => (el.textContent = p.title || ""));
+        card.querySelectorAll('[data-preview="english"]').forEach((el) => (el.textContent = p.english || ""));
+        card.querySelectorAll('[data-preview="index"]').forEach((el) => (el.textContent = p.index || ""));
+        const desc = card.querySelector('[data-preview="description"]');
+        if (desc) desc.textContent = p.description || "";
+        const img = card.querySelector('[data-preview="image"]');
+        if (img) img.src = p.image || "";
+        const btnWrap = card.querySelector('[data-preview="buttons"]');
+        if (btnWrap) {
+          btnWrap.innerHTML = "";
+          const buttons = [
+            [p.primaryLabel, "bg-tertiary text-on-tertiary"],
+            [p.secondaryLabel, "bg-slate-100 text-slate-600"],
+            [p.tertiaryLabel, "bg-slate-100 text-slate-600"],
+            [p.quaternaryLabel, "bg-slate-100 text-slate-600"],
+          ];
+          buttons.forEach(([label, classes]) => {
+            if (!label) return;
+            const span = document.createElement("span");
+            span.className = `rounded-full px-3 py-1 text-xs font-semibold ${classes}`;
+            span.textContent = label;
+            btnWrap.appendChild(span);
+          });
+        }
+      }
+
+      fetch(dataUrl)
+        .then((res) => res.json())
+        .then((data) => {
+          projects = Array.isArray(data.projects) ? data.projects : [];
+          render();
+        })
+        .catch(() => {
+          projects = [];
+          render();
+        });
+    </script>
+  </body>
+</html>
