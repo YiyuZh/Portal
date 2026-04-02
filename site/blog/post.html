@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Architecture of Intent | Zenithy Blog</title>
+    <title>Zenithy - Blog Post</title>
     <meta name="theme-color" content="#f8f9fa" />
     <meta
       name="description"
-      content="The Architecture of Intent: How We Build Digital Spaces for Depth - Zenithy Blog."
+      content="Zenithy Blog post - The Architecture of Intent."
     />
     <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
     <link rel="alternate icon" href="../favicon.svg" />
@@ -75,10 +75,29 @@
       }
 
       .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
         font-family: "Manrope", sans-serif;
         font-weight: 800;
         font-size: 24px;
         letter-spacing: -0.02em;
+      }
+
+      .brand-mark {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #2b3437;
+      }
+
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: #fff;
       }
 
       .nav-links {
@@ -412,7 +431,10 @@
   <body>
     <header>
       <nav class="nav">
-        <div class="brand">Zenithy</div>
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          Zenithy
+        </div>
         <div class="nav-links">
           <a href="https://zenithy.art">Projects</a>
           <a class="active" href="https://blog.zenithy.art">Blog</a>
@@ -423,7 +445,7 @@
             <span class="material-symbols-outlined">search</span>
             <input type="text" placeholder="Search insights..." />
           </div>
-          <button class="nav-cta">Subscribe</button>
+          <a class="nav-cta" href="https://blog.zenithy.art/admin/">进入后台</a>
         </div>
       </nav>
       <div class="progress"><span></span></div>
@@ -438,7 +460,7 @@
 
         <div class="hero-tag">
           <span>Strategy</span>
-          <span>•</span>
+          <span>·</span>
           <span>12 Min Read</span>
         </div>
 
@@ -451,10 +473,10 @@
           />
           <div>
             <div style="font-family: Manrope, sans-serif; font-weight: 700">
-              Marcus Chen
+              Zenithy Team
             </div>
             <div style="font-size: 12px; color: var(--on-surface-variant)">
-              Design Director · March 14, 2024
+              Editorial · 2026-04-02
             </div>
           </div>
         </div>
@@ -550,14 +572,14 @@
             alt="Marcus Chen"
           />
           <div>
-            <h3 style="margin: 0 0 8px">Written by Marcus Chen</h3>
+            <h3 style="margin: 0 0 8px">Written by Zenithy Team</h3>
             <p style="margin: 0 0 12px; color: var(--on-surface-variant)">
               Marcus leads the Design and Curation team at Zenithy, focusing on digital ecosystems
               that feel human and enduring.
             </p>
             <div class="author-links">
               <a href="#">Follow on Twitter</a>
-              <span style="color: #abb3b7">•</span>
+              <span style="color: #abb3b7">·</span>
               <a href="#">View Portfolio</a>
             </div>
           </div>
@@ -587,7 +609,10 @@
     <footer>
       <div class="footer-inner">
         <div>
-          <div class="brand">Zenithy</div>
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+            Zenithy
+          </div>
           <div style="margin-top: 8px">
             Building the architecture of digital intent through precise curation.
           </div>
@@ -609,7 +634,7 @@
           color: #9aa3a8;
         "
       >
-        © 2024 Zenithy Architecture &amp; Curation. All rights reserved.
+        © 2026 Zenithy Archive. All rights reserved.
       </div>
     </footer>
   </body>

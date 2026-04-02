@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Insights &amp; Reflections | Zenithy</title>
+    <title>Zenithy - Blog</title>
     <meta name="theme-color" content="#f8f9fa" />
     <meta
       name="description"
@@ -95,10 +95,29 @@
       }
 
       .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
         font-family: "Manrope", sans-serif;
         font-size: 24px;
         font-weight: 800;
         letter-spacing: -0.02em;
+      }
+
+      .brand-mark {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #2b3437;
+      }
+
+      .brand-mark::after {
+        content: "";
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: #fff;
       }
 
       .nav-links {
@@ -382,13 +401,16 @@
     <div class="page">
       <header>
         <nav class="nav">
-          <div class="brand">Zenithy</div>
+          <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+            Zenithy
+          </div>
           <div class="nav-links">
             <a href="https://zenithy.art">Projects</a>
             <a class="active" href="https://blog.zenithy.art">Blog</a>
             <a href="#">About</a>
           </div>
-          <a class="nav-cta" href="https://zenithy.art">Get Started</a>
+          <a class="nav-cta" href="https://blog.zenithy.art/admin/">进入后台</a>
         </nav>
       </header>
 
@@ -519,9 +541,12 @@
       <footer>
         <div class="footer-inner">
           <div>
-            <div class="brand">Zenithy</div>
+            <div class="brand">
+              <span class="brand-mark" aria-hidden="true"></span>
+              Zenithy
+            </div>
             <div style="font-size: 12px; color: var(--on-surface-variant)">
-              © 2024 Zenithy Portal. All rights reserved.
+              © 2026 Zenithy Archive. All rights reserved.
             </div>
           </div>
           <div class="footer-links">

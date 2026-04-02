@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Zenithy - Blog Admin</title>
+    <meta name="theme-color" content="#f8f9fa" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="alternate icon" href="../../favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#5d5e61",
+              "inverse-primary": "#f9f9fc",
+              "inverse-on-surface": "#9b9d9e",
+              "on-primary-container": "#505254",
+              "surface": "#f8f9fa",
+              "on-tertiary": "#f1faff",
+              "on-surface": "#2b3437",
+              "on-surface-variant": "#586064",
+              "primary-fixed-dim": "#d4d4d7",
+              "on-tertiary-fixed": "#003a47",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-highest": "#dbe4e7",
+              "surface-container-high": "#e3e9ec",
+              "on-secondary-container": "#47535b",
+              "tertiary-fixed-dim": "#83cee7",
+              "on-tertiary-fixed-variant": "#00586c",
+              "secondary": "#556169",
+              "error": "#9f403d",
+              "on-secondary-fixed": "#354148",
+              "tertiary-container": "#91dcf6",
+              "primary-container": "#e2e2e5",
+              "secondary-dim": "#49555d",
+              "secondary-container": "#d8e4ee",
+              "secondary-fixed-dim": "#cad6e0",
+              "surface-dim": "#d1dce0",
+              "primary-fixed": "#e2e2e5",
+              "on-primary": "#f7f7fa",
+              "primary-dim": "#515255",
+              "inverse-surface": "#0c0f10",
+              "on-primary-fixed": "#3e3f42",
+              "on-secondary-fixed-variant": "#515d65",
+              "tertiary-dim": "#005b6f",
+              "surface-variant": "#dbe4e7",
+              "on-tertiary-container": "#004e60",
+              "background": "#f8f9fa",
+              "secondary-fixed": "#d8e4ee",
+              "tertiary-fixed": "#91dcf6",
+              "outline": "#737c7f",
+              "surface-container": "#eaeff1",
+              "tertiary": "#03687e",
+              "on-error": "#fff7f6",
+              "error-dim": "#4e0309",
+              "on-error-container": "#752121",
+              "on-primary-fixed-variant": "#5a5c5e",
+              "error-container": "#fe8983",
+              "surface-bright": "#f8f9fa",
+              "outline-variant": "#abb3b7",
+              "on-secondary": "#f4faff",
+              "on-background": "#2b3437",
+              "surface-container-low": "#f1f4f6",
+              "primary": "#5d5e61",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+            borderRadius: {
+              DEFAULT: "1rem",
+              lg: "2rem",
+              xl: "3rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        vertical-align: middle;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3,
+      .headline {
+        font-family: "Manrope", sans-serif;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #abb3b740;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="bg-surface text-on-surface">
+    <aside class="fixed left-0 top-0 flex h-screen w-64 flex-col bg-slate-50">
+      <div class="p-8">
+        <div class="mb-10 flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white"
+          >
+            <span class="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">Zenithy</h1>
+            <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
+              Admin Dashboard
+            </p>
+          </div>
+        </div>
+        <a
+          class="mb-8 flex w-full items-center justify-center gap-2 rounded-full bg-tertiary py-4 font-semibold text-on-tertiary shadow-lg shadow-tertiary/10 transition-all active:scale-90"
+          href="https://blog.zenithy.art/admin/editor.html"
+        >
+          <span class="material-symbols-outlined">add</span>
+          New Post
+        </a>
+        <nav class="space-y-1">
+          <a
+            class="flex items-center gap-3 border-r-2 border-cyan-800 bg-slate-100/50 px-4 py-3 font-semibold text-cyan-800"
+            href="#"
+          >
+            <span class="material-symbols-outlined">article</span>
+            Posts
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+            href="#"
+          >
+            <span class="material-symbols-outlined">category</span>
+            Categories
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+            href="#"
+          >
+            <span class="material-symbols-outlined">perm_media</span>
+            Media
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
+            href="#"
+          >
+            <span class="material-symbols-outlined">settings</span>
+            Settings
+          </a>
+        </nav>
+      </div>
+      <div class="mt-auto space-y-1 p-8">
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
+          <span class="material-symbols-outlined">help_outline</span>
+          Help
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700" href="#">
+          <span class="material-symbols-outlined">logout</span>
+          Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <header
+      class="fixed top-0 z-40 flex h-16 w-full items-center justify-between bg-white/80 px-8 pl-64 backdrop-blur-xl"
+    >
+      <div class="flex items-center gap-6">
+        <span class="font-headline text-lg font-semibold text-slate-900">Blog Manager</span>
+        <div class="relative group">
+          <span
+            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+            >search</span
+          >
+          <input
+            class="w-64 rounded-full border-0 bg-surface-container-low py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-tertiary"
+            placeholder="Search articles..."
+            type="text"
+          />
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="p-2 text-slate-600 hover:text-cyan-800">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <button class="p-2 text-slate-600 hover:text-cyan-800">
+          <span class="material-symbols-outlined">apps</span>
+        </button>
+        <div class="mx-2 h-8 w-px bg-outline-variant/20"></div>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <p class="text-xs font-bold text-on-surface">Zenithy Admin</p>
+            <p class="text-[10px] uppercase tracking-tighter text-on-surface-variant">
+              Content Manager
+            </p>
+          </div>
+          <img
+            alt="Administrator Profile"
+            class="h-8 w-8 rounded-full ring-2 ring-surface-container-high"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxvL1QWxAu7rJJWpKHYiYm_te_0e80euG-8kRnikZymcKUKP_DGMejrG9UmP07mOdeH3WcVhe96mA0Y0G26Rk19yKYrAyzbipORdGU-6pgW8RciZ0P1D7OxtcbDEOUrgg1yZuXw_AwwhvFoyuzJqIfLud5vXDP3xpXduDfJcTY35gp8uhFfBapsTi-cGo7f_XSsG4j_-bqy2SIk2V9v68QICU2PP6uE-OHR_s3uTUq2jgDXZz_MEPwPzeD2Tr3caCW3MH9w5fL4WUH"
+          />
+        </div>
+      </div>
+    </header>
+
+    <main class="min-h-screen pl-64 pt-16">
+      <div class="mx-auto max-w-7xl p-8">
+        <div class="mb-12 flex flex-col items-end justify-between gap-6 md:flex-row">
+          <div class="max-w-2xl">
+            <span class="mb-2 block text-xs font-bold uppercase tracking-[0.2em] text-tertiary"
+              >Content Repository</span
+            >
+            <h2 class="font-headline mb-4 text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
+              Article Management
+            </h2>
+            <p class="text-lg leading-relaxed text-on-surface-variant">
+              Refine your narrative. Manage published insights, draft future perspectives, and
+              archive historical content from your centralized editorial hub.
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
+              <span class="font-headline text-3xl font-bold text-on-surface">124</span>
+              <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
+                >Total Posts</span
+              >
+            </div>
+            <div class="flex flex-col rounded-lg bg-surface-container-lowest px-6 py-4 shadow-sm">
+              <span class="font-headline text-3xl font-bold text-tertiary">8.2k</span>
+              <span class="text-xs font-medium uppercase tracking-widest text-on-surface-variant"
+                >Monthly Reads</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8 flex items-center justify-between rounded-xl bg-surface-container-lowest p-4 shadow-sm">
+          <div class="flex gap-2">
+            <button class="rounded-full bg-tertiary px-5 py-2 text-sm font-semibold text-on-tertiary">
+              All Posts
+            </button>
+            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
+              Published
+            </button>
+            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
+              Drafts
+            </button>
+            <button class="rounded-full px-5 py-2 text-sm font-medium text-on-surface-variant hover:bg-surface-container-low">
+              Archived
+            </button>
+          </div>
+          <div class="flex gap-4">
+            <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
+              <span class="material-symbols-outlined text-lg">filter_list</span>
+              Filter
+            </button>
+            <button class="flex items-center gap-2 text-sm font-medium text-on-surface-variant hover:text-on-surface">
+              <span class="material-symbols-outlined text-lg">sort</span>
+              Sort
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">
+            <div class="grid grid-cols-12 items-center gap-6">
+              <div class="col-span-1">
+                <img
+                  alt="Post Thumbnail"
+                  class="h-16 w-16 rounded-lg object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT"
+                />
+              </div>
+              <div class="col-span-5">
+                <div class="mb-1 flex items-center gap-2">
+                  <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">
+                    Digital Design
+                  </span>
+                  <span class="text-[10px] font-medium uppercase text-on-surface-variant">5 min read</span>
+                </div>
+                <h3 class="text-lg font-bold text-on-surface group-hover:text-tertiary transition-colors">
+                  The Future of Minimalism in SaaS Interface Design
+                </h3>
+                <p class="line-clamp-1 text-sm text-on-surface-variant">
+                  Exploring how reductionist aesthetics are shaping user retention and psychological comfort...
+                </p>
+              </div>
+              <div class="col-span-2">
+                <div class="flex flex-col">
+                  <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Status</span>
+                  <div class="flex items-center gap-2 text-sm font-semibold text-emerald-600">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Published
+                  </div>
+                </div>
+              </div>
+              <div class="col-span-2">
+                <div class="flex flex-col">
+                  <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Last Updated</span>
+                  <span class="text-sm font-medium text-on-surface">Oct 12, 2023</span>
+                </div>
+              </div>
+              <div class="col-span-2 flex justify-end gap-2">
+                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+                <button class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container">
+                  <span class="material-symbols-outlined">more_vert</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-12 flex items-center justify-between">
+          <p class="text-sm font-medium text-on-surface-variant">
+            Showing <span class="font-bold text-on-surface">1-4</span> of 124 articles
+          </p>
+          <div class="flex items-center gap-2">
+            <button class="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div class="flex items-center gap-1">
+              <button class="h-8 w-8 rounded-full bg-tertiary text-xs font-bold text-on-tertiary">1</button>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">2</button>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">3</button>
+              <span class="mx-1 text-on-surface-variant">...</span>
+              <button class="h-8 w-8 rounded-full text-xs font-medium text-on-surface hover:bg-surface-container">31</button>
+            </div>
+            <button class="rounded-full p-2 text-on-surface-variant hover:bg-surface-container-low">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+        <footer class="mt-24 border-t border-outline-variant/10 pt-12 pb-8 text-center">
+          <p class="mb-2 text-[10px] uppercase tracking-[0.3em] text-on-surface-variant">
+            Powered by Zenithy Editorial Cloud
+          </p>
+          <p class="text-xs text-on-surface-variant/60">
+            Version 4.2.1-stable · © 2026 Zenithy Archive. All rights reserved.
+          </p>
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
