@@ -104,6 +104,12 @@
           </div>
           <div class="flex flex-wrap gap-2">
             <button
+              id="syncBtn"
+              class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
+            >
+              从主页同步
+            </button>
+            <button
               id="addProjectBtn"
               class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
             >
@@ -150,6 +156,7 @@
       const previewContainer = document.getElementById("previewContainer");
       const closePreview = document.getElementById("closePreview");
       const addProjectBtn = document.getElementById("addProjectBtn");
+      const syncBtn = document.getElementById("syncBtn");
       let projects = [];
 
       const emptyProject = () => ({
@@ -180,6 +187,77 @@
           return "../../assets/" + src.replace("/assets/", "");
         }
         return src;
+      }
+
+      function normalizeHomepageImage(src) {
+        if (!src) return "";
+        if (src.startsWith("./")) return src;
+        if (src.startsWith("/")) return "." + src;
+        return src;
+      }
+
+      function getText(doc, selector) {
+        const el = doc.querySelector(selector);
+        return el ? el.textContent.trim() : "";
+      }
+
+      function getHtml(doc, selector) {
+        const el = doc.querySelector(selector);
+        return el ? el.innerHTML.trim() : "";
+      }
+
+      function getLink(doc, selector) {
+        const el = doc.querySelector(selector);
+        if (!el) return { label: "", url: "" };
+        return {
+          label: el.textContent.trim(),
+          url: el.getAttribute("href") || "",
+        };
+      }
+
+      function getImage(doc, selector) {
+        const el = doc.querySelector(selector);
+        return el ? el.getAttribute("src") || "" : "";
+      }
+
+      function buildProjectsFromHomepage(doc) {
+        const hiremate = {
+          id: "hiremate",
+          name: getText(doc, "#project-hiremate-name"),
+          english: getText(doc, "#project-hiremate-english"),
+          title: getText(doc, "#project-hiremate-title"),
+          description: getText(doc, "#project-hiremate-desc"),
+          index: getText(doc, "#project-hiremate-index"),
+          primaryLabel: getLink(doc, "#project-hiremate-primary").label,
+          primaryUrl: getLink(doc, "#project-hiremate-primary").url,
+          secondaryLabel: getLink(doc, "#project-hiremate-secondary").label,
+          secondaryUrl: getLink(doc, "#project-hiremate-secondary").url,
+          image: normalizeHomepageImage(getImage(doc, "#project-hiremate-image")),
+        };
+
+        const ai = {
+          id: "ai-interview",
+          name: getHtml(doc, "#project-ai-name"),
+          english: getText(doc, "#project-ai-english"),
+          title: getText(doc, "#project-ai-title"),
+          description: getText(doc, "#project-ai-desc"),
+          features: [
+            getText(doc, "#project-ai-feature-1"),
+            getText(doc, "#project-ai-feature-2"),
+          ].filter(Boolean),
+          index: getText(doc, "#project-ai-index"),
+          primaryLabel: getLink(doc, "#project-ai-primary").label,
+          primaryUrl: getLink(doc, "#project-ai-primary").url,
+          secondaryLabel: getLink(doc, "#project-ai-secondary").label,
+          secondaryUrl: getLink(doc, "#project-ai-secondary").url,
+          tertiaryLabel: getLink(doc, "#project-ai-tertiary").label,
+          tertiaryUrl: getLink(doc, "#project-ai-tertiary").url,
+          quaternaryLabel: getLink(doc, "#project-ai-quaternary").label,
+          quaternaryUrl: getLink(doc, "#project-ai-quaternary").url,
+          image: normalizeHomepageImage(getImage(doc, "#project-ai-image")),
+        };
+
+        return [hiremate, ai];
       }
 
       function render() {
@@ -460,6 +538,20 @@
           projects[idx][field] = input.value;
         }
         updatePreview(idx);
+      });
+
+      syncBtn.addEventListener("click", () => {
+        fetch("/index.html")
+          .then((res) => res.text())
+          .then((html) => {
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            projects = buildProjectsFromHomepage(doc);
+            render();
+            alert("已从主页同步项目数据，请检查后点击“发布”生成 projects.json。");
+          })
+          .catch(() => {
+            alert("同步失败，请检查主页是否可访问。");
+          });
       });
 
       let dragIndex = null;
