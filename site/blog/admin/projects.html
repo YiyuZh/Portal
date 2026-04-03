@@ -171,14 +171,31 @@
         image: "./assets/placeholder.jpg",
       });
 
+      function normalizeImage(src) {
+        if (!src) return "";
+        if (src.startsWith("./assets/")) {
+          return src.replace("./assets/", "../../assets/");
+        }
+        if (src.startsWith("/assets/")) {
+          return "../../assets/" + src.replace("/assets/", "");
+        }
+        return src;
+      }
+
       function render() {
         list.innerHTML = "";
+        if (!projects.length) {
+          list.innerHTML =
+            '<div class="rounded-2xl border border-slate-100 bg-white p-6 text-on-surface-variant">暂无项目数据。请检查 <code>/portal/site/assets/projects.json</code> 是否存在且可访问。</div>';
+          return;
+        }
         projects.forEach((p, idx) => {
           const wrapper = document.createElement("div");
           wrapper.className =
             "project-card rounded-2xl bg-white shadow-sm border border-slate-100 p-6 space-y-6";
           wrapper.setAttribute("draggable", "true");
           wrapper.dataset.index = String(idx);
+          const imgSrc = normalizeImage(p.image || "");
           wrapper.innerHTML = `
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -216,7 +233,7 @@
                   </div>
                 </div>
                 <div class="overflow-hidden rounded-2xl border border-slate-100">
-                  <img class="h-44 w-full object-cover" src="${p.image || ""}" alt="Project cover" data-preview="image" />
+                  <img class="h-44 w-full object-cover" src="${imgSrc}" alt="Project cover" data-preview="image" />
                 </div>
               </div>
               <div class="space-y-4">
@@ -246,6 +263,16 @@
                 <label class="text-sm text-on-surface-variant">亮点（每行一个）
                   <textarea class="input w-full border rounded-lg px-3 py-2" data-field="features" data-index="${idx}" rows="2">${Array.isArray(p.features) ? p.features.join("\n") : ""}</textarea>
                 </label>
+                <div class="rounded-2xl border border-slate-100 bg-surface-container-lowest p-4">
+                  <p class="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">亮点预览</p>
+                  <ul class="mt-3 space-y-2 text-sm text-on-surface-variant" data-preview="features">
+                    ${
+                      Array.isArray(p.features) && p.features.length
+                        ? p.features.map((item) => `<li>• ${item}</li>`).join("")
+                        : "<li>暂无亮点</li>"
+                    }
+                  </ul>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="text-sm text-on-surface-variant">主按钮文案
                     <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryLabel" data-index="${idx}" value="${p.primaryLabel || ""}" />
@@ -340,7 +367,7 @@
                 .join("")}
             </div>
             <div class="mt-5 overflow-hidden rounded-2xl border border-slate-100">
-              <img class="h-40 w-full object-cover" src="${p.image || ""}" alt="Project cover" />
+              <img class="h-40 w-full object-cover" src="${normalizeImage(p.image || "")}" alt="Project cover" />
             </div>
           </article>
         `;
@@ -362,6 +389,44 @@
         previewModal.classList.remove("flex");
       }
 
+      function updatePreview(idx) {
+        const card = list.querySelector(`.project-card[data-index="${idx}"]`);
+        if (!card || !projects[idx]) return;
+        const p = projects[idx];
+        card.querySelectorAll('[data-preview="name"]').forEach((el) => (el.textContent = p.name || ""));
+        card.querySelectorAll('[data-preview="title"]').forEach((el) => (el.textContent = p.title || ""));
+        card.querySelectorAll('[data-preview="english"]').forEach((el) => (el.textContent = p.english || ""));
+        card.querySelectorAll('[data-preview="index"]').forEach((el) => (el.textContent = p.index || ""));
+        const desc = card.querySelector('[data-preview="description"]');
+        if (desc) desc.textContent = p.description || "";
+        const img = card.querySelector('[data-preview="image"]');
+        if (img) img.src = normalizeImage(p.image || "");
+        const btnWrap = card.querySelector('[data-preview="buttons"]');
+        if (btnWrap) {
+          btnWrap.innerHTML = "";
+          const buttons = [
+            [p.primaryLabel, "bg-tertiary text-on-tertiary"],
+            [p.secondaryLabel, "bg-slate-100 text-slate-600"],
+            [p.tertiaryLabel, "bg-slate-100 text-slate-600"],
+            [p.quaternaryLabel, "bg-slate-100 text-slate-600"],
+          ];
+          buttons.forEach(([label, classes]) => {
+            if (!label) return;
+            const span = document.createElement("span");
+            span.className = `rounded-full px-3 py-1 text-xs font-semibold ${classes}`;
+            span.textContent = label;
+            btnWrap.appendChild(span);
+          });
+        }
+        const featureList = card.querySelector('[data-preview="features"]');
+        if (featureList) {
+          const features = Array.isArray(p.features) ? p.features : [];
+          featureList.innerHTML = features.length
+            ? features.map((item) => `<li>• ${item}</li>`).join("")
+            : "<li>暂无亮点</li>";
+        }
+      }
+
       document.getElementById("previewBtn").addEventListener("click", openPreview);
       document.getElementById("publishBtn").addEventListener("click", () => {
         collect();
@@ -380,7 +445,6 @@
         projects.splice(idx, 1);
         render();
       });
-
       list.addEventListener("input", (event) => {
         const input = event.target.closest(".input");
         if (!input) return;
@@ -429,37 +493,6 @@
         projects.splice(dropIndex, 0, moving);
         render();
       });
-
-      function updatePreview(idx) {
-        const card = list.querySelector(`.project-card[data-index="${idx}"]`);
-        if (!card || !projects[idx]) return;
-        const p = projects[idx];
-        card.querySelectorAll('[data-preview="name"]').forEach((el) => (el.textContent = p.name || ""));
-        card.querySelectorAll('[data-preview="title"]').forEach((el) => (el.textContent = p.title || ""));
-        card.querySelectorAll('[data-preview="english"]').forEach((el) => (el.textContent = p.english || ""));
-        card.querySelectorAll('[data-preview="index"]').forEach((el) => (el.textContent = p.index || ""));
-        const desc = card.querySelector('[data-preview="description"]');
-        if (desc) desc.textContent = p.description || "";
-        const img = card.querySelector('[data-preview="image"]');
-        if (img) img.src = p.image || "";
-        const btnWrap = card.querySelector('[data-preview="buttons"]');
-        if (btnWrap) {
-          btnWrap.innerHTML = "";
-          const buttons = [
-            [p.primaryLabel, "bg-tertiary text-on-tertiary"],
-            [p.secondaryLabel, "bg-slate-100 text-slate-600"],
-            [p.tertiaryLabel, "bg-slate-100 text-slate-600"],
-            [p.quaternaryLabel, "bg-slate-100 text-slate-600"],
-          ];
-          buttons.forEach(([label, classes]) => {
-            if (!label) return;
-            const span = document.createElement("span");
-            span.className = `rounded-full px-3 py-1 text-xs font-semibold ${classes}`;
-            span.textContent = label;
-            btnWrap.appendChild(span);
-          });
-        }
-      }
 
       fetch(dataUrl)
         .then((res) => res.json())
