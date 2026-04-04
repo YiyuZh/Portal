@@ -6,29 +6,37 @@
       "english": "Recruitment Intelligence",
       "title": "AI 招聘助手平台",
       "description": "支持简历解析、候选人评估、批量初筛，为人力资源团队提供更清晰的筛选洞察与决策支持。",
-      "index": "01 / Archive",
+      "index": "01 / HR",
       "primaryLabel": "进入 HireMate",
       "primaryUrl": "https://hiremate.zenithy.art",
-      "secondaryLabel": "查看手册",
-      "secondaryUrl": "#",
-      "image": "./assets/hiremate-dashboard.jpg"
+      "secondaryLabel": "",
+      "secondaryUrl": "",
+      "image": "./assets/hiremate-dashboard.jpg",
+      "features": [],
+      "tertiaryLabel": "",
+      "tertiaryUrl": "",
+      "quaternaryLabel": "",
+      "quaternaryUrl": ""
     },
     {
       "id": "ai-interview",
-      "name": "AI-Interview <span style=\"color: #d1d7de; font-weight: 300\">智面</span>",
+      "name": "AI-Interview <span style=",
       "english": "Simulated Evaluation System",
       "title": "AI 模拟面试系统",
       "description": "支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。",
-      "features": ["动态多轮对话生成", "实时反馈与评估结果"],
-      "index": "02 / Core",
+      "features": [
+        "动态多轮对话生成",
+        "实时反馈与评估结果"
+      ],
+      "index": "02 / Employee",
       "primaryLabel": "用户端",
       "primaryUrl": "https://interview.zenithy.art",
       "secondaryLabel": "管理后台",
       "secondaryUrl": "https://admin.interview.zenithy.art",
-      "tertiaryLabel": "API Documentation",
-      "tertiaryUrl": "https://api.interview.zenithy.art",
-      "quaternaryLabel": "Deployment Guide",
-      "quaternaryUrl": "#",
+      "tertiaryLabel": "",
+      "tertiaryUrl": "",
+      "quaternaryLabel": "",
+      "quaternaryUrl": "",
       "image": "./assets/ai-interview-portrait.jpg"
     }
   ]
