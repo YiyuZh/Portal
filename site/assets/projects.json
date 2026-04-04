@@ -11,12 +11,12 @@
       "primaryUrl": "https://hiremate.zenithy.art",
       "secondaryLabel": "",
       "secondaryUrl": "",
+      "image": "./assets/hiremate-dashboard.jpg",
+      "features": [],
       "tertiaryLabel": "",
       "tertiaryUrl": "",
       "quaternaryLabel": "",
-      "quaternaryUrl": "",
-      "features": [],
-      "image": "./assets/hiremate-dashboard.jpg"
+      "quaternaryUrl": ""
     },
     {
       "id": "ai-interview",
@@ -24,7 +24,10 @@
       "english": "Simulated Evaluation System",
       "title": "AI 模拟面试系统",
       "description": "支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。",
-      "features": ["动态多轮对话生成", "实时反馈与评估结果"],
+      "features": [
+        "动态多轮对话生成",
+        "实时反馈与评估结果"
+      ],
       "index": "02 / Core",
       "primaryLabel": "用户端",
       "primaryUrl": "https://interview.zenithy.art",
