@@ -183,6 +183,21 @@
       }
 
 
+      function escapeAttr(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function escapeTextarea(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
       function render() {
         list.innerHTML = "";
         if (!projects.length) {
@@ -197,6 +212,7 @@
           wrapper.setAttribute("draggable", "true");
           wrapper.dataset.index = String(idx);
           const imgSrc = normalizeImage(p.image || "");
+          const featuresText = Array.isArray(p.features) ? p.features.join("\n") : "";
           wrapper.innerHTML = `
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -240,29 +256,29 @@
               <div class="space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="text-sm text-on-surface-variant">项目 ID（勿随意修改）
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="id" data-index="${idx}" value="${p.id || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="id" data-index="${idx}" value="${escapeAttr(p.id)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">卡片序号
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="index" data-index="${idx}" value="${p.index || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="index" data-index="${idx}" value="${escapeAttr(p.index)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">项目名称
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="name" data-index="${idx}" value="${p.name || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="name" data-index="${idx}" value="${escapeAttr(p.name)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">英文副标题
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="english" data-index="${idx}" value="${p.english || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="english" data-index="${idx}" value="${escapeAttr(p.english)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">主标题
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="title" data-index="${idx}" value="${p.title || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="title" data-index="${idx}" value="${escapeAttr(p.title)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">封面图地址
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="image" data-index="${idx}" value="${p.image || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="image" data-index="${idx}" value="${escapeAttr(p.image)}" />
                   </label>
                 </div>
                 <label class="text-sm text-on-surface-variant">项目简介
-                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="description" data-index="${idx}" rows="3">${p.description || ""}</textarea>
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="description" data-index="${idx}" rows="3">${escapeTextarea(p.description)}</textarea>
                 </label>
                 <label class="text-sm text-on-surface-variant">亮点（每行一个）
-                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="features" data-index="${idx}" rows="2">${Array.isArray(p.features) ? p.features.join("\n") : ""}</textarea>
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="features" data-index="${idx}" rows="2">${escapeTextarea(featuresText)}</textarea>
                 </label>
                 <div class="rounded-2xl border border-slate-100 bg-surface-container-lowest p-4">
                   <p class="text-xs font-semibold uppercase tracking-widest text-on-surface-variant">亮点预览</p>
@@ -276,28 +292,28 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label class="text-sm text-on-surface-variant">主按钮文案
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryLabel" data-index="${idx}" value="${p.primaryLabel || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryLabel" data-index="${idx}" value="${escapeAttr(p.primaryLabel)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">主按钮链接
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryUrl" data-index="${idx}" value="${p.primaryUrl || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="primaryUrl" data-index="${idx}" value="${escapeAttr(p.primaryUrl)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">次按钮文案
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryLabel" data-index="${idx}" value="${p.secondaryLabel || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryLabel" data-index="${idx}" value="${escapeAttr(p.secondaryLabel)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">次按钮链接
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryUrl" data-index="${idx}" value="${p.secondaryUrl || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="secondaryUrl" data-index="${idx}" value="${escapeAttr(p.secondaryUrl)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">第三按钮文案
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryLabel" data-index="${idx}" value="${p.tertiaryLabel || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryLabel" data-index="${idx}" value="${escapeAttr(p.tertiaryLabel)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">第三按钮链接
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryUrl" data-index="${idx}" value="${p.tertiaryUrl || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="tertiaryUrl" data-index="${idx}" value="${escapeAttr(p.tertiaryUrl)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">第四按钮文案
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryLabel" data-index="${idx}" value="${p.quaternaryLabel || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryLabel" data-index="${idx}" value="${escapeAttr(p.quaternaryLabel)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">第四按钮链接
-                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryUrl" data-index="${idx}" value="${p.quaternaryUrl || ""}" />
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="quaternaryUrl" data-index="${idx}" value="${escapeAttr(p.quaternaryUrl)}" />
                   </label>
                 </div>
               </div>
@@ -394,7 +410,9 @@
         const card = list.querySelector(`.project-card[data-index="${idx}"]`);
         if (!card || !projects[idx]) return;
         const p = projects[idx];
-        card.querySelectorAll('[data-preview="name"]').forEach((el) => (el.textContent = p.name || ""));
+        card.querySelectorAll('[data-preview="name"]').forEach((el) => {
+          el.innerHTML = p.name || "";
+        });
         card.querySelectorAll('[data-preview="title"]').forEach((el) => (el.textContent = p.title || ""));
         card.querySelectorAll('[data-preview="english"]').forEach((el) => (el.textContent = p.english || ""));
         card.querySelectorAll('[data-preview="index"]').forEach((el) => (el.textContent = p.index || ""));
