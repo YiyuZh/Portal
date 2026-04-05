@@ -1014,7 +1014,13 @@
         function setLink(id, label, url) {
           var el = document.getElementById(id);
           if (!el) return;
-          if (label) el.textContent = label;
+          if (label) {
+            el.textContent = label;
+            el.style.display = "";
+          } else {
+            el.textContent = "";
+            el.style.display = "none";
+          }
           if (url) {
             el.setAttribute("href", url);
           } else {
@@ -1022,7 +1028,7 @@
           }
         }
 
-        fetch("./assets/projects.json")
+        fetch("./assets/projects.json?ts=" + Date.now())
           .then(function (res) {
             return res.json();
           })

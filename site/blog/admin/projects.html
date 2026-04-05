@@ -101,6 +101,15 @@
             <p class="text-on-surface-variant">
               可视化编辑门户首页的项目卡片内容，支持封面预览、按钮配置与排序。
             </p>
+            <div id="errorPanel" class="mt-4 hidden rounded-2xl border border-error/20 bg-red-50/60 p-4 text-sm text-red-700">
+              <div class="flex items-center justify-between">
+                <strong>发布前检查未通过</strong>
+                <button id="errorToggle" class="text-xs text-red-700/80 hover:text-red-900" type="button">
+                  收起
+                </button>
+              </div>
+              <div id="errorList" class="mt-2"></div>
+            </div>
           </div>
           <div class="flex flex-wrap gap-2">
             <button
@@ -150,6 +159,10 @@
       const previewContainer = document.getElementById("previewContainer");
       const closePreview = document.getElementById("closePreview");
       const addProjectBtn = document.getElementById("addProjectBtn");
+      const errorPanel = document.getElementById("errorPanel");
+      const errorList = document.getElementById("errorList");
+      const errorToggle = document.getElementById("errorToggle");
+      let errorsCollapsed = false;
       let projects = [];
 
       const emptyProject = () => ({
@@ -341,12 +354,97 @@
       }
 
       function downloadFile(name, content) {
-        const blob = new Blob([content], { type: "application/json" });
+        const blob = new Blob(["\ufeff" + content], { type: "application/json;charset=utf-8" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = name;
         link.click();
         URL.revokeObjectURL(link.href);
+      }
+
+      function defaultLabelForIndex(index) {
+        const map = ["进入项目", "了解更多", "查看详情", "相关链接"];
+        return map[index] || "查看";
+      }
+
+      function autoFixProjects(list) {
+        list.forEach((p) => {
+          if (!p.primaryLabel) p.primaryLabel = defaultLabelForIndex(0);
+          if (!p.primaryUrl && p.primaryLabel) p.primaryUrl = "#";
+          if (p.secondaryLabel && !p.secondaryUrl) p.secondaryUrl = "#";
+          if (p.tertiaryLabel && !p.tertiaryUrl) p.tertiaryUrl = "#";
+          if (p.quaternaryLabel && !p.quaternaryUrl) p.quaternaryUrl = "#";
+        });
+      }
+
+      function validateProjects(list) {
+        const errors = [];
+        const ids = new Set();
+        list.forEach((p, idx) => {
+          const label = `第 ${idx + 1} 个项目`;
+          if (!p.id) errors.push(`${label}缺少 id`);
+          if (!p.name) errors.push(`${label}缺少项目名称`);
+          if (!p.title) errors.push(`${label}缺少主标题`);
+          if (!p.description) errors.push(`${label}缺少简介`);
+          if (!p.primaryLabel) errors.push(`${label}主按钮文案为空`);
+          if (!p.primaryUrl) errors.push(`${label}主按钮链接为空`);
+          if (p.id) {
+            if (ids.has(p.id)) errors.push(`${label} id 重复：${p.id}`);
+            ids.add(p.id);
+          }
+          const urls = [
+            p.primaryUrl,
+            p.secondaryUrl,
+            p.tertiaryUrl,
+            p.quaternaryUrl,
+          ].filter(Boolean);
+          urls.forEach((url) => {
+            if (!/^https?:\/\//i.test(url)) {
+              errors.push(`${label}链接格式不正确：${url}`);
+            }
+          });
+        });
+        return errors;
+      }
+
+      function renderErrors(errors) {
+        if (!errors.length) {
+          errorPanel.classList.add("hidden");
+          errorList.innerHTML = "";
+          return;
+        }
+        errorPanel.classList.remove("hidden");
+        const listHtml =
+          "<ul class='list-disc pl-5 space-y-1'>" +
+          errors.map((err) => `<li>${err}</li>`).join("") +
+          "</ul>";
+        errorList.innerHTML = errorsCollapsed ? "" : listHtml;
+        errorToggle.textContent = errorsCollapsed ? "展开" : "收起";
+      }
+
+      function clearFieldHighlights() {
+        list.querySelectorAll(".input").forEach((input) => {
+          input.classList.remove("ring-2", "ring-red-300");
+        });
+      }
+
+      function highlightMissingFields() {
+        clearFieldHighlights();
+        projects.forEach((p, idx) => {
+          const card = list.querySelector(`.project-card[data-index="${idx}"]`);
+          if (!card) return;
+          const highlight = (field) => {
+            const input = card.querySelector(`.input[data-field="${field}"]`);
+            if (input) input.classList.add("ring-2", "ring-red-300");
+          };
+          if (!p.id) highlight("id");
+          if (!p.name) highlight("name");
+          if (!p.title) highlight("title");
+          if (!p.description) highlight("description");
+          if (!p.primaryLabel) highlight("primaryLabel");
+          if (!p.primaryUrl) highlight("primaryUrl");
+        });
+      }
       }
 
       function buildPreviewCard(p) {
@@ -449,8 +547,19 @@
       document.getElementById("previewBtn").addEventListener("click", openPreview);
       document.getElementById("publishBtn").addEventListener("click", () => {
         collect();
+        autoFixProjects(projects);
+        render();
+        const errors = validateProjects(projects);
+        renderErrors(errors);
+        highlightMissingFields();
+        if (errors.length) {
+          alert("发布前发现以下问题：\n\n" + errors.join("\n"));
+          return;
+        }
         downloadFile("projects.json", JSON.stringify({ projects }, null, 2));
-        alert("已生成 projects.json。请替换 /portal/site/assets/projects.json 并提交到 Git。");
+        alert(
+          "已生成 projects.json（UTF-8）。请直接替换 /portal/site/assets/projects.json，不要用记事本另存为。"
+        );
       });
       closePreview.addEventListener("click", closeModal);
       addProjectBtn.addEventListener("click", () => {
@@ -479,6 +588,13 @@
           projects[idx][field] = input.value;
         }
         updatePreview(idx);
+        renderErrors(validateProjects(projects));
+        highlightMissingFields();
+      });
+
+      errorToggle.addEventListener("click", () => {
+        errorsCollapsed = !errorsCollapsed;
+        renderErrors(validateProjects(projects));
       });
 
 
