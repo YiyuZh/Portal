@@ -9,8 +9,19 @@
       name="description"
       content="Zenithy 项目展示页，统一进入 HireMate 与 AI-Interview（智面）。"
     />
+    <meta property="og:title" content="Zenithy 项目展示" />
+    <meta
+      property="og:description"
+      content="Zenithy 项目展示页，统一进入 HireMate 与 AI-Interview（智面）。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://zenithy.art/" />
+    <meta property="og:image" content="https://zenithy.art/og-cover.png" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="alternate icon" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./site.webmanifest" />
     <script>
       (function () {
         var managedHashes = {
@@ -290,6 +301,14 @@
         font-weight: 500;
         color: #8b96a4;
         letter-spacing: 0.06em;
+      }
+
+      .hero-actions {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 12px;
+        justify-content: center;
       }
 
       .hero-divider {
@@ -744,10 +763,13 @@
             <p class="brand-name">Zenithy</p>
           </a>
 
+          <!-- 由 site-config.json 驱动：nav.*Label -->
           <nav class="topnav" aria-label="Site navigation">
-            <button class="is-active" type="button" data-scroll-target="projects">Projects</button>
-            <button type="button" data-scroll-target="about">About</button>
-            <a href="https://blog.zenithy.art" target="_blank" rel="noreferrer">Blog</a>
+            <button id="nav-projects" class="is-active" type="button" data-scroll-target="projects">
+              Projects
+            </button>
+            <button id="nav-about" type="button" data-scroll-target="about">About</button>
+            <a id="nav-blog" href="https://blog.zenithy.art" target="_blank" rel="noreferrer">Blog</a>
           </nav>
 
           <div class="topbar-action">
@@ -768,9 +790,19 @@
       <main>
         <section class="hero shell" aria-labelledby="page-title">
           <div class="hero-inner">
-            <div class="eyebrow">Creative Engineering Lab</div>
+            <!-- 由 site-config.json 驱动：hero.eyebrow / hero.title / hero.subtitle -->
+            <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
             <h1 id="page-title">Zenithy 项目展示</h1>
-            <p class="hero-subtitle">统一入口 · 快速访问 · 持续扩展</p>
+            <p id="hero-subtitle" class="hero-subtitle">统一入口 · 快速访问 · 持续扩展</p>
+            <div class="hero-actions">
+              <!-- 由 site-config.json 驱动：hero.primaryCta / hero.secondaryCta -->
+              <a id="hero-cta-primary" class="button button-primary" href="https://hiremate.zenithy.art">
+                进入 HireMate
+              </a>
+              <a id="hero-cta-secondary" class="button button-secondary" href="https://interview.zenithy.art">
+                进入智面
+              </a>
+            </div>
             <div class="hero-divider" aria-hidden="true"></div>
           </div>
         </section>
@@ -908,30 +940,34 @@
                 <span class="brand-mark" aria-hidden="true"></span>
                 <p class="brand-name">Zenithy</p>
               </div>
-              <p>
+              <!-- 由 site-config.json 驱动：footer.summary -->
+              <p id="footer-summary">
                 致力通过 AI 驱动的工具生态，为企业和个人提供更清晰的职业判断、评估流程与连接方式。
               </p>
             </section>
 
             <section class="footer-group">
-              <h4>Connect</h4>
+              <!-- 由 site-config.json 驱动：footer.connectTitle / footer.connectLinks -->
+              <h4 id="footer-connect-title">Connect</h4>
               <div class="footer-links">
-                <a href="https://zenithy.art">zenithy.art</a>
-                <button type="button">LinkedIn</button>
+                <a id="footer-connect-1" href="https://zenithy.art">zenithy.art</a>
+                <a id="footer-connect-2" href="#" rel="noreferrer">LinkedIn</a>
               </div>
             </section>
 
             <section class="footer-group">
-              <h4>Legal</h4>
+              <!-- 由 site-config.json 驱动：footer.legalTitle / footer.legalLinks -->
+              <h4 id="footer-legal-title">Legal</h4>
               <div class="footer-links">
-                <button type="button">Terms</button>
-                <button type="button">Privacy</button>
+                <a id="footer-legal-1" href="#" rel="noreferrer">Terms</a>
+                <a id="footer-legal-2" href="#" rel="noreferrer">Privacy</a>
               </div>
             </section>
           </div>
 
           <div class="footer-bottom">
-            <div class="footer-meta">© 2026 Zenithy Archive. All rights reserved.</div>
+            <!-- 由 site-config.json 驱动：footer.meta -->
+            <div id="footer-meta" class="footer-meta">© 2026 Zenithy Archive. All rights reserved.</div>
             <div class="status">
               <span class="status-dot" aria-hidden="true"></span>
               <span>Systems Online</span>
@@ -1027,6 +1063,50 @@
             el.setAttribute("href", "#");
           }
         }
+
+        function applySiteConfig(config) {
+          if (!config) return;
+          setText("hero-eyebrow", config.hero && config.hero.eyebrow);
+          setText("page-title", config.hero && config.hero.title);
+          setText("hero-subtitle", config.hero && config.hero.subtitle);
+          if (config.hero && config.hero.primaryCta) {
+            setLink("hero-cta-primary", config.hero.primaryCta.label, config.hero.primaryCta.url);
+          }
+          if (config.hero && config.hero.secondaryCta) {
+            setLink("hero-cta-secondary", config.hero.secondaryCta.label, config.hero.secondaryCta.url);
+          }
+
+          if (config.nav) {
+            setText("nav-projects", config.nav.projectsLabel);
+            setText("nav-about", config.nav.aboutLabel);
+            setText("nav-blog", config.nav.blogLabel);
+          }
+
+          if (config.footer) {
+            setText("footer-summary", config.footer.summary);
+            setText("footer-connect-title", config.footer.connectTitle);
+            setText("footer-legal-title", config.footer.legalTitle);
+            setText("footer-meta", config.footer.meta);
+
+            if (config.footer.connectLinks) {
+              setLink("footer-connect-1", config.footer.connectLinks[0] && config.footer.connectLinks[0].label, config.footer.connectLinks[0] && config.footer.connectLinks[0].url);
+              setLink("footer-connect-2", config.footer.connectLinks[1] && config.footer.connectLinks[1].label, config.footer.connectLinks[1] && config.footer.connectLinks[1].url);
+            }
+            if (config.footer.legalLinks) {
+              setLink("footer-legal-1", config.footer.legalLinks[0] && config.footer.legalLinks[0].label, config.footer.legalLinks[0] && config.footer.legalLinks[0].url);
+              setLink("footer-legal-2", config.footer.legalLinks[1] && config.footer.legalLinks[1].label, config.footer.legalLinks[1] && config.footer.legalLinks[1].url);
+            }
+          }
+        }
+
+        fetch("./assets/site-config.json?ts=" + Date.now())
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (data) {
+            applySiteConfig(data || {});
+          })
+          .catch(function () {});
 
         fetch("./assets/projects.json?ts=" + Date.now())
           .then(function (res) {

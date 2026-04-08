@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "eyebrow": "Creative Engineering Lab",
+    "title": "Zenithy 项目展示",
+    "subtitle": "统一入口 · 快速访问 · 持续扩展",
+    "primaryCta": {
+      "label": "进入 HireMate",
+      "url": "https://hiremate.zenithy.art"
+    },
+    "secondaryCta": {
+      "label": "进入智面",
+      "url": "https://interview.zenithy.art"
+    }
+  },
+  "nav": {
+    "projectsLabel": "Projects",
+    "aboutLabel": "About",
+    "blogLabel": "Blog"
+  },
+  "footer": {
+    "summary": "致力通过 AI 驱动的工具生态，为企业和个人提供更清晰的职业判断、评估流程与连接方式。",
+    "connectTitle": "Connect",
+    "legalTitle": "Legal",
+    "meta": "© 2026 Zenithy Archive. All rights reserved.",
+    "connectLinks": [
+      {
+        "label": "zenithy.art",
+        "url": "https://zenithy.art"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "#"
+      }
+    ],
+    "legalLinks": [
+      {
+        "label": "Terms",
+        "url": "#"
+      },
+      {
+        "label": "Privacy",
+        "url": "#"
+      }
+    ]
+  }
+}
