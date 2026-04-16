@@ -5,16 +5,7 @@
     "titleLeading": "HELLO, I'M",
     "titleName": "Zenithy",
     "revealTitle": "你好，我是詹已誉",
-    "metaLine": "AI Process Manager / 18岁 / 广东深圳",
-    "subtitle": "统一入口 · 快速访问 · 持续扩展",
-    "primaryCta": {
-      "label": "进入 HireMate",
-      "url": "https://hiremate.zenithy.art"
-    },
-    "secondaryCta": {
-      "label": "进入智面",
-      "url": "https://interview.zenithy.art"
-    },
+    "metaLine": "AI Process Manger / 18岁 / 广东深圳",
     "tilt": {
       "enabled": true,
       "maxRotate": 8

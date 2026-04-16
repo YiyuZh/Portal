@@ -147,6 +147,18 @@ function checkHomepageStructure() {
   ["hero-title-leading", "hero-title-name", "hero-reveal-title", "hero-meta-line"].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[hero] missing #${id}`);
   });
+  if (!html.includes("hero-interaction-plane") || !html.includes("data-hero-plane")) {
+    errors.push("[hero] missing large interaction plane (.hero-interaction-plane / data-hero-plane)");
+  }
+  if (!html.includes('class="brand-mark" src="./favicon.svg"')) {
+    errors.push("[brand] homepage brand mark must reuse ./favicon.svg");
+  }
+  if (html.includes("hero-subtitle") || html.includes("hero-actions") || html.includes("hero-cta-primary") || html.includes("hero-cta-secondary")) {
+    errors.push("[hero] legacy subtitle/actions/CTA should not be rendered in Hero");
+  }
+  if (html.includes("统一入口 · 快速访问 · 持续扩展")) {
+    errors.push("[hero] legacy portal subtitle is still present");
+  }
 
   if (!html.includes('data-scroll-target="projects"') || !html.includes("scrollIntoView")) {
     errors.push("[scroll] controlled scroll logic is missing");
@@ -187,8 +199,14 @@ function checkHomepageMotion() {
   }
   if (!heroJs.includes("requestAnimationFrame")) errors.push("[hero] requestAnimationFrame motion loop is missing");
   if (!heroJs.includes("prefers-reduced-motion")) errors.push("[hero] reduced-motion guard is missing");
+  if (!heroJs.includes("data-hero-plane") || !heroJs.includes("plane.getBoundingClientRect")) {
+    errors.push("[hero] large interaction plane pointer logic is missing");
+  }
   if (!heroJs.includes("data-tilt-max") || !heroJs.includes("data-orb-follow-strength")) {
     errors.push("[hero] tilt/orb config reading is missing");
+  }
+  if (!css.includes("clip-path: circle") || !css.includes(".hero-interaction-plane")) {
+    errors.push("[hero] Chinese reveal circle mask or interaction plane CSS is missing");
   }
   if (!css.includes("--card-tilt-x") || !css.includes("--card-tilt-y") || !css.includes("[data-tilt-layer]")) {
     errors.push("[projects tilt] project card tilt CSS is missing");
@@ -208,8 +226,14 @@ function checkHomepageMotion() {
   if (!css.includes("--skill-tilt-x") || !css.includes(".skill-highlight") || !css.includes("skillHeadingFlow")) {
     errors.push("[skills motion] skill card motion CSS is missing");
   }
+  if (!css.includes("skill-card__progress") || !css.includes("is-skills-active")) {
+    errors.push("[skills motion] progress line or section active state is missing");
+  }
   if (!skillsJs.includes("IntersectionObserver") || !skillsJs.includes("requestAnimationFrame") || !skillsJs.includes("skill-metric-value")) {
     errors.push("[skills motion] skill activation or metric animation is missing");
+  }
+  if (!skillsJs.includes("activateWithDelay") || !skillsJs.includes("is-skills-active")) {
+    errors.push("[skills motion] staggered section activation is missing");
   }
   if (!skillsJs.includes("prefers-reduced-motion") || !skillsJs.includes("(hover: hover) and (pointer: fine)")) {
     errors.push("[skills motion] reduced-motion or desktop-only guard is missing");
@@ -217,8 +241,11 @@ function checkHomepageMotion() {
   if (!skillsJs.includes("ZenithySkills") || !skillsJs.includes("MutationObserver")) {
     errors.push("[skills motion] dynamic skills mounting is missing");
   }
-  if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card")) {
+  if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-card__progress")) {
     errors.push("[skills motion] skills renderer hooks are missing");
+  }
+  if (!indexHtml.includes('card.className = "skill-card skill-card--"')) {
+    errors.push("[skills motion] skills must use the dedicated skill-card renderer instead of the generic insight-card model");
   }
   if (!collabJs.includes("fetch(apiBase() + \"/messages\"") || !collabJs.includes("isEmail")) {
     errors.push("[collab api] POST /api/messages flow or validation is missing");
@@ -273,8 +300,9 @@ function checkSiteConfig() {
   const data = readJson(targets.siteConfig);
   if (!data) return;
 
-  checkUrl(data.hero && data.hero.primaryCta && data.hero.primaryCta.url, "siteConfig.hero.primaryCta.url");
-  checkUrl(data.hero && data.hero.secondaryCta && data.hero.secondaryCta.url, "siteConfig.hero.secondaryCta.url");
+  if (data.hero && (data.hero.subtitle || data.hero.primaryCta || data.hero.secondaryCta)) {
+    errors.push("[hero config] Hero should not define subtitle/primaryCta/secondaryCta; project CTAs live in Projects section");
+  }
 
   ["titleLeading", "titleName", "revealTitle", "metaLine"].forEach((field) => {
     if (!data.hero || !data.hero[field]) errors.push(`[hero config] missing siteConfig.hero.${field}`);

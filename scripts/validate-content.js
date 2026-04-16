@@ -231,12 +231,9 @@ function validateSiteConfig() {
   requireText(data.hero && data.hero.titleName, "siteConfig.hero.titleName");
   requireText(data.hero && data.hero.revealTitle, "siteConfig.hero.revealTitle");
   requireText(data.hero && data.hero.metaLine, "siteConfig.hero.metaLine");
-  checkUrl(data.hero && data.hero.primaryCta && data.hero.primaryCta.url, "siteConfig.hero.primaryCta.url", {
-    required: true,
-  });
-  checkUrl(data.hero && data.hero.secondaryCta && data.hero.secondaryCta.url, "siteConfig.hero.secondaryCta.url", {
-    required: true,
-  });
+  if (data.hero && (data.hero.subtitle || data.hero.primaryCta || data.hero.secondaryCta)) {
+    errors.push("[hero] subtitle/primaryCta/secondaryCta should not be configured; keep project entries in Projects section");
+  }
 
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.enabled !== "boolean") {
     errors.push("[hero] tilt.enabled must be boolean");

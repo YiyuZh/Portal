@@ -99,7 +99,9 @@ body::before {
 .brand-mark {
   width: 20px;
   height: 20px;
-  background: var(--surface-ink);
+  border-radius: 7px;
+  background: transparent;
+  object-fit: contain;
 }
 
 .brand-name {
@@ -139,17 +141,28 @@ body::before {
 .hero {
   min-height: clamp(700px, 92vh, 920px);
   padding-top: 156px;
-  --hero-orb-x: 66%;
-  --hero-orb-y: 35%;
-  --hero-mask-x: 66%;
-  --hero-mask-y: 35%;
-  --hero-mask-size: clamp(150px, 20vw, 280px);
+  --hero-orb-x: 72%;
+  --hero-orb-y: 28%;
+  --hero-mask-x: 72%;
+  --hero-mask-y: 28%;
+  --hero-mask-size: clamp(86px, 11vw, 164px);
+  --hero-reveal-size: clamp(132px, 16vw, 248px);
   --hero-tilt-x: 0deg;
   --hero-tilt-y: 0deg;
 }
 
 .hero-inner {
   position: relative;
+  isolation: isolate;
+}
+
+.hero-interaction-plane {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  min-height: clamp(430px, 56vh, 560px);
+  padding: clamp(18px, 4vw, 42px) 0 clamp(10px, 2.2vw, 24px);
+  perspective: 1200px;
   isolation: isolate;
 }
 
@@ -173,6 +186,7 @@ body::before {
   place-items: center;
   width: 100%;
   max-width: min(1180px, 100%);
+  margin-inline: auto;
   min-height: clamp(170px, 19vw, 292px);
   opacity: 0;
   transform: translateY(22px) scale(0.985);
@@ -195,7 +209,7 @@ body::before {
 
 .hero-title-base {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -208,7 +222,7 @@ body::before {
     translateZ(0);
   transform-style: preserve-3d;
   will-change: transform;
-  transition: opacity 0.42s ease;
+  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-title-leading {
@@ -224,10 +238,10 @@ body::before {
 
 .hero-title-reveal {
   position: relative;
-  z-index: 4;
+  z-index: 5;
   display: grid;
   place-items: center;
-  color: var(--text-strong);
+  color: #fff;
   pointer-events: none;
   opacity: 0;
   transform:
@@ -236,7 +250,7 @@ body::before {
     rotateY(var(--hero-tilt-y))
     translateY(18px)
     translateZ(56px);
-  clip-path: inset(0 0 100% 0);
+  clip-path: circle(0 at var(--hero-mask-x) var(--hero-mask-y));
   will-change: clip-path, opacity, transform;
   transition:
     opacity 0.42s ease,
@@ -254,10 +268,11 @@ body::before {
   letter-spacing: -0.08em;
   line-height: 0.98;
   text-shadow: 0 18px 60px rgba(13, 17, 16, 0.12);
+  filter: drop-shadow(0 16px 34px rgba(0, 0, 0, 0.34));
 }
 
 .hero.is-hero-active .hero-title-reveal,
-.hero-title-system:focus-visible .hero-title-reveal {
+.hero-interaction-plane:focus-within .hero-title-reveal {
   opacity: 1;
   transform:
     perspective(1100px)
@@ -265,11 +280,7 @@ body::before {
     rotateY(var(--hero-tilt-y))
     translateY(0)
     translateZ(68px);
-  clip-path: inset(0 0 0 0);
-}
-
-.hero.is-hero-active .hero-title-base {
-  opacity: 0.42;
+  clip-path: circle(var(--hero-reveal-size) at var(--hero-mask-x) var(--hero-mask-y));
 }
 
 .hero-title-reveal::after {
@@ -284,7 +295,7 @@ body::before {
 
 .hero-orb {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
   left: var(--hero-orb-x);
   top: var(--hero-orb-y);
   width: var(--hero-mask-size);
@@ -302,6 +313,7 @@ body::before {
   pointer-events: none;
   will-change: left, top, transform;
   animation: heroOrbEnter 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.22s forwards;
+  mix-blend-mode: normal;
 }
 
 .hero-orb::after {
@@ -313,9 +325,11 @@ body::before {
   opacity: 0.7;
 }
 
-.hero-subtitle,
+.hero.is-orb-disabled .hero-orb {
+  display: none;
+}
+
 .hero-meta-line,
-.hero-actions,
 .hero-divider,
 .eyebrow {
   opacity: 0;
@@ -327,13 +341,6 @@ body::before {
   animation-delay: 0.02s;
 }
 
-.hero-subtitle {
-  color: var(--text-muted);
-  font-size: clamp(14px, 1.2vw, 17px);
-  letter-spacing: 0.08em;
-  animation-delay: 0.48s;
-}
-
 .hero-meta-line {
   margin: clamp(24px, 3vw, 38px) 0 0;
   color: rgba(104, 111, 108, 0.82);
@@ -341,10 +348,6 @@ body::before {
   font-weight: 700;
   letter-spacing: 0.1em;
   animation-delay: 0.34s;
-}
-
-.hero-actions {
-  animation-delay: 0.6s;
 }
 
 .hero-divider {
@@ -420,6 +423,7 @@ body::before {
 }
 
 .showcase-card,
+.skill-card,
 .insight-card,
 .about-card,
 .contact-card {
@@ -445,6 +449,7 @@ body::before {
 }
 
 .showcase-card::before,
+.skill-card::before,
 .insight-card::before,
 .about-card::before,
 .contact-card::before {
@@ -522,6 +527,7 @@ body::before {
 }
 
 .showcase-card:hover,
+.skill-card:hover,
 .insight-card:hover {
   transform: translateY(-5px);
 }
@@ -555,6 +561,7 @@ body::before {
 }
 
 .showcase-card.is-reveal:not(.is-visible),
+.skill-card.is-reveal:not(.is-visible),
 .insight-card.is-reveal:not(.is-visible) {
   transform: translateY(34px) scale(0.985);
 }
@@ -638,6 +645,7 @@ body::before {
 .card-body p,
 .project-summary-long,
 .feature-list li,
+.skill-card p,
 .insight-card p,
 .about-card p,
 .contact-card p {
@@ -667,12 +675,15 @@ body::before {
   filter: saturate(0.82) contrast(1.02);
 }
 
+.skill-card,
 .insight-card {
   --skill-tilt-x: 0deg;
   --skill-tilt-y: 0deg;
   --skill-glow-x: 50%;
   --skill-glow-y: 50%;
   min-height: 280px;
+  padding: 30px;
+  border-radius: var(--radius-card);
 }
 
 .skill-card {
@@ -681,6 +692,7 @@ body::before {
     rotateX(var(--skill-tilt-x))
     rotateY(var(--skill-tilt-y));
   transform-style: preserve-3d;
+  overflow: hidden;
   transition:
     transform 0.56s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.36s ease,
@@ -710,6 +722,10 @@ body::before {
   border-color: rgba(13, 17, 16, 0.12);
   box-shadow: 0 28px 70px rgba(13, 17, 16, 0.12);
   transition-duration: 0.08s;
+}
+
+.skill-card.is-skill-active {
+  box-shadow: 0 18px 54px rgba(13, 17, 16, 0.075);
 }
 
 .skill-card:hover {
@@ -753,6 +769,11 @@ body::before {
     linear-gradient(90deg, rgba(13, 17, 16, 0.12), rgba(13, 17, 16, 0.22));
   background-size: 180% 100%, 100% 100%;
   animation: skillHeadingFlow 3.8s ease-in-out infinite;
+}
+
+#skills.is-skills-active .section-heading::after {
+  width: min(320px, 62vw);
+  background-size: 220% 100%, 100% 100%;
 }
 
 .skill-card__ambient {
@@ -799,6 +820,16 @@ body::before {
   justify-items: end;
   gap: 2px;
   color: var(--text-strong);
+  opacity: 0.38;
+  transform: translateY(10px);
+  transition:
+    opacity 0.58s ease,
+    transform 0.58s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.skill-card.is-skill-active .skill-metric {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .skill-metric strong {
@@ -815,6 +846,32 @@ body::before {
   text-transform: uppercase;
 }
 
+.skill-card__progress {
+  height: 3px;
+  margin: -10px 0 28px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(13, 17, 16, 0.055);
+}
+
+.skill-card__progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(13, 17, 16, 0.15), rgba(13, 17, 16, 0.9), rgba(13, 17, 16, 0.22));
+  transform: scaleX(0.06);
+  transform-origin: left center;
+  transition: transform 1.05s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(var(--skill-index, 0) * 110ms + 120ms);
+}
+
+.skill-card.is-skill-active .skill-card__progress span {
+  transform: scaleX(1);
+}
+
+.skill-card h3,
 .insight-card h3 {
   color: var(--text-strong);
   font-size: clamp(24px, 2.6vw, 32px);
@@ -1016,6 +1073,10 @@ body::before {
     padding-top: 124px;
   }
 
+  .hero-interaction-plane {
+    min-height: 390px;
+  }
+
   .hero-title-system {
     min-height: clamp(124px, 32vw, 220px);
   }
@@ -1033,6 +1094,7 @@ body::before {
   }
 
   .showcase-card,
+  .skill-card,
   .insight-card,
   .about-card,
   .contact-card,
@@ -1057,7 +1119,8 @@ body::before {
 
   .hero {
     min-height: 610px;
-    --hero-mask-size: clamp(116px, 34vw, 164px);
+    --hero-mask-size: clamp(82px, 24vw, 128px);
+    --hero-reveal-size: clamp(120px, 34vw, 180px);
   }
 
   .button {
@@ -1079,9 +1142,7 @@ body::before {
   }
 
   .hero-title-system,
-  .hero-subtitle,
   .hero-meta-line,
-  .hero-actions,
   .hero-divider,
   .eyebrow {
     animation: none;
@@ -1101,6 +1162,7 @@ body::before {
 
   .button,
   .showcase-card,
+  .skill-card,
   .insight-card,
   .about-card,
   .contact-card,
@@ -1110,6 +1172,7 @@ body::before {
 
   .button:hover,
   .showcase-card:hover,
+  .skill-card:hover,
   .insight-card:hover,
   .action-circle:hover {
     transform: none;
@@ -1137,6 +1200,13 @@ body::before {
     transition: none;
   }
 
+  .skill-metric,
+  .skill-card__progress span {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
   .collab-form input,
   .collab-form textarea {
     transition: none;
@@ -1152,6 +1222,7 @@ body::before {
   .is-reveal,
   .is-reveal:not(.is-visible),
   .showcase-card.is-reveal:not(.is-visible),
+  .skill-card.is-reveal:not(.is-visible),
   .insight-card.is-reveal:not(.is-visible) {
     opacity: 1;
     transform: none;
@@ -1200,7 +1271,7 @@ body::before {
     transform: translate(-50%, -50%) scale(0.52);
   }
   to {
-    opacity: 1;
+    opacity: 0.9;
     transform: translate(-50%, -50%) scale(1);
   }
 }

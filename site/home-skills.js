@@ -3,7 +3,8 @@
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   var mounted = new WeakSet();
   var animatedMetrics = new WeakSet();
-  var activeObserver = null;
+  var sectionActive = false;
+  var sectionObserver = null;
 
   function toNumber(value, fallback) {
     var number = Number(value);
@@ -41,6 +42,21 @@
     if (!card) return;
     card.classList.add("is-skill-active");
     animateMetric(card.querySelector(".skill-metric-value"));
+  }
+
+  function activateWithDelay(card) {
+    var index = toNumber(card.getAttribute("data-skill-index"), 0);
+    window.setTimeout(function () {
+      activate(card);
+    }, index * 140);
+  }
+
+  function activateList(root) {
+    var section = root || document.getElementById("skills") || document;
+    if (section.classList) {
+      section.classList.add("is-skills-active");
+    }
+    Array.prototype.slice.call(section.querySelectorAll("[data-skill-card]")).forEach(activateWithDelay);
   }
 
   function mountTilt(card) {
@@ -128,18 +144,9 @@
       return;
     }
 
-    if (!activeObserver) {
-      activeObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            activate(entry.target);
-            activeObserver.unobserve(entry.target);
-          }
-        });
-      }, { rootMargin: "0px 0px -18% 0px", threshold: 0.2 });
+    if (sectionActive) {
+      activateWithDelay(card);
     }
-
-    activeObserver.observe(card);
   }
 
   function refresh(root) {
@@ -152,10 +159,31 @@
 
   window.ZenithySkills = {
     refresh: refresh,
+    activate: function () {
+      sectionActive = true;
+      activateList(document.getElementById("skills"));
+    },
   };
 
   function boot() {
+    var section = document.getElementById("skills");
     refresh(document);
+    if (section && !reducedMotion.matches && "IntersectionObserver" in window) {
+      sectionObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            sectionActive = true;
+            activateList(section);
+            sectionObserver.unobserve(section);
+          }
+        });
+      }, { rootMargin: "0px 0px -24% 0px", threshold: 0.18 });
+      sectionObserver.observe(section);
+    } else {
+      sectionActive = true;
+      activateList(section);
+    }
+
     var list = document.getElementById("skills-list");
     if (list && "MutationObserver" in window) {
       new MutationObserver(function (mutations) {

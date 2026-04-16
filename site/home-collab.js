@@ -100,7 +100,7 @@
       })
       .catch(function () {
         downloadJson(entry.id + ".json", entry);
-        setFeedback("API 暂时不可用，已生成本地 JSON 备份。请稍后重试或在后台导入。", "error");
+        setFeedback("当前已生成本地备份，请稍后重试或后台导入。", "info");
       });
   }
 

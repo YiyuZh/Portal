@@ -1,15 +1,16 @@
 // Zenithy Hero route B animation.
-// Text stays data-driven in site-config.json; this file only drives motion.
+// site-config.json owns the text; this file only controls the interaction plane.
 (function () {
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
   var coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)");
   var mobileViewport = window.matchMedia && window.matchMedia("(max-width: 820px)");
   var hero = document.querySelector(".hero");
+  var plane = document.querySelector("[data-hero-plane]");
   var stage = document.querySelector("[data-hero-stage]");
   var title = document.getElementById("page-title");
   var reveal = document.getElementById("hero-title-reveal");
 
-  if (!hero || !stage || !title || !reveal) {
+  if (!hero || !plane || !stage || !title || !reveal) {
     return;
   }
 
@@ -50,6 +51,8 @@
     });
   }
 
+  hero.classList.add("is-hero-ready");
+
   if (shouldReduceMotion()) {
     hero.style.setProperty("--hero-tilt-x", "0deg");
     hero.style.setProperty("--hero-tilt-y", "0deg");
@@ -57,8 +60,11 @@
   }
 
   var active = false;
-  var pointer = { x: 0.66, y: 0.35 };
-  var orb = { x: 0.66, y: 0.35 };
+  var bounds = null;
+  var stageBounds = null;
+  var pointer = { x: 0.72, y: 0.28 };
+  var focus = { x: 0.72, y: 0.28 };
+  var orb = { x: 0.72, y: 0.28 };
   var tilt = { x: 0, y: 0 };
 
   function setActive(next) {
@@ -66,29 +72,55 @@
     hero.classList.toggle("is-hero-active", next);
   }
 
-  function updatePointer(event) {
-    var rect = stage.getBoundingClientRect();
-    if (!rect.width || !rect.height) return;
-
-    pointer.x = clamp((event.clientX - rect.left) / rect.width, 0.08, 0.92);
-    pointer.y = clamp((event.clientY - rect.top) / rect.height, 0.12, 0.86);
+  function refreshBounds() {
+    bounds = plane.getBoundingClientRect();
+    stageBounds = stage.getBoundingClientRect();
   }
 
-  stage.addEventListener(
+  function updatePointer(event) {
+    if (!bounds) refreshBounds();
+    if (!bounds.width || !bounds.height) return;
+
+    var rawX = (event.clientX - bounds.left) / bounds.width;
+    var rawY = (event.clientY - bounds.top) / bounds.height;
+
+    // The plane is intentionally taller than the title. Clamp the focus so the
+    // orb reveals the headline instead of sitting on top of the center text.
+    pointer.x = clamp(rawX, 0.12, 0.9);
+    pointer.y = clamp(rawY, 0.1, 0.68);
+
+    if (stageBounds && stageBounds.width && stageBounds.height) {
+      focus.x = clamp((event.clientX - stageBounds.left) / stageBounds.width, 0.08, 0.92);
+      focus.y = clamp((event.clientY - stageBounds.top) / stageBounds.height, 0.06, 0.78);
+    }
+  }
+
+  plane.addEventListener(
     "pointerenter",
     function (event) {
+      refreshBounds();
       setActive(true);
       updatePointer(event);
     },
     { passive: true }
   );
 
-  stage.addEventListener("pointermove", updatePointer, { passive: true });
+  plane.addEventListener("pointermove", updatePointer, { passive: true });
 
-  stage.addEventListener(
+  plane.addEventListener(
     "pointerleave",
     function () {
       setActive(false);
+      bounds = null;
+    },
+    { passive: true }
+  );
+
+  plane.addEventListener(
+    "pointercancel",
+    function () {
+      setActive(false);
+      bounds = null;
     },
     { passive: true }
   );
@@ -101,24 +133,32 @@
     setActive(false);
   });
 
+  window.addEventListener(
+    "resize",
+    function () {
+      bounds = null;
+    },
+    { passive: true }
+  );
+
   function tick(time) {
     var tiltEnabled = boolAttr("data-tilt-enabled", true);
     var orbEnabled = boolAttr("data-orb-enabled", true);
     var driftEnabled = boolAttr("data-orb-drift", true);
     var maxRotate = numberAttr("data-tilt-max", 8);
-    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.08), 0.02, 0.18);
+    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.08), 0.03, 0.2);
 
     hero.classList.toggle("is-orb-disabled", !orbEnabled);
 
-    var driftX = 0.66;
-    var driftY = 0.35;
+    var driftX = 0.72;
+    var driftY = 0.28;
     if (driftEnabled) {
-      driftX += Math.sin(time / 2800) * 0.055 + Math.sin(time / 5200) * 0.025;
-      driftY += Math.cos(time / 3300) * 0.045;
+      driftX += Math.sin(time / 3000) * 0.045 + Math.sin(time / 5600) * 0.018;
+      driftY += Math.cos(time / 3600) * 0.038;
     }
 
-    var targetX = active ? pointer.x : driftX;
-    var targetY = active ? pointer.y : driftY;
+    var targetX = active ? focus.x : driftX;
+    var targetY = active ? focus.y : driftY;
 
     orb.x += (targetX - orb.x) * followStrength;
     orb.y += (targetY - orb.y) * followStrength;
@@ -126,8 +166,8 @@
     var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate : 0;
     var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate : 0;
 
-    tilt.x += (targetTiltX - tilt.x) * 0.1;
-    tilt.y += (targetTiltY - tilt.y) * 0.1;
+    tilt.x += (targetTiltX - tilt.x) * 0.12;
+    tilt.y += (targetTiltY - tilt.y) * 0.12;
 
     var x = (orb.x * 100).toFixed(2) + "%";
     var y = (orb.y * 100).toFixed(2) + "%";

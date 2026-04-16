@@ -155,31 +155,10 @@
       }
 
       .brand-mark {
-        position: relative;
         width: 22px;
         height: 22px;
-        border-radius: 50%;
-        background: var(--text-strong);
-      }
-
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 5px;
-        border-radius: 50%;
-        background: #fff;
-      }
-
-      .brand-mark::before {
-        content: "";
-        position: absolute;
-        top: 8px;
-        left: 8px;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--text-strong);
-        z-index: 1;
+        border-radius: 7px;
+        object-fit: contain;
       }
 
       .brand-name {
@@ -296,22 +275,6 @@
         line-height: 1.02;
         letter-spacing: -0.05em;
         color: var(--text-strong);
-      }
-
-      .hero-subtitle {
-        margin: 0;
-        font-size: clamp(16px, 1.9vw, 20px);
-        font-weight: 500;
-        color: #8b96a4;
-        letter-spacing: 0.06em;
-      }
-
-      .hero-actions {
-        display: inline-flex;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-top: 12px;
-        justify-content: center;
       }
 
       .hero-divider {
@@ -877,11 +840,6 @@
           padding-bottom: 74px;
         }
 
-        .hero-subtitle {
-          font-size: 14px;
-          line-height: 1.8;
-        }
-
         .showcase {
           padding-bottom: 92px;
         }
@@ -916,7 +874,7 @@
       <header class="topbar-wrap">
         <div class="shell topbar">
           <a class="brand" href="https://zenithy.art">
-            <span class="brand-mark" aria-hidden="true"></span>
+            <img class="brand-mark" src="./favicon.svg" alt="" aria-hidden="true" />
             <p class="brand-name">Zenithy</p>
           </a>
 
@@ -950,37 +908,29 @@
         <section class="hero shell" aria-labelledby="page-title">
           <div class="hero-inner">
             <!-- 由 site-config.json 驱动：hero.eyebrow / hero.titleLeading / hero.titleName / hero.revealTitle / hero.metaLine -->
-            <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
-            <div
-              class="hero-title-system"
-              data-hero-stage
-              data-tilt-enabled="true"
-              data-tilt-max="8"
-              data-orb-enabled="true"
-              data-orb-follow-strength="0.08"
-              data-orb-drift="true"
-              tabindex="0"
-              aria-label="HELLO, I'M Zenithy"
-            >
-              <h1 id="page-title" class="hero-title hero-title-base">
-                <span id="hero-title-leading" class="hero-title-leading">HELLO, I'M</span>
-                <span id="hero-title-name" class="hero-title-name">Zenithy</span>
-              </h1>
-              <div class="hero-orb" aria-hidden="true"></div>
-              <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
-                <span id="hero-reveal-title">你好，我是詹已誉</span>
+            <div class="hero-interaction-plane" data-hero-plane>
+              <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
+              <div
+                class="hero-title-system"
+                data-hero-stage
+                data-tilt-enabled="true"
+                data-tilt-max="8"
+                data-orb-enabled="true"
+                data-orb-follow-strength="0.08"
+                data-orb-drift="true"
+                tabindex="0"
+                aria-label="HELLO, I'M Zenithy"
+              >
+                <h1 id="page-title" class="hero-title hero-title-base">
+                  <span id="hero-title-leading" class="hero-title-leading">HELLO, I'M</span>
+                  <span id="hero-title-name" class="hero-title-name">Zenithy</span>
+                </h1>
+                <div class="hero-orb" aria-hidden="true"></div>
+                <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
+                  <span id="hero-reveal-title">你好，我是詹已誉</span>
+                </div>
               </div>
-            </div>
-            <p id="hero-meta-line" class="hero-meta-line">AI Process Manager / 18岁 / 广东深圳</p>
-            <p id="hero-subtitle" class="hero-subtitle">统一入口 · 快速访问 · 持续扩展</p>
-            <div class="hero-actions">
-              <!-- 由 site-config.json 驱动：hero.primaryCta / hero.secondaryCta -->
-              <a id="hero-cta-primary" class="button button-primary" href="https://zenithy.art">
-                查看项目
-              </a>
-              <a id="hero-cta-secondary" class="button button-secondary" href="https://blog.zenithy.art">
-                阅读 Blog
-              </a>
+              <p id="hero-meta-line" class="hero-meta-line">AI Process Manger / 18岁 / 广东深圳</p>
             </div>
             <div class="hero-divider" aria-hidden="true"></div>
           </div>
@@ -1049,8 +999,8 @@
               <p class="section-kicker">Message</p>
               <h3>留下一个可以继续推进的想法</h3>
               <p>
-                当前已接入真实留言 API：提交后会保存到服务器 SQLite，并可在博客后台留言管理页查看、
-                标记状态或删除。若 API 暂时不可用，表单会生成本地 JSON 备份。
+                提交后会优先保存到服务器留言系统；如果网络暂时不可用，页面会生成本地备份，
+                后续可重试或导入后台。
               </p>
             </div>
             <form id="collab-form" class="collab-form" novalidate>
@@ -1117,7 +1067,7 @@
           <div class="footer-grid">
             <section class="footer-copy">
               <div class="footer-brand">
-                <span class="brand-mark" aria-hidden="true"></span>
+                <img class="brand-mark" src="./favicon.svg" alt="" aria-hidden="true" />
                 <p class="brand-name">Zenithy</p>
               </div>
               <!-- 由 site-config.json 驱动：footer.summary -->
@@ -1356,7 +1306,6 @@
           setText("hero-title-name", name);
           setText("hero-reveal-title", hero.revealTitle);
           setText("hero-meta-line", hero.metaLine);
-          setText("hero-subtitle", hero.subtitle);
 
           if (stage) {
             stage.setAttribute("aria-label", (document.getElementById("page-title").textContent || "").replace(/\s+/g, " ").trim());
@@ -1509,10 +1458,11 @@
             var metric = Number(item.metric);
             var hasMetric = Number.isFinite(metric);
             var highlights = Array.isArray(item.highlights) ? item.highlights : [];
-            card.className = "insight-card skill-card skill-card--" + escapeHtml(variant);
+            card.className = "skill-card skill-card--" + escapeHtml(variant);
             card.setAttribute("data-skill-card", "true");
             card.setAttribute("data-skill-index", String(index));
             card.style.setProperty("--reveal-delay", index * 90 + "ms");
+            card.style.setProperty("--skill-index", index);
 
             card.innerHTML = [
               '<div class="skill-card__ambient" aria-hidden="true"></div>',
@@ -1520,6 +1470,7 @@
                 '<span class="skill-label">' + escapeHtml(item.label || "Focus") + '</span>',
                 hasMetric ? '<div class="skill-metric" aria-label="' + escapeHtml((item.metricLabel || "Metric") + " " + metric + (item.metricSuffix || "")) + '"><strong class="skill-metric-value" data-target="' + escapeHtml(metric) + '" data-suffix="' + escapeHtml(item.metricSuffix || "") + '">0</strong><small>' + escapeHtml(item.metricLabel || "Signal") + '</small></div>' : "",
               '</div>',
+              '<div class="skill-card__progress" aria-hidden="true"><span></span></div>',
               '<h3 data-skill-layer="8">' + escapeHtml(item.title || "未命名模块") + '</h3>',
               '<p data-skill-layer="5">' + escapeHtml(item.description || "") + '</p>',
               highlights.length ? '<div class="skill-highlights" data-skill-layer="12">' + highlights.map(function (highlight, highlightIndex) {
@@ -1540,12 +1491,6 @@
         function applySiteConfig(config) {
           if (!config) return;
           applyHero(config.hero);
-          if (config.hero && config.hero.primaryCta) {
-            setLink("hero-cta-primary", config.hero.primaryCta.label, config.hero.primaryCta.url);
-          }
-          if (config.hero && config.hero.secondaryCta) {
-            setLink("hero-cta-secondary", config.hero.secondaryCta.label, config.hero.secondaryCta.url);
-          }
 
           if (config.nav) {
             setText("nav-projects", config.nav.projectsLabel);
