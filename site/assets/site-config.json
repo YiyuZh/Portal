@@ -14,8 +14,84 @@
   },
   "nav": {
     "projectsLabel": "Projects",
+    "skillsLabel": "Skills",
+    "collabLabel": "Collab",
     "aboutLabel": "About",
     "blogLabel": "Blog"
+  },
+  "sections": {
+    "projects": {
+      "kicker": "Projects",
+      "title": "正在构建的 AI 产品入口",
+      "description": "项目是 Zenithy 首页的第一层内容。这里展示已经上线、可以真实访问、并持续迭代的 AI 应用。"
+    },
+    "skills": {
+      "kicker": "Skills",
+      "title": "把模糊需求变成可上线系统",
+      "description": "Skills 不是技术名词堆叠，而是围绕产品判断、工程交付和 AI 应用落地形成的一套工作方式。",
+      "items": [
+        {
+          "label": "01 / Product Sense",
+          "title": "从场景判断价值",
+          "description": "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。"
+        },
+        {
+          "label": "02 / Full-stack Delivery",
+          "title": "把想法交付成系统",
+          "description": "从前端体验、后端接口、数据结构到部署回滚，优先保证能稳定上线和继续维护。"
+        },
+        {
+          "label": "03 / AI Application",
+          "title": "让模型进入业务闭环",
+          "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可被验证的产品能力。"
+        }
+      ]
+    },
+    "collab": {
+      "kicker": "Collab",
+      "title": "适合一起推进的合作方向",
+      "description": "Collab 承接合作意图，但保持克制。更适合从一个具体问题、一个原型或一次系统升级开始。",
+      "items": [
+        {
+          "label": "Prototype",
+          "title": "AI 产品原型",
+          "description": "把一个明确问题快速变成可体验的产品样机，用真实反馈判断是否值得继续投入。"
+        },
+        {
+          "label": "System Upgrade",
+          "title": "现有系统升级",
+          "description": "围绕体验、稳定性、部署流程和数据维护方式，给已有项目做低风险迭代。"
+        },
+        {
+          "label": "Research",
+          "title": "AI 应用研究",
+          "description": "探索 RAG、Agent、自动化工作流与具体业务场景之间的边界、成本和落地方式。"
+        }
+      ]
+    },
+    "about": {
+      "kicker": "About",
+      "title": "Zenithy 是一个持续扩展的个人项目实验场",
+      "description": "它不是单纯的作品集，也不是传统公司官网，而是一个把个人品牌、项目入口、经验沉淀与 AI 应用实践放在一起的长期入口。"
+    },
+    "aboutNote": {
+      "kicker": "Direction",
+      "title": "小步快跑，但每一步都能上线",
+      "description": "Zenithy 的节奏会优先考虑真实可用、稳定部署和后续维护，不追求一次性堆满功能，而是让每个模块都能被持续打磨。"
+    },
+    "contact": {
+      "kicker": "Contact",
+      "title": "从一个具体问题开始",
+      "description": "如果你想了解项目、合作构建 AI 应用，或交流产品与部署经验，可以从 Blog 或项目入口继续深入。",
+      "primaryCta": {
+        "label": "阅读 Blog",
+        "url": "https://blog.zenithy.art"
+      },
+      "secondaryCta": {
+        "label": "回到首页",
+        "url": "https://zenithy.art"
+      }
+    }
   },
   "footer": {
     "summary": "致力通过 AI 驱动的工具生态，为企业和个人提供更清晰的职业判断、评估流程与连接方式。",

@@ -171,6 +171,11 @@
         english: "Project Subtitle",
         title: "项目主标题",
         description: "在这里填写项目简介，支持一句话定位与价值说明。",
+        summaryLong: "在这里补充更完整的项目价值、使用场景和当前阶段，用于首页高级项目卡片。",
+        projectType: "Product System",
+        badge: "New Project",
+        sequence: "03",
+        keywords: ["Keyword 1", "Keyword 2"],
         features: ["关键能力 1", "关键能力 2"],
         index: "03 / New",
         primaryLabel: "进入项目",
@@ -226,6 +231,7 @@
           wrapper.dataset.index = String(idx);
           const imgSrc = normalizeImage(p.image || "");
           const featuresText = Array.isArray(p.features) ? p.features.join("\n") : "";
+          const keywordsText = Array.isArray(p.keywords) ? p.keywords.join("\n") : "";
           wrapper.innerHTML = `
             <div class="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -250,12 +256,20 @@
                 </div>
                 <div class="rounded-2xl bg-white p-4 shadow-sm">
                   <div class="flex items-center justify-between text-xs text-on-surface-variant">
-                    <span data-preview="english">${p.english || ""}</span>
+                    <span data-preview="projectType">${p.projectType || p.english || ""}</span>
                     <span data-preview="index">${p.index || ""}</span>
                   </div>
+                  <span class="mt-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" data-preview="badge">${p.badge || "Project"}</span>
                   <h4 class="mt-2 text-lg font-bold" data-preview="name">${p.name || ""}</h4>
                   <p class="mt-1 text-sm text-on-surface-variant" data-preview="title">${p.title || ""}</p>
-                  <p class="mt-3 text-sm text-on-surface" data-preview="description">${p.description || ""}</p>
+                  <p class="mt-3 text-sm text-on-surface" data-preview="description">${p.summaryLong || p.description || ""}</p>
+                  <div class="mt-4 flex flex-wrap gap-2" data-preview="keywords">
+                    ${
+                      Array.isArray(p.keywords) && p.keywords.length
+                        ? p.keywords.map((item) => `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${item}</span>`).join("")
+                        : ""
+                    }
+                  </div>
                   <div class="mt-4 flex flex-wrap gap-2" data-preview="buttons">
                     ${p.primaryLabel ? `<span class="rounded-full bg-tertiary px-3 py-1 text-xs font-semibold text-on-tertiary">${p.primaryLabel}</span>` : ""}
                     ${p.secondaryLabel ? `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${p.secondaryLabel}</span>` : ""}
@@ -277,8 +291,17 @@
                   <label class="text-sm text-on-surface-variant">项目名称
                     <input class="input w-full border rounded-lg px-3 py-2" data-field="name" data-index="${idx}" value="${escapeAttr(p.name)}" />
                   </label>
+                  <label class="text-sm text-on-surface-variant">项目角标
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="badge" data-index="${idx}" value="${escapeAttr(p.badge)}" />
+                  </label>
                   <label class="text-sm text-on-surface-variant">英文副标题
                     <input class="input w-full border rounded-lg px-3 py-2" data-field="english" data-index="${idx}" value="${escapeAttr(p.english)}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">项目类型
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="projectType" data-index="${idx}" value="${escapeAttr(p.projectType)}" />
+                  </label>
+                  <label class="text-sm text-on-surface-variant">展示序号
+                    <input class="input w-full border rounded-lg px-3 py-2" data-field="sequence" data-index="${idx}" value="${escapeAttr(p.sequence)}" />
                   </label>
                   <label class="text-sm text-on-surface-variant">主标题
                     <input class="input w-full border rounded-lg px-3 py-2" data-field="title" data-index="${idx}" value="${escapeAttr(p.title)}" />
@@ -289,6 +312,12 @@
                 </div>
                 <label class="text-sm text-on-surface-variant">项目简介
                   <textarea class="input w-full border rounded-lg px-3 py-2" data-field="description" data-index="${idx}" rows="3">${escapeTextarea(p.description)}</textarea>
+                </label>
+                <label class="text-sm text-on-surface-variant">项目长摘要（首页高级卡片优先展示）
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="summaryLong" data-index="${idx}" rows="4">${escapeTextarea(p.summaryLong)}</textarea>
+                </label>
+                <label class="text-sm text-on-surface-variant">关键词（每行一个）
+                  <textarea class="input w-full border rounded-lg px-3 py-2" data-field="keywords" data-index="${idx}" rows="2">${escapeTextarea(keywordsText)}</textarea>
                 </label>
                 <label class="text-sm text-on-surface-variant">亮点（每行一个）
                   <textarea class="input w-full border rounded-lg px-3 py-2" data-field="features" data-index="${idx}" rows="2">${escapeTextarea(featuresText)}</textarea>
@@ -342,7 +371,7 @@
           const idx = Number(input.dataset.index);
           const field = input.dataset.field;
           if (!projects[idx]) return;
-          if (field === "features") {
+          if (field === "features" || field === "keywords") {
             projects[idx][field] = input.value
               .split("\n")
               .map((line) => line.trim())
@@ -399,7 +428,7 @@
             p.quaternaryUrl,
           ].filter(Boolean);
           urls.forEach((url) => {
-            if (!/^https?:\/\//i.test(url)) {
+            if (url !== "#" && !/^https?:\/\//i.test(url)) {
               errors.push(`${label}链接格式不正确：${url}`);
             }
           });
@@ -445,7 +474,6 @@
           if (!p.primaryUrl) highlight("primaryUrl");
         });
       }
-      }
 
       function buildPreviewCard(p) {
         const buttons = [
@@ -458,12 +486,20 @@
         return `
           <article class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
             <div class="flex items-center justify-between text-xs text-on-surface-variant">
-              <span>${p.english || ""}</span>
+              <span>${p.projectType || p.english || ""}</span>
               <span>${p.index || ""}</span>
             </div>
+            <span class="mt-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${p.badge || "Project"}</span>
             <h3 class="mt-2 text-xl font-bold">${p.name || ""}</h3>
             <p class="mt-1 text-sm text-on-surface-variant">${p.title || ""}</p>
-            <p class="mt-3 text-sm text-on-surface">${p.description || ""}</p>
+            <p class="mt-3 text-sm text-on-surface">${p.summaryLong || p.description || ""}</p>
+            ${
+              Array.isArray(p.keywords) && p.keywords.length
+                ? `<div class="mt-4 flex flex-wrap gap-2">
+                    ${p.keywords.map((k) => `<span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">${k}</span>`).join("")}
+                  </div>`
+                : ""
+            }
             ${
               features.length
                 ? `<ul class="mt-4 space-y-2 text-sm text-on-surface-variant">
@@ -513,11 +549,24 @@
         });
         card.querySelectorAll('[data-preview="title"]').forEach((el) => (el.textContent = p.title || ""));
         card.querySelectorAll('[data-preview="english"]').forEach((el) => (el.textContent = p.english || ""));
+        card.querySelectorAll('[data-preview="projectType"]').forEach((el) => (el.textContent = p.projectType || p.english || ""));
+        card.querySelectorAll('[data-preview="badge"]').forEach((el) => (el.textContent = p.badge || "Project"));
         card.querySelectorAll('[data-preview="index"]').forEach((el) => (el.textContent = p.index || ""));
         const desc = card.querySelector('[data-preview="description"]');
-        if (desc) desc.textContent = p.description || "";
+        if (desc) desc.textContent = p.summaryLong || p.description || "";
         const img = card.querySelector('[data-preview="image"]');
         if (img) img.src = normalizeImage(p.image || "");
+        const keywordWrap = card.querySelector('[data-preview="keywords"]');
+        if (keywordWrap) {
+          keywordWrap.innerHTML = "";
+          const keywords = Array.isArray(p.keywords) ? p.keywords : [];
+          keywords.forEach((item) => {
+            const span = document.createElement("span");
+            span.className = "rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600";
+            span.textContent = item;
+            keywordWrap.appendChild(span);
+          });
+        }
         const btnWrap = card.querySelector('[data-preview="buttons"]');
         if (btnWrap) {
           btnWrap.innerHTML = "";

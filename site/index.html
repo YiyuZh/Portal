@@ -26,7 +26,10 @@
       (function () {
         var managedHashes = {
           "#projects": true,
+          "#skills": true,
+          "#collab": true,
           "#about": true,
+          "#contact": true,
         };
 
         try {
@@ -322,6 +325,49 @@
         padding-bottom: 128px;
       }
 
+      .section-block {
+        padding: 0 0 128px;
+      }
+
+      .section-heading {
+        display: grid;
+        gap: 16px;
+        max-width: 720px;
+        margin-bottom: 34px;
+      }
+
+      .section-heading--center {
+        justify-items: center;
+        max-width: 780px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+
+      .section-kicker {
+        margin: 0;
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        color: var(--text-strong);
+        font-size: clamp(36px, 5vw, 64px);
+        line-height: 1.02;
+        letter-spacing: -0.055em;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 16px;
+        line-height: 1.85;
+      }
+
       .showcase-grid {
         display: grid;
         grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -569,6 +615,91 @@
         background: #eef2f5;
       }
 
+      .insight-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .insight-card {
+        min-height: 260px;
+        padding: 30px;
+        border-radius: var(--radius-card);
+        background: var(--surface-card);
+        box-shadow: var(--shadow-soft);
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+      }
+
+      .insight-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .insight-card span {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 12px;
+        border-radius: var(--radius-pill);
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .insight-card h3 {
+        margin: 28px 0 12px;
+        color: var(--text-strong);
+        font-size: 26px;
+        line-height: 1.18;
+        letter-spacing: -0.035em;
+      }
+
+      .insight-card p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 15px;
+        line-height: 1.8;
+      }
+
+      .about-panel {
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .about-card,
+      .contact-card {
+        border-radius: var(--radius-panel);
+        background: var(--surface-card);
+        box-shadow: var(--shadow-soft);
+        padding: 42px;
+      }
+
+      .about-card p,
+      .contact-card p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 16px;
+        line-height: 1.9;
+      }
+
+      .contact-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 28px;
+      }
+
+      .contact-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
       .site-footer {
         background: rgba(255, 255, 255, 0.72);
         box-shadow: inset 0 1px 0 rgba(20, 32, 48, 0.04);
@@ -677,6 +808,11 @@
         .visual-panel--portrait {
           max-width: 320px;
         }
+
+        .insight-grid,
+        .about-panel {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 820px) {
@@ -700,6 +836,16 @@
         .showcase-card {
           min-height: auto;
           padding: 28px;
+        }
+
+        .section-block,
+        .showcase {
+          padding-bottom: 92px;
+        }
+
+        .about-card,
+        .contact-card {
+          padding: 30px;
         }
 
         .footer-grid {
@@ -740,6 +886,16 @@
           padding-bottom: 92px;
         }
 
+        .section-heading h2 {
+          font-size: clamp(34px, 11vw, 48px);
+        }
+
+        .insight-card,
+        .about-card,
+        .contact-card {
+          padding: 24px;
+        }
+
         .card-title-group h2 {
           font-size: 30px;
         }
@@ -753,6 +909,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="./home-visual.css" />
   </head>
   <body>
     <div class="page">
@@ -768,6 +925,8 @@
             <button id="nav-projects" class="is-active" type="button" data-scroll-target="projects">
               Projects
             </button>
+            <button id="nav-skills" type="button" data-scroll-target="skills">Skills</button>
+            <button id="nav-collab" type="button" data-scroll-target="collab">Collab</button>
             <button id="nav-about" type="button" data-scroll-target="about">About</button>
             <a id="nav-blog" href="https://blog.zenithy.art" target="_blank" rel="noreferrer">Blog</a>
           </nav>
@@ -792,147 +951,126 @@
           <div class="hero-inner">
             <!-- 由 site-config.json 驱动：hero.eyebrow / hero.title / hero.subtitle -->
             <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
-            <h1 id="page-title">Zenithy 项目展示</h1>
+            <div class="hero-title-system" data-hero-stage>
+              <h1 id="page-title" class="hero-title hero-title-base">Zenithy 项目展示</h1>
+              <div class="hero-orb" aria-hidden="true"></div>
+              <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
+                Zenithy 项目展示
+              </div>
+            </div>
             <p id="hero-subtitle" class="hero-subtitle">统一入口 · 快速访问 · 持续扩展</p>
             <div class="hero-actions">
               <!-- 由 site-config.json 驱动：hero.primaryCta / hero.secondaryCta -->
-              <a id="hero-cta-primary" class="button button-primary" href="https://hiremate.zenithy.art">
-                进入 HireMate
+              <a id="hero-cta-primary" class="button button-primary" href="https://zenithy.art">
+                查看项目
               </a>
-              <a id="hero-cta-secondary" class="button button-secondary" href="https://interview.zenithy.art">
-                进入智面
+              <a id="hero-cta-secondary" class="button button-secondary" href="https://blog.zenithy.art">
+                阅读 Blog
               </a>
             </div>
             <div class="hero-divider" aria-hidden="true"></div>
           </div>
         </section>
 
-        <section id="projects" class="showcase shell" aria-label="项目列表">
-          <div class="showcase-grid">
-            <article class="showcase-card showcase-card--small">
-              <div class="card-head">
-                <div class="card-brand">
-                  <div class="card-icon-wrap" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M14.5 7.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0Z" />
-                      <path d="M3.5 19a6 6 0 0 1 10-4.4" />
-                      <path d="M16.5 17.25h4" />
-                      <path d="M18.5 15.25v4" />
-                    </svg>
-                  </div>
+        <section id="projects" class="showcase shell" aria-labelledby="projects-title">
+          <div class="section-heading">
+            <p id="projects-kicker" class="section-kicker">Projects</p>
+            <h2 id="projects-title">正在构建的 AI 产品入口</h2>
+            <p id="projects-desc">Zenithy 当前优先展示两个已上线项目：一个面向招聘筛选，一个面向模拟面试与评估。</p>
+          </div>
 
-                  <div class="card-title-group">
-                    <h2 id="project-hiremate-name">HireMate</h2>
-                    <p id="project-hiremate-english" class="project-english">Recruitment Intelligence</p>
-                  </div>
-                </div>
+          <div id="projects-grid" class="showcase-grid" aria-live="polite"></div>
+        </section>
 
-                <div id="project-hiremate-index" class="card-index">01 / Archive</div>
-              </div>
-
-              <div class="card-body">
-                <h3 id="project-hiremate-title">AI 招聘助手平台</h3>
-                <p>
-                  <span id="project-hiremate-desc">支持简历解析、候选人评估、批量初筛，为人力资源团队提供更清晰的筛选洞察与决策支持。</span>
-                </p>
-
-                <div class="visual-panel visual-panel--dashboard">
-                  <img id="project-hiremate-image" src="./assets/hiremate-dashboard.jpg" alt="HireMate 产品界面预览" />
-                </div>
-              </div>
-
-              <div class="card-actions">
-                <a
-                  id="project-hiremate-primary"
-                  class="button button-primary"
-                  href="https://hiremate.zenithy.art"
-                >
-                  进入 HireMate
-                </a>
-                <!-- 后续可替换成真实手册链接 -->
-                <a id="project-hiremate-secondary" class="button button-secondary" href="#">
-                  查看手册
-                </a>
-              </div>
+        <section id="skills" class="section-block shell" aria-labelledby="skills-title">
+          <div class="section-heading section-heading--center">
+            <p id="skills-kicker" class="section-kicker">Skills</p>
+            <h2 id="skills-title">把产品、工程与 AI 应用串起来</h2>
+            <p id="skills-desc">这里先作为能力结构占位，后续视觉阶段再强化节奏与表达，不影响现有项目入口。</p>
+          </div>
+          <div class="insight-grid" id="skills-list">
+            <article class="insight-card">
+              <span>Product</span>
+              <h3>产品判断</h3>
+              <p>从真实使用场景出发，拆解用户路径、核心价值和可持续迭代方向。</p>
             </article>
-
-            <article class="showcase-card showcase-card--large">
-              <div class="card-head">
-                <div class="card-brand">
-                  <div class="card-icon-wrap" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M5 7.75A1.75 1.75 0 0 1 6.75 6h10.5A1.75 1.75 0 0 1 19 7.75v8.5A1.75 1.75 0 0 1 17.25 18H6.75A1.75 1.75 0 0 1 5 16.25v-8.5Z" />
-                      <path d="M8.5 10.25h7" />
-                      <path d="M8.5 13.75h4.5" />
-                    </svg>
-                  </div>
-
-                  <div class="card-title-group">
-                    <h2 id="project-ai-name">AI-Interview <span style="color: #d1d7de; font-weight: 300">智面</span></h2>
-                    <p id="project-ai-english" class="project-english">Simulated Evaluation System</p>
-                  </div>
-                </div>
-
-                <div id="project-ai-index" class="card-index">02 / Core</div>
-              </div>
-
-              <div class="card-body">
-                <div class="card-layout">
-                  <div>
-                    <h3 id="project-ai-title">AI 模拟面试系统</h3>
-                    <p>
-                      <span id="project-ai-desc">支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。</span>
-                    </p>
-
-                    <ul class="feature-list">
-                      <li>
-                        <span class="feature-dot" aria-hidden="true"></span>
-                        <span id="project-ai-feature-1">动态多轮对话生成</span>
-                      </li>
-                      <li>
-                        <span class="feature-dot" aria-hidden="true"></span>
-                        <span id="project-ai-feature-2">实时反馈与评估结果</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div class="visual-panel visual-panel--portrait">
-                    <img id="project-ai-image" src="./assets/ai-interview-portrait.jpg" alt="AI-Interview 场景视觉图" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-actions card-actions--split">
-                <a
-                  id="project-ai-primary"
-                  class="button button-primary"
-                  href="https://interview.zenithy.art"
-                >
-                  用户端
-                </a>
-                <a
-                  id="project-ai-secondary"
-                  class="button button-secondary"
-                  href="https://admin.interview.zenithy.art"
-                >
-                  管理后台
-                </a>
-                <a
-                  id="project-ai-tertiary"
-                  class="button button-soft"
-                  href="https://api.interview.zenithy.art"
-                >
-                  API Documentation
-                </a>
-                <!-- 后续可替换成真实部署手册链接 -->
-                <a id="project-ai-quaternary" class="button button-soft" href="#">Deployment Guide</a>
-              </div>
+            <article class="insight-card">
+              <span>Engineering</span>
+              <h3>全栈实现</h3>
+              <p>关注静态门户、前后端联动、部署链路和可回滚的生产化交付。</p>
             </article>
+            <article class="insight-card">
+              <span>AI Application</span>
+              <h3>AI 应用落地</h3>
+              <p>围绕简历解析、智能问答、评估反馈等场景，把模型能力转成可用产品。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="collab" class="section-block shell" aria-labelledby="collab-title">
+          <div class="section-heading">
+            <p id="collab-kicker" class="section-kicker">Collab</p>
+            <h2 id="collab-title">适合一起推进的合作方向</h2>
+            <p id="collab-desc">Collab 区块用于承接个人品牌首页的合作意图，保持克制，不把门户改成重营销页面。</p>
+          </div>
+          <div class="insight-grid" id="collab-list">
+            <article class="insight-card">
+              <span>Build</span>
+              <h3>AI 产品原型</h3>
+              <p>把一个明确问题快速变成可体验、可验证、可继续迭代的产品样机。</p>
+            </article>
+            <article class="insight-card">
+              <span>Improve</span>
+              <h3>现有系统升级</h3>
+              <p>围绕体验、稳定性、部署流程和数据维护方式，逐步减少线上风险。</p>
+            </article>
+            <article class="insight-card">
+              <span>Explore</span>
+              <h3>AI 应用研究</h3>
+              <p>探索 RAG、Agent、自动化工作流与具体业务场景之间的可行结合点。</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="about" class="section-block shell" aria-labelledby="about-title">
+          <div class="about-panel">
+            <div class="about-card">
+              <div class="section-heading">
+                <p id="about-kicker" class="section-kicker">About</p>
+                <h2 id="about-title">Zenithy 是一个持续扩展的个人项目实验场</h2>
+              </div>
+              <p id="about-desc">
+                它不是单纯的作品集，也不是传统公司官网，而是把个人品牌、项目入口、经验沉淀与 AI 应用实践放在同一个清晰入口里。
+              </p>
+            </div>
+            <div class="about-card">
+              <div class="section-heading">
+                <p id="about-note-kicker" class="section-kicker">Direction</p>
+                <h2 id="about-note-title">小步快跑，但每一步都能上线</h2>
+              </div>
+              <p id="about-note-desc">
+                Zenithy 的项目节奏会优先考虑真实可用、稳定部署和后续维护，不追求一次性堆满功能，而是让每个模块都能被持续打磨。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="section-block shell" aria-labelledby="contact-title">
+          <div class="contact-card">
+            <div>
+              <p id="contact-kicker" class="section-kicker">Contact</p>
+              <h2 id="contact-title">从一个具体问题开始</h2>
+              <p id="contact-desc">如果你想了解项目、合作构建 AI 应用，或交流产品与部署经验，可以从 Blog 或项目入口继续深入。</p>
+            </div>
+            <div class="contact-actions">
+              <a id="contact-primary" class="button button-primary" href="https://blog.zenithy.art">阅读 Blog</a>
+              <a id="contact-secondary" class="button button-secondary" href="https://zenithy.art">回到首页</a>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer id="about" class="site-footer">
+      <footer class="site-footer">
         <div class="shell footer-main">
           <div class="footer-grid">
             <section class="footer-copy">
@@ -980,8 +1118,13 @@
       (function () {
         var managedHashes = {
           "#projects": true,
+          "#skills": true,
+          "#collab": true,
           "#about": true,
+          "#contact": true,
         };
+        var sectionIds = ["projects", "skills", "collab", "about"];
+        var reduceMotionQuery = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
 
         function resetToTop() {
           if (managedHashes[window.location.hash]) {
@@ -1011,6 +1154,22 @@
           }
         });
 
+        function setActiveNav(targetId) {
+          document.querySelectorAll("[data-scroll-target]").forEach(function (item) {
+            var isActive = item.getAttribute("data-scroll-target") === targetId;
+            item.classList.toggle("is-active", isActive);
+            if (isActive) {
+              item.setAttribute("aria-current", "page");
+            } else {
+              item.removeAttribute("aria-current");
+            }
+          });
+        }
+
+        function getScrollBehavior() {
+          return reduceMotionQuery && reduceMotionQuery.matches ? "auto" : "smooth";
+        }
+
         document.addEventListener("click", function (event) {
           var trigger = event.target.closest("[data-scroll-target]");
           if (!trigger) {
@@ -1024,11 +1183,75 @@
           }
 
           event.preventDefault();
+          setActiveNav(targetId);
           target.scrollIntoView({
-            behavior: "smooth",
+            behavior: getScrollBehavior(),
             block: "start",
           });
         });
+
+        if ("IntersectionObserver" in window) {
+          var observer = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  setActiveNav(entry.target.id);
+                }
+              });
+            },
+            { rootMargin: "-42% 0px -50% 0px", threshold: 0.01 }
+          );
+
+          sectionIds.forEach(function (id) {
+            var section = document.getElementById(id);
+            if (section) observer.observe(section);
+          });
+        }
+
+        var revealObserver = null;
+
+        function markVisible(element) {
+          element.classList.add("is-visible");
+        }
+
+        function observeReveal(element) {
+          if (!element) return;
+          element.classList.add("is-reveal");
+          if (reduceMotionQuery && reduceMotionQuery.matches) {
+            markVisible(element);
+            return;
+          }
+          if (revealObserver) {
+            revealObserver.observe(element);
+          } else {
+            markVisible(element);
+          }
+        }
+
+        if ("IntersectionObserver" in window) {
+          revealObserver = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  markVisible(entry.target);
+                  revealObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -12% 0px", threshold: 0.08 }
+          );
+        }
+
+        window.ZenithyReveal = {
+          observe: observeReveal,
+          refresh: function () {
+            document
+              .querySelectorAll(".section-heading, .showcase-card, .insight-card, .about-card, .contact-card")
+              .forEach(observeReveal);
+          },
+        };
+
+        window.ZenithyReveal.refresh();
       })();
     </script>
     <script>
@@ -1064,6 +1287,132 @@
           }
         }
 
+        function escapeHtml(value) {
+          return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function buttonClass(index) {
+          if (index === 0) return "button button-primary";
+          if (index === 1) return "button button-secondary";
+          return "button button-soft";
+        }
+
+        function projectIcon(index) {
+          if (index % 2 === 0) {
+            return '<path d="M14.5 7.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0Z" /><path d="M3.5 19a6 6 0 0 1 10-4.4" /><path d="M16.5 17.25h4" /><path d="M18.5 15.25v4" />';
+          }
+          return '<path d="M5 7.75A1.75 1.75 0 0 1 6.75 6h10.5A1.75 1.75 0 0 1 19 7.75v8.5A1.75 1.75 0 0 1 17.25 18H6.75A1.75 1.75 0 0 1 5 16.25v-8.5Z" /><path d="M8.5 10.25h7" /><path d="M8.5 13.75h4.5" />';
+        }
+
+        function renderProjects(projects) {
+          var grid = document.getElementById("projects-grid");
+          if (!grid || !Array.isArray(projects)) return;
+          grid.innerHTML = "";
+
+          projects.forEach(function (project, index) {
+            var article = document.createElement("article");
+            var layoutClass = index % 2 === 0 ? "showcase-card--small" : "showcase-card--large";
+            article.className = "showcase-card showcase-card--dynamic " + layoutClass;
+            article.setAttribute("data-project-id", project.id || "");
+
+            var features = Array.isArray(project.features) ? project.features : [];
+            var keywords = Array.isArray(project.keywords) ? project.keywords : [];
+            var buttons = [
+              [project.primaryLabel, project.primaryUrl],
+              [project.secondaryLabel, project.secondaryUrl],
+              [project.tertiaryLabel, project.tertiaryUrl],
+              [project.quaternaryLabel, project.quaternaryUrl],
+            ].filter(function (button) {
+              return button[0];
+            });
+            var summary = project.summaryLong || project.description || "";
+            var visualClass = index % 2 === 0 ? "visual-panel--dashboard" : "visual-panel--portrait";
+
+            article.innerHTML = [
+              '<div class="card-head">',
+                '<div class="card-brand">',
+                  '<div class="card-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24">',
+                    projectIcon(index),
+                  '</svg></div>',
+                  '<div class="card-title-group">',
+                    '<p class="project-badge">' + escapeHtml(project.badge || project.projectType || "Project") + '</p>',
+                    '<h2>' + (project.name || "Untitled Project") + '</h2>',
+                    '<p class="project-english">' + escapeHtml(project.english || project.projectType || "") + '</p>',
+                  '</div>',
+                '</div>',
+                '<div class="card-index">' + escapeHtml(project.index || project.sequence || String(index + 1).padStart(2, "0")) + '</div>',
+              '</div>',
+              '<div class="card-body">',
+                '<div class="project-meta-row">',
+                  '<span>' + escapeHtml(project.sequence || String(index + 1).padStart(2, "0")) + '</span>',
+                  '<span>' + escapeHtml(project.projectType || "Product System") + '</span>',
+                '</div>',
+                '<div class="card-layout">',
+                  '<div>',
+                    '<h3>' + escapeHtml(project.title || "") + '</h3>',
+                    '<p class="project-summary-long">' + escapeHtml(summary) + '</p>',
+                    features.length ? '<ul class="feature-list">' + features.map(function (item) {
+                      return '<li><span class="feature-dot" aria-hidden="true"></span><span>' + escapeHtml(item) + '</span></li>';
+                    }).join("") + '</ul>' : "",
+                    keywords.length ? '<div class="keyword-list">' + keywords.map(function (item) {
+                      return '<span>' + escapeHtml(item) + '</span>';
+                    }).join("") + '</div>' : "",
+                  '</div>',
+                  project.image ? '<div class="visual-panel ' + visualClass + '"><img src="' + escapeHtml(project.image) + '" alt="' + escapeHtml((project.title || project.name || "Project") + " 预览图") + '" /></div>' : "",
+                '</div>',
+              '</div>',
+              '<div class="card-actions card-actions--split">',
+                buttons.map(function (button, buttonIndex) {
+                  return '<a class="' + buttonClass(buttonIndex) + '" href="' + escapeHtml(button[1] || "#") + '">' + escapeHtml(button[0]) + '</a>';
+                }).join(""),
+              '</div>',
+            ].join("");
+
+            grid.appendChild(article);
+            if (window.ZenithyReveal) {
+              window.ZenithyReveal.observe(article);
+            }
+          });
+        }
+
+        function applySection(prefix, section) {
+          if (!section) return;
+          setText(prefix + "-kicker", section.kicker);
+          setText(prefix + "-title", section.title);
+          setText(prefix + "-desc", section.description);
+        }
+
+        function renderInsightList(containerId, items) {
+          var container = document.getElementById(containerId);
+          if (!container || !Array.isArray(items) || !items.length) return;
+          container.innerHTML = "";
+          items.forEach(function (item) {
+            var card = document.createElement("article");
+            card.className = "insight-card";
+
+            var label = document.createElement("span");
+            label.textContent = item.label || "Focus";
+
+            var title = document.createElement("h3");
+            title.textContent = item.title || "未命名模块";
+
+            var desc = document.createElement("p");
+            desc.textContent = item.description || "";
+
+            card.appendChild(label);
+            card.appendChild(title);
+            card.appendChild(desc);
+            container.appendChild(card);
+            if (window.ZenithyReveal) {
+              window.ZenithyReveal.observe(card);
+            }
+          });
+        }
+
         function applySiteConfig(config) {
           if (!config) return;
           setText("hero-eyebrow", config.hero && config.hero.eyebrow);
@@ -1078,8 +1427,27 @@
 
           if (config.nav) {
             setText("nav-projects", config.nav.projectsLabel);
+            setText("nav-skills", config.nav.skillsLabel);
+            setText("nav-collab", config.nav.collabLabel);
             setText("nav-about", config.nav.aboutLabel);
             setText("nav-blog", config.nav.blogLabel);
+          }
+
+          if (config.sections) {
+            applySection("projects", config.sections.projects);
+            applySection("skills", config.sections.skills);
+            applySection("collab", config.sections.collab);
+            applySection("about", config.sections.about);
+            applySection("about-note", config.sections.aboutNote);
+            applySection("contact", config.sections.contact);
+            renderInsightList("skills-list", config.sections.skills && config.sections.skills.items);
+            renderInsightList("collab-list", config.sections.collab && config.sections.collab.items);
+            if (config.sections.contact && config.sections.contact.primaryCta) {
+              setLink("contact-primary", config.sections.contact.primaryCta.label, config.sections.contact.primaryCta.url);
+            }
+            if (config.sections.contact && config.sections.contact.secondaryCta) {
+              setLink("contact-secondary", config.sections.contact.secondaryCta.label, config.sections.contact.secondaryCta.url);
+            }
           }
 
           if (config.footer) {
@@ -1114,43 +1482,11 @@
           })
           .then(function (data) {
             if (!data || !data.projects) return;
-            var hiremate = data.projects.find(function (p) {
-              return p.id === "hiremate";
-            });
-            var ai = data.projects.find(function (p) {
-              return p.id === "ai-interview";
-            });
-
-            if (hiremate) {
-              setText("project-hiremate-name", hiremate.name);
-              setText("project-hiremate-english", hiremate.english);
-              setText("project-hiremate-title", hiremate.title);
-              setText("project-hiremate-desc", hiremate.description);
-              setText("project-hiremate-index", hiremate.index);
-              setLink("project-hiremate-primary", hiremate.primaryLabel, hiremate.primaryUrl);
-              setLink("project-hiremate-secondary", hiremate.secondaryLabel, hiremate.secondaryUrl);
-              var img = document.getElementById("project-hiremate-image");
-              if (img && hiremate.image) img.src = hiremate.image;
-            }
-
-            if (ai) {
-              setHtml("project-ai-name", ai.name);
-              setText("project-ai-english", ai.english);
-              setText("project-ai-title", ai.title);
-              setText("project-ai-desc", ai.description);
-              setText("project-ai-index", ai.index);
-              setText("project-ai-feature-1", ai.features && ai.features[0]);
-              setText("project-ai-feature-2", ai.features && ai.features[1]);
-              setLink("project-ai-primary", ai.primaryLabel, ai.primaryUrl);
-              setLink("project-ai-secondary", ai.secondaryLabel, ai.secondaryUrl);
-              setLink("project-ai-tertiary", ai.tertiaryLabel, ai.tertiaryUrl);
-              setLink("project-ai-quaternary", ai.quaternaryLabel, ai.quaternaryUrl);
-              var img2 = document.getElementById("project-ai-image");
-              if (img2 && ai.image) img2.src = ai.image;
-            }
+            renderProjects(data.projects);
           })
           .catch(function () {});
       })();
     </script>
+    <script src="./home-hero.js" defer></script>
   </body>
 </html>
