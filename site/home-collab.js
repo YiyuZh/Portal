@@ -1,0 +1,118 @@
+(function () {
+  function apiBase() {
+    if (window.ZENITHY_MESSAGES_API) return String(window.ZENITHY_MESSAGES_API).replace(/\/$/, "");
+    if ((location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "8080") {
+      return "http://127.0.0.1:18081/api";
+    }
+    return "/api";
+  }
+
+  function getValue(id) {
+    var node = document.getElementById(id);
+    return node ? node.value.trim() : "";
+  }
+
+  function setFeedback(message, type) {
+    var feedback = document.getElementById("collab-feedback");
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.dataset.state = type || "info";
+  }
+
+  function isEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function downloadJson(filename, data) {
+    var blob = new Blob([JSON.stringify(data, null, 2) + "\n"], { type: "application/json;charset=utf-8" });
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+  }
+
+  function createMessageEntry(name, email, message) {
+    var now = new Date();
+    var id = "msg-" + now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
+    return {
+      id: id,
+      name: name || "",
+      email: email,
+      message: message,
+      status: "unread",
+      createdAt: now.toISOString(),
+      source: "zenithy-home",
+    };
+  }
+
+  function submitToApi(entry) {
+    return fetch(apiBase() + "/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: entry.name,
+        email: entry.email,
+        message: entry.message,
+      }),
+    }).then(function (response) {
+      return response.json().catch(function () {
+        return {};
+      }).then(function (payload) {
+        if (!response.ok || payload.ok === false) {
+          throw new Error(payload.error || "submit_failed");
+        }
+        return payload;
+      });
+    });
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    var name = getValue("collab-name");
+    var email = getValue("collab-email");
+    var message = getValue("collab-message");
+
+    if (!email) {
+      setFeedback("请先填写邮箱。", "error");
+      return;
+    }
+    if (!isEmail(email)) {
+      setFeedback("邮箱格式看起来不正确，请检查后再提交。", "error");
+      return;
+    }
+    if (!message) {
+      setFeedback("请填写想法或留言内容。", "error");
+      return;
+    }
+
+    var entry = createMessageEntry(name, email, message);
+    setFeedback("正在提交留言...", "info");
+    submitToApi(entry)
+      .then(function () {
+        event.target.reset();
+        setFeedback("留言已提交，我会在后台查看并处理。", "success");
+      })
+      .catch(function () {
+        downloadJson(entry.id + ".json", entry);
+        setFeedback("API 暂时不可用，已生成本地 JSON 备份。请稍后重试或在后台导入。", "error");
+      });
+  }
+
+  function boot() {
+    var form = document.getElementById("collab-form");
+    if (!form) return;
+    form.addEventListener("submit", handleSubmit);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();

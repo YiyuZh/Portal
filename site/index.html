@@ -949,15 +949,29 @@
       <main>
         <section class="hero shell" aria-labelledby="page-title">
           <div class="hero-inner">
-            <!-- 由 site-config.json 驱动：hero.eyebrow / hero.title / hero.subtitle -->
+            <!-- 由 site-config.json 驱动：hero.eyebrow / hero.titleLeading / hero.titleName / hero.revealTitle / hero.metaLine -->
             <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
-            <div class="hero-title-system" data-hero-stage>
-              <h1 id="page-title" class="hero-title hero-title-base">Zenithy 项目展示</h1>
+            <div
+              class="hero-title-system"
+              data-hero-stage
+              data-tilt-enabled="true"
+              data-tilt-max="8"
+              data-orb-enabled="true"
+              data-orb-follow-strength="0.08"
+              data-orb-drift="true"
+              tabindex="0"
+              aria-label="HELLO, I'M Zenithy"
+            >
+              <h1 id="page-title" class="hero-title hero-title-base">
+                <span id="hero-title-leading" class="hero-title-leading">HELLO, I'M</span>
+                <span id="hero-title-name" class="hero-title-name">Zenithy</span>
+              </h1>
               <div class="hero-orb" aria-hidden="true"></div>
               <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
-                Zenithy 项目展示
+                <span id="hero-reveal-title">你好，我是詹已誉</span>
               </div>
             </div>
+            <p id="hero-meta-line" class="hero-meta-line">AI Process Manager / 18岁 / 广东深圳</p>
             <p id="hero-subtitle" class="hero-subtitle">统一入口 · 快速访问 · 持续扩展</p>
             <div class="hero-actions">
               <!-- 由 site-config.json 驱动：hero.primaryCta / hero.secondaryCta -->
@@ -1029,6 +1043,34 @@
               <h3>AI 应用研究</h3>
               <p>探索 RAG、Agent、自动化工作流与具体业务场景之间的可行结合点。</p>
             </article>
+          </div>
+          <div class="collab-message-panel">
+            <div class="collab-message-copy">
+              <p class="section-kicker">Message</p>
+              <h3>留下一个可以继续推进的想法</h3>
+              <p>
+                当前已接入真实留言 API：提交后会保存到服务器 SQLite，并可在博客后台留言管理页查看、
+                标记状态或删除。若 API 暂时不可用，表单会生成本地 JSON 备份。
+              </p>
+            </div>
+            <form id="collab-form" class="collab-form" novalidate>
+              <label>
+                <span>姓名（可选）</span>
+                <input id="collab-name" name="name" type="text" autocomplete="name" placeholder="你的名字" />
+              </label>
+              <label>
+                <span>邮箱（必填）</span>
+                <input id="collab-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+              </label>
+              <label>
+                <span>想法 / 留言（必填）</span>
+                <textarea id="collab-message" name="message" rows="5" placeholder="简单说说你想一起推进什么..." required></textarea>
+              </label>
+              <div class="collab-form-actions">
+                <button class="button button-primary" type="submit">提交留言</button>
+                <p id="collab-feedback" class="collab-feedback" role="status" aria-live="polite"></p>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -1287,6 +1329,45 @@
           }
         }
 
+        function setHeroOption(stage, name, value, fallback) {
+          if (!stage) return;
+          var next = value;
+          if (next === undefined || next === null || next === "") {
+            next = fallback;
+          }
+          if (next !== undefined && next !== null) {
+            stage.setAttribute(name, String(next));
+          }
+        }
+
+        function applyHero(hero) {
+          hero = hero || {};
+          var stage = document.querySelector("[data-hero-stage]");
+          var leading = hero.titleLeading;
+          var name = hero.titleName;
+
+          if (!leading && !name && hero.title) {
+            leading = hero.title;
+            name = "";
+          }
+
+          setText("hero-eyebrow", hero.eyebrow);
+          setText("hero-title-leading", leading);
+          setText("hero-title-name", name);
+          setText("hero-reveal-title", hero.revealTitle);
+          setText("hero-meta-line", hero.metaLine);
+          setText("hero-subtitle", hero.subtitle);
+
+          if (stage) {
+            stage.setAttribute("aria-label", (document.getElementById("page-title").textContent || "").replace(/\s+/g, " ").trim());
+            setHeroOption(stage, "data-tilt-enabled", hero.tilt && hero.tilt.enabled !== false, true);
+            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 8);
+            setHeroOption(stage, "data-orb-enabled", hero.orb && hero.orb.enabled !== false, true);
+            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.08);
+            setHeroOption(stage, "data-orb-drift", hero.orb && hero.orb.drift !== false, true);
+          }
+        }
+
         function escapeHtml(value) {
           return String(value || "")
             .replace(/&/g, "&amp;")
@@ -1318,6 +1399,8 @@
             var layoutClass = index % 2 === 0 ? "showcase-card--small" : "showcase-card--large";
             article.className = "showcase-card showcase-card--dynamic " + layoutClass;
             article.setAttribute("data-project-id", project.id || "");
+            article.setAttribute("data-tilt-card", "project");
+            article.setAttribute("data-tilt-max", "5.8");
 
             var features = Array.isArray(project.features) ? project.features : [];
             var keywords = Array.isArray(project.keywords) ? project.keywords : [];
@@ -1333,18 +1416,18 @@
             var visualClass = index % 2 === 0 ? "visual-panel--dashboard" : "visual-panel--portrait";
 
             article.innerHTML = [
-              '<div class="card-head">',
+              '<div class="card-head" data-tilt-layer="14">',
                 '<div class="card-brand">',
-                  '<div class="card-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24">',
+                  '<div class="card-icon-wrap" aria-hidden="true" data-tilt-layer="18"><svg viewBox="0 0 24 24">',
                     projectIcon(index),
                   '</svg></div>',
                   '<div class="card-title-group">',
-                    '<p class="project-badge">' + escapeHtml(project.badge || project.projectType || "Project") + '</p>',
-                    '<h2>' + (project.name || "Untitled Project") + '</h2>',
+                    '<p class="project-badge" data-tilt-layer="20">' + escapeHtml(project.badge || project.projectType || "Project") + '</p>',
+                    '<h2 data-tilt-layer="16">' + (project.name || "Untitled Project") + '</h2>',
                     '<p class="project-english">' + escapeHtml(project.english || project.projectType || "") + '</p>',
                   '</div>',
                 '</div>',
-                '<div class="card-index">' + escapeHtml(project.index || project.sequence || String(index + 1).padStart(2, "0")) + '</div>',
+                '<div class="card-index" data-tilt-layer="22">' + escapeHtml(project.index || project.sequence || String(index + 1).padStart(2, "0")) + '</div>',
               '</div>',
               '<div class="card-body">',
                 '<div class="project-meta-row">',
@@ -1353,7 +1436,7 @@
                 '</div>',
                 '<div class="card-layout">',
                   '<div>',
-                    '<h3>' + escapeHtml(project.title || "") + '</h3>',
+                    '<h3 data-tilt-layer="10">' + escapeHtml(project.title || "") + '</h3>',
                     '<p class="project-summary-long">' + escapeHtml(summary) + '</p>',
                     features.length ? '<ul class="feature-list">' + features.map(function (item) {
                       return '<li><span class="feature-dot" aria-hidden="true"></span><span>' + escapeHtml(item) + '</span></li>';
@@ -1362,10 +1445,10 @@
                       return '<span>' + escapeHtml(item) + '</span>';
                     }).join("") + '</div>' : "",
                   '</div>',
-                  project.image ? '<div class="visual-panel ' + visualClass + '"><img src="' + escapeHtml(project.image) + '" alt="' + escapeHtml((project.title || project.name || "Project") + " 预览图") + '" /></div>' : "",
+                  project.image ? '<div class="visual-panel ' + visualClass + '" data-tilt-layer="28"><img src="' + escapeHtml(project.image) + '" alt="' + escapeHtml((project.title || project.name || "Project") + " 预览图") + '" /></div>' : "",
                 '</div>',
               '</div>',
-              '<div class="card-actions card-actions--split">',
+              '<div class="card-actions card-actions--split" data-tilt-layer="12">',
                 buttons.map(function (button, buttonIndex) {
                   return '<a class="' + buttonClass(buttonIndex) + '" href="' + escapeHtml(button[1] || "#") + '">' + escapeHtml(button[0]) + '</a>';
                 }).join(""),
@@ -1375,6 +1458,9 @@
             grid.appendChild(article);
             if (window.ZenithyReveal) {
               window.ZenithyReveal.observe(article);
+            }
+            if (window.ZenithyProjectTilt) {
+              window.ZenithyProjectTilt.refresh(article);
             }
           });
         }
@@ -1413,11 +1499,47 @@
           });
         }
 
+        function renderSkillsList(containerId, items) {
+          var container = document.getElementById(containerId);
+          if (!container || !Array.isArray(items) || !items.length) return;
+          container.innerHTML = "";
+          items.forEach(function (item, index) {
+            var card = document.createElement("article");
+            var variant = item.motionVariant || "signal";
+            var metric = Number(item.metric);
+            var hasMetric = Number.isFinite(metric);
+            var highlights = Array.isArray(item.highlights) ? item.highlights : [];
+            card.className = "insight-card skill-card skill-card--" + escapeHtml(variant);
+            card.setAttribute("data-skill-card", "true");
+            card.setAttribute("data-skill-index", String(index));
+            card.style.setProperty("--reveal-delay", index * 90 + "ms");
+
+            card.innerHTML = [
+              '<div class="skill-card__ambient" aria-hidden="true"></div>',
+              '<div class="skill-card__head" data-skill-layer="10">',
+                '<span class="skill-label">' + escapeHtml(item.label || "Focus") + '</span>',
+                hasMetric ? '<div class="skill-metric" aria-label="' + escapeHtml((item.metricLabel || "Metric") + " " + metric + (item.metricSuffix || "")) + '"><strong class="skill-metric-value" data-target="' + escapeHtml(metric) + '" data-suffix="' + escapeHtml(item.metricSuffix || "") + '">0</strong><small>' + escapeHtml(item.metricLabel || "Signal") + '</small></div>' : "",
+              '</div>',
+              '<h3 data-skill-layer="8">' + escapeHtml(item.title || "未命名模块") + '</h3>',
+              '<p data-skill-layer="5">' + escapeHtml(item.description || "") + '</p>',
+              highlights.length ? '<div class="skill-highlights" data-skill-layer="12">' + highlights.map(function (highlight, highlightIndex) {
+                return '<span class="skill-highlight" style="--highlight-index:' + highlightIndex + '">' + escapeHtml(highlight) + '</span>';
+              }).join("") + '</div>' : "",
+            ].join("");
+
+            container.appendChild(card);
+            if (window.ZenithyReveal) {
+              window.ZenithyReveal.observe(card);
+            }
+            if (window.ZenithySkills) {
+              window.ZenithySkills.refresh(card);
+            }
+          });
+        }
+
         function applySiteConfig(config) {
           if (!config) return;
-          setText("hero-eyebrow", config.hero && config.hero.eyebrow);
-          setText("page-title", config.hero && config.hero.title);
-          setText("hero-subtitle", config.hero && config.hero.subtitle);
+          applyHero(config.hero);
           if (config.hero && config.hero.primaryCta) {
             setLink("hero-cta-primary", config.hero.primaryCta.label, config.hero.primaryCta.url);
           }
@@ -1440,7 +1562,7 @@
             applySection("about", config.sections.about);
             applySection("about-note", config.sections.aboutNote);
             applySection("contact", config.sections.contact);
-            renderInsightList("skills-list", config.sections.skills && config.sections.skills.items);
+            renderSkillsList("skills-list", config.sections.skills && config.sections.skills.items);
             renderInsightList("collab-list", config.sections.collab && config.sections.collab.items);
             if (config.sections.contact && config.sections.contact.primaryCta) {
               setLink("contact-primary", config.sections.contact.primaryCta.label, config.sections.contact.primaryCta.url);
@@ -1488,5 +1610,8 @@
       })();
     </script>
     <script src="./home-hero.js" defer></script>
+    <script src="./home-tilt.js" defer></script>
+    <script src="./home-skills.js" defer></script>
+    <script src="./home-collab.js" defer></script>
   </body>
 </html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zenithy - 留言管理</title>
+    <meta name="theme-color" content="#f8f9fa" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="alternate icon" href="../../favicon.svg" />
+    <style>
+      :root {
+        --bg: #f8f9fa;
+        --panel: #ffffff;
+        --soft: #f1f4f6;
+        --text: #2b3437;
+        --muted: #667277;
+        --line: rgba(43, 52, 55, 0.1);
+        --ink: #0c0f10;
+        --accent: #03687e;
+        --danger: #9f403d;
+        --radius: 28px;
+        --shadow: 0 28px 80px rgba(12, 15, 16, 0.08);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      a { color: inherit; text-decoration: none; }
+      button, input, select { font: inherit; }
+      .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; }
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        padding: 32px;
+        border-right: 1px solid var(--line);
+        background: #f2f5f6;
+      }
+      .brand { display: flex; gap: 12px; align-items: center; margin-bottom: 34px; }
+      .brand-mark {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-weight: 900;
+      }
+      .brand strong { display: block; letter-spacing: -0.04em; }
+      .brand small, .eyebrow {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .nav { display: grid; gap: 6px; }
+      .nav a {
+        border-radius: 999px;
+        color: var(--muted);
+        padding: 12px 14px;
+        font-weight: 700;
+      }
+      .nav a.active { background: var(--ink); color: #fff; }
+      .main { padding: clamp(24px, 4vw, 54px); }
+      .topbar {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      h1 {
+        margin: 8px 0 10px;
+        font-size: clamp(38px, 5vw, 72px);
+        line-height: 0.95;
+        letter-spacing: -0.07em;
+      }
+      .lead { max-width: 760px; color: var(--muted); font-size: 17px; line-height: 1.8; }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+      .button {
+        display: inline-flex;
+        min-height: 42px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--panel);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 800;
+        padding: 0 16px;
+      }
+      .button.primary { background: var(--ink); color: #fff; }
+      .button.danger { color: var(--danger); }
+      .token-input {
+        min-height: 42px;
+        min-width: min(340px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        outline: none;
+        padding: 0 16px;
+      }
+      .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+      .stat, .panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow: var(--shadow);
+      }
+      .stat { padding: 20px; }
+      .stat strong { display: block; font-size: 30px; letter-spacing: -0.06em; }
+      .content { display: grid; grid-template-columns: minmax(360px, 0.85fr) minmax(360px, 1fr); gap: 18px; }
+      .panel { min-height: 460px; padding: 18px; }
+      .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+      .filter {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        cursor: pointer;
+        font-weight: 800;
+        padding: 9px 12px;
+      }
+      .filter.active { background: var(--ink); color: #fff; }
+      .message-list { display: grid; gap: 10px; }
+      .message-card {
+        display: grid;
+        gap: 8px;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: #fff;
+        color: inherit;
+        cursor: pointer;
+        padding: 16px;
+        text-align: left;
+      }
+      .message-card.active { border-color: rgba(3, 104, 126, 0.34); box-shadow: 0 12px 32px rgba(3, 104, 126, 0.08); }
+      .message-card header, .detail-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+      .pill {
+        display: inline-flex;
+        min-height: 24px;
+        align-items: center;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        padding: 0 9px;
+        text-transform: uppercase;
+      }
+      .pill.unread { background: #e8f7f3; color: #006b55; }
+      .pill.contacted { background: #e8f0fb; color: #285c9f; }
+      .pill.archived { background: #efefef; color: #6d7477; }
+      .message-preview, .empty, .help { color: var(--muted); line-height: 1.7; }
+      .detail { display: grid; gap: 18px; }
+      .detail h2 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -0.06em; }
+      .message-body {
+        white-space: pre-wrap;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        background: #fff;
+        line-height: 1.8;
+        padding: 18px;
+      }
+      select {
+        width: 220px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--text);
+        padding: 12px 14px;
+      }
+      .notice {
+        margin-top: 18px;
+        border: 1px solid rgba(3, 104, 126, 0.16);
+        border-radius: 20px;
+        background: rgba(232, 247, 243, 0.68);
+        color: #006b55;
+        padding: 14px 16px;
+      }
+      @media (max-width: 980px) {
+        .layout, .content, .stats { grid-template-columns: 1fr; }
+        .sidebar { position: static; height: auto; }
+        .topbar { display: grid; }
+        .toolbar { justify-content: flex-start; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">Z</div>
+          <div>
+            <strong>Zenithy</strong>
+            <small>Blog Admin</small>
+          </div>
+        </div>
+        <nav class="nav" aria-label="后台导航">
+          <a href="https://blog.zenithy.art/admin/">文章列表</a>
+          <a href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+          <a href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+          <a class="active" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <div class="topbar">
+          <div>
+            <p class="eyebrow">Messages API</p>
+            <h1>留言管理</h1>
+            <p class="lead">
+              这里直接连接真实 Messages API。输入 Admin Token 后即可查看留言、标记状态、归档或删除。
+            </p>
+          </div>
+          <div class="toolbar">
+            <input id="adminToken" class="token-input" type="password" autocomplete="current-password" placeholder="Admin Token" />
+            <button id="saveTokenBtn" class="button" type="button">保存 Token</button>
+            <button id="reloadBtn" class="button primary" type="button">刷新留言</button>
+          </div>
+        </div>
+
+        <section class="stats" aria-label="留言统计">
+          <div class="stat"><small class="eyebrow">Total</small><strong id="statTotal">0</strong></div>
+          <div class="stat"><small class="eyebrow">Unread</small><strong id="statUnread">0</strong></div>
+          <div class="stat"><small class="eyebrow">Contacted</small><strong id="statContacted">0</strong></div>
+          <div class="stat"><small class="eyebrow">Archived</small><strong id="statArchived">0</strong></div>
+        </section>
+
+        <section class="content">
+          <div class="panel">
+            <div class="filter-row" role="tablist" aria-label="状态筛选">
+              <button class="filter active" type="button" data-filter="all">全部</button>
+              <button class="filter" type="button" data-filter="unread">未读</button>
+              <button class="filter" type="button" data-filter="contacted">已联系</button>
+              <button class="filter" type="button" data-filter="archived">已归档</button>
+            </div>
+            <div id="messageList" class="message-list"></div>
+          </div>
+
+          <div class="panel">
+            <article id="messageDetail" class="detail">
+              <p class="empty">请输入 Admin Token 并点击“刷新留言”。</p>
+            </article>
+          </div>
+        </section>
+
+        <p id="notice" class="notice" hidden></p>
+      </main>
+    </div>
+
+    <script>
+      function apiBase() {
+        if (window.ZENITHY_MESSAGES_API) return String(window.ZENITHY_MESSAGES_API).replace(/\/$/, "");
+        if ((location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "8080") {
+          return "http://127.0.0.1:18081/api";
+        }
+        return "/api";
+      }
+
+      const statusLabels = { unread: "未读", contacted: "已联系", archived: "已归档" };
+      let messages = [];
+      let currentFilter = "all";
+      let selectedId = "";
+
+      const listEl = document.getElementById("messageList");
+      const detailEl = document.getElementById("messageDetail");
+      const noticeEl = document.getElementById("notice");
+      const tokenInput = document.getElementById("adminToken");
+      tokenInput.value = localStorage.getItem("zenithy_messages_admin_token") || "";
+
+      function escapeHtml(value) {
+        return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      }
+
+      function token() {
+        return tokenInput.value.trim();
+      }
+
+      function showNotice(message, isError) {
+        noticeEl.textContent = message;
+        noticeEl.hidden = false;
+        noticeEl.style.color = isError ? "#9f403d" : "#006b55";
+      }
+
+      function api(path, options = {}) {
+        const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
+        if (path.startsWith("/admin/")) headers["X-Admin-Token"] = token();
+        return fetch(apiBase() + path, Object.assign({}, options, { headers })).then((res) =>
+          res.json().catch(() => ({})).then((payload) => {
+            if (!res.ok || payload.ok === false) throw new Error(payload.error || "request_failed");
+            return payload;
+          })
+        );
+      }
+
+      function formatTime(value) {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? value || "未记录时间" : date.toLocaleString("zh-CN", { hour12: false });
+      }
+
+      function filteredMessages() {
+        if (currentFilter === "all") return messages;
+        return messages.filter((item) => item.status === currentFilter);
+      }
+
+      function updateStats() {
+        document.getElementById("statTotal").textContent = messages.length;
+        document.getElementById("statUnread").textContent = messages.filter((item) => item.status === "unread").length;
+        document.getElementById("statContacted").textContent = messages.filter((item) => item.status === "contacted").length;
+        document.getElementById("statArchived").textContent = messages.filter((item) => item.status === "archived").length;
+      }
+
+      function renderList() {
+        const list = filteredMessages();
+        if (!list.length) {
+          listEl.innerHTML = '<p class="empty">暂无留言。</p>';
+          return;
+        }
+        listEl.innerHTML = list.map((item) => {
+          const active = item.id === selectedId ? " active" : "";
+          return `
+            <button class="message-card${active}" type="button" data-id="${escapeHtml(item.id)}">
+              <header>
+                <strong>${escapeHtml(item.name || "未留姓名")}</strong>
+                <span class="pill ${escapeHtml(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span>
+              </header>
+              <span class="help">${escapeHtml(item.email)}</span>
+              <p class="message-preview">${escapeHtml(item.message).slice(0, 88)}${item.message.length > 88 ? "..." : ""}</p>
+              <small class="help">${escapeHtml(formatTime(item.createdAt))}</small>
+            </button>
+          `;
+        }).join("");
+      }
+
+      function renderDetail() {
+        const item = messages.find((message) => message.id === selectedId);
+        if (!item) {
+          detailEl.innerHTML = '<p class="empty">请选择一条留言查看详情。</p>';
+          return;
+        }
+        detailEl.innerHTML = `
+          <div class="detail-meta">
+            <span class="pill ${escapeHtml(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span>
+            <small class="help">${escapeHtml(item.id)}</small>
+          </div>
+          <h2>${escapeHtml(item.name || "未留姓名")}</h2>
+          <p><a href="mailto:${escapeHtml(item.email)}">${escapeHtml(item.email)}</a></p>
+          <div class="message-body">${escapeHtml(item.message)}</div>
+          <select id="statusSelect">
+            <option value="unread"${item.status === "unread" ? " selected" : ""}>未读</option>
+            <option value="contacted"${item.status === "contacted" ? " selected" : ""}>已联系</option>
+            <option value="archived"${item.status === "archived" ? " selected" : ""}>已归档</option>
+          </select>
+          <p class="help">来源：${escapeHtml(item.source || "zenithy-home")} · 创建：${escapeHtml(formatTime(item.createdAt))}</p>
+          <div class="toolbar" style="justify-content:flex-start">
+            <button class="button danger" type="button" id="deleteSelected">删除该留言</button>
+          </div>
+        `;
+      }
+
+      function render() {
+        updateStats();
+        renderList();
+        renderDetail();
+      }
+
+      function loadMessages() {
+        if (!token()) {
+          showNotice("请先输入 Admin Token。", true);
+          render();
+          return;
+        }
+        api("/admin/messages")
+          .then((data) => {
+            messages = Array.isArray(data.messages) ? data.messages : [];
+            selectedId = messages[0] ? messages[0].id : "";
+            render();
+            showNotice("留言已刷新。");
+          })
+          .catch((error) => showNotice("读取失败：" + error.message, true));
+      }
+
+      document.getElementById("saveTokenBtn").addEventListener("click", () => {
+        localStorage.setItem("zenithy_messages_admin_token", token());
+        showNotice("Token 已保存在当前浏览器。");
+      });
+
+      document.getElementById("reloadBtn").addEventListener("click", loadMessages);
+
+      document.querySelectorAll(".filter").forEach((button) => {
+        button.addEventListener("click", () => {
+          currentFilter = button.dataset.filter || "all";
+          document.querySelectorAll(".filter").forEach((item) => item.classList.toggle("active", item === button));
+          render();
+        });
+      });
+
+      listEl.addEventListener("click", (event) => {
+        const card = event.target.closest(".message-card");
+        if (!card) return;
+        selectedId = card.dataset.id;
+        render();
+      });
+
+      detailEl.addEventListener("change", (event) => {
+        if (event.target.id !== "statusSelect") return;
+        const status = event.target.value;
+        api("/admin/messages/" + encodeURIComponent(selectedId), {
+          method: "PATCH",
+          body: JSON.stringify({ status }),
+        })
+          .then((data) => {
+            const next = data.message;
+            messages = messages.map((item) => (item.id === next.id ? next : item));
+            render();
+            showNotice("状态已更新。");
+          })
+          .catch((error) => showNotice("更新失败：" + error.message, true));
+      });
+
+      detailEl.addEventListener("click", (event) => {
+        if (event.target.id !== "deleteSelected") return;
+        const ok = confirm("确认删除这条留言？如果只是暂时处理完，建议改为“已归档”。");
+        if (!ok) return;
+        api("/admin/messages/" + encodeURIComponent(selectedId), { method: "DELETE" })
+          .then(() => {
+            messages = messages.filter((item) => item.id !== selectedId);
+            selectedId = messages[0] ? messages[0].id : "";
+            render();
+            showNotice("留言已删除。");
+          })
+          .catch((error) => showNotice("删除失败：" + error.message, true));
+      });
+
+      render();
+      if (token()) loadMessages();
+    </script>
+  </body>
+</html>

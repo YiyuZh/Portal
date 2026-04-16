@@ -1,0 +1,12 @@
+{
+  "name": "zenithy-portal",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "validate": "node scripts/validate-content.js",
+    "preflight": "node scripts/preflight-check.js",
+    "check": "node scripts/validate-content.js && node scripts/preflight-check.js",
+    "test:messages": "node scripts/test-messages-api.js",
+    "qa": "npm run check && npm run test:messages"
+  }
+}

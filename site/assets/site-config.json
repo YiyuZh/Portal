@@ -1,7 +1,11 @@
 {
   "hero": {
     "eyebrow": "Creative Engineering Lab",
-    "title": "Zenithy 项目展示",
+    "title": "HELLO, I'M Zenithy",
+    "titleLeading": "HELLO, I'M",
+    "titleName": "Zenithy",
+    "revealTitle": "你好，我是詹已誉",
+    "metaLine": "AI Process Manager / 18岁 / 广东深圳",
     "subtitle": "统一入口 · 快速访问 · 持续扩展",
     "primaryCta": {
       "label": "进入 HireMate",
@@ -10,6 +14,15 @@
     "secondaryCta": {
       "label": "进入智面",
       "url": "https://interview.zenithy.art"
+    },
+    "tilt": {
+      "enabled": true,
+      "maxRotate": 8
+    },
+    "orb": {
+      "enabled": true,
+      "followStrength": 0.08,
+      "drift": true
     }
   },
   "nav": {
@@ -33,17 +46,44 @@
         {
           "label": "01 / Product Sense",
           "title": "从场景判断价值",
-          "description": "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。"
+          "description": "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。",
+          "metric": 3,
+          "metricSuffix": "+",
+          "metricLabel": "验证维度",
+          "highlights": [
+            "需求判断",
+            "用户路径",
+            "MVP 优先级"
+          ],
+          "motionVariant": "orbit"
         },
         {
           "label": "02 / Full-stack Delivery",
           "title": "把想法交付成系统",
-          "description": "从前端体验、后端接口、数据结构到部署回滚，优先保证能稳定上线和继续维护。"
+          "description": "从前端体验、后端接口、数据结构到部署回滚，优先保证能稳定上线和继续维护。",
+          "metric": 5,
+          "metricSuffix": "+",
+          "metricLabel": "交付链路",
+          "highlights": [
+            "前端体验",
+            "API 设计",
+            "部署回滚"
+          ],
+          "motionVariant": "grid"
         },
         {
           "label": "03 / AI Application",
           "title": "让模型进入业务闭环",
-          "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可被验证的产品能力。"
+          "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可被验证的产品能力。",
+          "metric": 4,
+          "metricSuffix": "+",
+          "metricLabel": "AI 场景",
+          "highlights": [
+            "RAG 检索",
+            "结构化评估",
+            "流式反馈"
+          ],
+          "motionVariant": "signal"
         }
       ]
     },

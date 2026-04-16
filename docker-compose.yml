@@ -14,7 +14,31 @@ services:
       timeout: 5s
       retries: 3
 
+  messages-api:
+    build: ./api
+    image: portal-messages-api:prod
+    container_name: portal-messages-api
+    restart: unless-stopped
+    environment:
+      MESSAGES_DB: /data/messages.sqlite3
+      MESSAGES_ADMIN_TOKEN: ${MESSAGES_ADMIN_TOKEN:-change-me-before-production}
+      CORS_ORIGINS: ${MESSAGES_CORS_ORIGINS:-https://zenithy.art,https://blog.zenithy.art,http://127.0.0.1:8080,http://localhost:8080,http://127.0.0.1:18080}
+    volumes:
+      - portal_messages_data:/data
+    ports:
+      - "127.0.0.1:18081:8000"
+    networks:
+      - shared_gateway
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3).read()\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
 networks:
   shared_gateway:
     external: true
     name: shared_gateway
+
+volumes:
+  portal_messages_data:
