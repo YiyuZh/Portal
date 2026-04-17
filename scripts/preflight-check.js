@@ -270,7 +270,7 @@ function checkHomepageMotion() {
     !heroJs.includes("event.clientX / viewportWidth") ||
     !heroJs.includes("event.clientY / viewportHeight") ||
     !heroJs.includes("hero.getBoundingClientRect") ||
-    !heroJs.includes("plane.getBoundingClientRect") ||
+    !heroJs.includes("effectsLayer.getBoundingClientRect") ||
     !heroJs.includes("data-hero-plane")
   ) {
     errors.push("[hero] viewport pointer model or Hero geometry mapping is missing");
@@ -295,6 +295,12 @@ function checkHomepageMotion() {
   if (!heroJs.includes("targetOrb.x = clamp(rawOrbX, edgePadding")) {
     errors.push("[hero] orb and reveal must be mapped from full Hero/viewport coordinates, not the title stage");
   }
+  if (
+    !heroJs.includes("rawOrbX = event.clientX - effectsBounds.left") ||
+    !heroJs.includes("rawOrbY = event.clientY - effectsBounds.top")
+  ) {
+    errors.push("[hero regression] black orb must use the full viewport-width effects layer, not the title plane/stage rect");
+  }
   if (!heroJs.includes("edgePadding = orbRadius * 0.15")) {
     errors.push("[hero regression] black orb edge clamp must stay loose enough to reach the top/bottom/left/right edges");
   }
@@ -304,7 +310,9 @@ function checkHomepageMotion() {
   if (
     !heroJs.includes("[data-hero-title-stack]") ||
     !heroJs.includes('setProperty("--hero-title-mask-x", titleMaskX)') ||
-    !heroJs.includes('setProperty("--hero-title-mask-y", titleMaskY)')
+    !heroJs.includes('setProperty("--hero-title-mask-y", titleMaskY)') ||
+    !heroJs.includes('setProperty("--hero-title-left", titleLeft)') ||
+    !heroJs.includes('setProperty("--hero-title-top", titleTop)')
   ) {
     errors.push("[hero] reveal mask must be converted from the black orb center into the title stack coordinate system");
   }
@@ -320,6 +328,7 @@ function checkHomepageMotion() {
   const effectsIndex = indexHtml.indexOf('class="hero-effects-layer"');
   const titleSystemIndex = indexHtml.indexOf('class="hero-title-system"');
   const orbIndex = indexHtml.indexOf('class="hero-orb"');
+  const revealIndex = indexHtml.indexOf('id="hero-title-reveal"');
   if (effectsIndex === -1 || !css.includes(".hero-effects-layer")) {
     errors.push("[hero] .hero-effects-layer is required so the black orb is not constrained by the title stack");
   }
@@ -328,6 +337,9 @@ function checkHomepageMotion() {
   }
   if (!(effectsIndex !== -1 && orbIndex > effectsIndex && titleSystemIndex !== -1 && orbIndex < titleSystemIndex)) {
     errors.push("[hero regression] .hero-orb must live in .hero-effects-layer before .hero-title-system, not inside the title stack");
+  }
+  if (!(effectsIndex !== -1 && revealIndex > effectsIndex && titleSystemIndex !== -1 && revealIndex < titleSystemIndex)) {
+    errors.push("[hero regression] .hero-title-reveal must live in .hero-effects-layer above the black orb, not inside the title stack");
   }
   [
     "hero-reveal-lens",
@@ -365,8 +377,19 @@ function checkHomepageMotion() {
   if (!effectsRule || !/z-index\s*:\s*2\b/.test(effectsRule[0])) {
     errors.push("[hero layering] black orb effects layer must sit above the black title with z-index: 2");
   }
+  if (
+    !effectsRule ||
+    !/width\s*:\s*100vw\b/.test(effectsRule[0]) ||
+    !/left\s*:\s*50%/.test(effectsRule[0]) ||
+    !/transform\s*:\s*translateX\(-50%\)/.test(effectsRule[0])
+  ) {
+    errors.push("[hero regression] .hero-effects-layer must span the full viewport width, not the shell width");
+  }
   if (!revealRule || !/z-index\s*:\s*3\b/.test(revealRule[0])) {
     errors.push("[hero layering] white reveal title must sit above the black orb with z-index: 3");
+  }
+  if (!css.includes("left: var(--hero-title-left)") || !css.includes("top: var(--hero-title-top)")) {
+    errors.push("[hero] reveal layer must be positioned over the real title stack before clipping");
   }
   const orbRule = css.match(/\.hero-orb\s*\{[^}]*\}/);
   if (orbRule) {

@@ -6,6 +6,7 @@
   var coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)");
   var mobileViewport = window.matchMedia && window.matchMedia("(max-width: 820px)");
   var hero = document.querySelector(".hero");
+  var effectsLayer = document.querySelector(".hero-effects-layer");
   var plane = document.querySelector("[data-hero-plane]");
   var stage = document.querySelector("[data-hero-stage]");
   var titleStack = document.querySelector("[data-hero-title-stack]");
@@ -13,7 +14,7 @@
   var reveal = document.getElementById("hero-title-reveal");
   var orbEl = document.querySelector(".hero-orb");
 
-  if (!hero || !plane || !stage || !titleStack || !title || !reveal || !orbEl) {
+  if (!hero || !effectsLayer || !plane || !stage || !titleStack || !title || !reveal || !orbEl) {
     return;
   }
 
@@ -66,7 +67,7 @@
 
   var active = false;
   var heroBounds = null;
-  var planeBounds = null;
+  var effectsBounds = null;
   var orbRadius = 86;
 
   // The pointer source is the whole viewport. This keeps the typography alive
@@ -83,12 +84,12 @@
 
   function refreshBounds() {
     heroBounds = hero.getBoundingClientRect();
-    planeBounds = plane.getBoundingClientRect();
+    effectsBounds = effectsLayer.getBoundingClientRect();
     var orbRect = orbEl.getBoundingClientRect();
     orbRadius = Math.max(55, (orbRect.width || 172) / 2);
-    if (!orb.x && planeBounds.width) {
-      orb.x = planeBounds.width * 0.78;
-      orb.y = planeBounds.height * 0.24;
+    if (!orb.x && effectsBounds.width) {
+      orb.x = effectsBounds.width * 0.78;
+      orb.y = effectsBounds.height * 0.24;
     }
   }
 
@@ -109,12 +110,12 @@
     pointer.x = clamp(event.clientX / viewportWidth, 0, 1);
     pointer.y = clamp(event.clientY / viewportHeight, 0, 1);
 
-    var rawOrbX = event.clientX - planeBounds.left;
-    var rawOrbY = event.clientY - planeBounds.top;
+    var rawOrbX = event.clientX - effectsBounds.left;
+    var rawOrbY = event.clientY - effectsBounds.top;
     var edgePadding = orbRadius * 0.15;
 
-    targetOrb.x = clamp(rawOrbX, edgePadding, planeBounds.width - edgePadding);
-    targetOrb.y = clamp(rawOrbY, edgePadding, planeBounds.height - edgePadding);
+    targetOrb.x = clamp(rawOrbX, edgePadding, effectsBounds.width - edgePadding);
+    targetOrb.y = clamp(rawOrbY, edgePadding, effectsBounds.height - edgePadding);
 
     setActive(visible);
   }
@@ -166,7 +167,7 @@
   );
 
   function tick(time) {
-    if (!heroBounds || !planeBounds) {
+    if (!heroBounds) {
       refreshBounds();
     }
 
@@ -185,8 +186,8 @@
       driftY += Math.cos(time / 3300) * 0.045;
     }
 
-    var idleOrbX = planeBounds && planeBounds.width ? planeBounds.width * clamp(driftX, 0.08, 0.92) : 0;
-    var idleOrbY = planeBounds && planeBounds.height ? planeBounds.height * clamp(driftY, 0.08, 0.84) : 0;
+    var idleOrbX = effectsBounds && effectsBounds.width ? effectsBounds.width * clamp(driftX, 0.08, 0.92) : 0;
+    var idleOrbY = effectsBounds && effectsBounds.height ? effectsBounds.height * clamp(driftY, 0.08, 0.84) : 0;
 
     var targetOrbX = active ? targetOrb.x : idleOrbX;
     var targetOrbY = active ? targetOrb.y : idleOrbY;
@@ -203,15 +204,23 @@
     var orbX = orb.x.toFixed(2) + "px";
     var orbY = orb.y.toFixed(2) + "px";
     var titleBounds = titleStack.getBoundingClientRect();
-    var orbClientX = planeBounds.left + orb.x;
-    var orbClientY = planeBounds.top + orb.y;
+    var orbClientX = effectsBounds.left + orb.x;
+    var orbClientY = effectsBounds.top + orb.y;
     var titleMaskX = (orbClientX - titleBounds.left).toFixed(2) + "px";
     var titleMaskY = (orbClientY - titleBounds.top).toFixed(2) + "px";
+    var titleLeft = (titleBounds.left - effectsBounds.left).toFixed(2) + "px";
+    var titleTop = (titleBounds.top - effectsBounds.top).toFixed(2) + "px";
+    var titleWidth = titleBounds.width.toFixed(2) + "px";
+    var titleHeight = titleBounds.height.toFixed(2) + "px";
 
     hero.style.setProperty("--hero-orb-x", orbX);
     hero.style.setProperty("--hero-orb-y", orbY);
     hero.style.setProperty("--hero-title-mask-x", titleMaskX);
     hero.style.setProperty("--hero-title-mask-y", titleMaskY);
+    hero.style.setProperty("--hero-title-left", titleLeft);
+    hero.style.setProperty("--hero-title-top", titleTop);
+    hero.style.setProperty("--hero-title-width", titleWidth);
+    hero.style.setProperty("--hero-title-height", titleHeight);
     hero.style.setProperty("--hero-pointer-x", (pointer.x * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-pointer-y", (pointer.y * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-rotate-x", tilt.x.toFixed(3) + "deg");

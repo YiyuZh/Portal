@@ -150,6 +150,10 @@ body::before {
   --hero-orb-y: 19%;
   --hero-title-mask-x: 80%;
   --hero-title-mask-y: 19%;
+  --hero-title-left: 0px;
+  --hero-title-top: 0px;
+  --hero-title-width: 100%;
+  --hero-title-height: 100%;
   --hero-pointer-x: 80%;
   --hero-pointer-y: 22%;
   --hero-orb-size: clamp(120px, 10.5vw, 210px);
@@ -162,6 +166,7 @@ body::before {
 
 .hero-inner {
   position: relative;
+  z-index: 1;
   isolation: isolate;
   gap: 10px;
 }
@@ -184,9 +189,15 @@ body::before {
 
 .hero-effects-layer {
   position: absolute;
-  inset: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
   z-index: 2;
   pointer-events: none;
+  overflow: visible;
+  transform: translateX(-50%);
 }
 
 .eyebrow,
@@ -289,11 +300,13 @@ body::before {
 .hero-title-reveal {
   position: absolute;
   z-index: 3;
-  inset: 0;
+  left: var(--hero-title-left);
+  top: var(--hero-title-top);
   display: grid;
   place-items: center;
-  width: 100%;
-  max-width: min(92vw, 1240px);
+  width: var(--hero-title-width);
+  height: var(--hero-title-height);
+  max-width: none;
   color: #fff;
   font-weight: 780;
   pointer-events: none;
@@ -1290,6 +1303,10 @@ body::before {
     --hero-orb-y: 50%;
     --hero-title-mask-x: 50%;
     --hero-title-mask-y: 50%;
+    --hero-title-left: 0px;
+    --hero-title-top: 0px;
+    --hero-title-width: 100%;
+    --hero-title-height: 100%;
     --hero-orb-size: 0px;
     --hero-rotate-x: 0deg;
     --hero-rotate-y: 0deg;
