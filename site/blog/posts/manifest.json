@@ -5,11 +5,13 @@
       "title": "测试",
       "excerpt": "测试",
       "date": "2026-04-02T15:03:22.124Z",
+      "updatedAt": "2026-04-02T15:03:22.124Z",
       "category": "Uncategorized",
       "tags": [],
       "cover": "",
       "readTime": "1 min read",
       "status": "已发布",
+      "published": true,
       "slug": "new-post",
       "url": "https://blog.zenithy.art/posts/new-post/",
       "adminEdit": "https://blog.zenithy.art/admin/editor.html"

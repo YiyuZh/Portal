@@ -59,48 +59,26 @@
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
     </style>
+    <link rel="stylesheet" href="./admin.css" />
   </head>
-  <body class="bg-surface text-on-surface">
-    <aside class="fixed left-0 top-0 flex h-screen w-64 flex-col bg-slate-50">
-      <div class="p-8">
-        <div class="mb-10 flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white">
-            <span class="material-symbols-outlined">auto_awesome</span>
-          </div>
-          <div>
-            <h1 class="text-xl font-bold tracking-tight text-slate-800">Zenithy</h1>
-            <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
-              项目管理
-            </p>
-          </div>
+  <body class="admin-body admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img class="admin-brand-mark" src="../../favicon.svg" alt="Zenithy" />
+        <div>
+          <strong>Zenithy</strong>
+          <small>Blog Admin</small>
         </div>
-        <nav class="space-y-1">
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="https://blog.zenithy.art/admin/"
-          >
-            <span class="material-symbols-outlined">article</span>
-            文章列表
-          </a>
-          <a
-            class="flex items-center gap-3 border-r-2 border-cyan-800 bg-slate-100/50 px-4 py-3 font-semibold text-cyan-800"
-            href="https://blog.zenithy.art/admin/projects.html"
-          >
-            <span class="material-symbols-outlined">dashboard</span>
-            项目管理
-          </a>
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="https://blog.zenithy.art/admin/messages.html"
-          >
-            <span class="material-symbols-outlined">mail</span>
-            留言管理
-          </a>
-        </nav>
       </div>
+      <nav class="admin-nav" aria-label="后台导航">
+        <a class="" href="https://blog.zenithy.art/admin/">文章列表</a>
+        <a class="" href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+        <a class="is-active" href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+        <a class="" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
+      </nav>
     </aside>
 
-    <main class="min-h-screen pl-64 pt-10">
+    <main class="admin-main">
       <div class="mx-auto max-w-6xl p-8">
         <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>

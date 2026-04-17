@@ -96,19 +96,10 @@
       }
 
       .brand-mark {
-        position: relative;
         width: 20px;
         height: 20px;
-        border-radius: 50%;
-        background: #2b3437;
-      }
-
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 5px;
-        border-radius: 50%;
-        background: #fff;
+        display: block;
+        border-radius: 6px;
       }
 
       .nav-links {
@@ -443,7 +434,7 @@
     <header>
       <nav class="nav">
         <div class="brand">
-          <span class="brand-mark" aria-hidden="true"></span>
+          <img class="brand-mark" src="../favicon.svg" alt="" aria-hidden="true" />
           Zenithy
         </div>
         <div class="nav-links">
@@ -621,7 +612,7 @@
       <div class="footer-inner">
         <div>
           <div class="brand">
-            <span class="brand-mark" aria-hidden="true"></span>
+            <img class="brand-mark" src="../favicon.svg" alt="" aria-hidden="true" />
             Zenithy
           </div>
           <div style="margin-top: 8px">

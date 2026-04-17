@@ -53,6 +53,17 @@ function normalizeArray(value) {
   return [];
 }
 
+function isPublishedPost(post) {
+  if (!post || typeof post !== "object") return false;
+  if (post.published === true) return true;
+  if (post.published === false) return false;
+  const status = String(post.status || "").trim().toLowerCase();
+  if (!status) return true;
+  if (["published", "publish", "live", "已发布", "已發佈"].includes(status)) return true;
+  if (["draft", "草稿", "archived", "已归档", "已歸檔", "hidden", "private"].includes(status)) return false;
+  return true;
+}
+
 function requireText(value, label) {
   if (typeof value !== "string" || !value.trim()) {
     errors.push(`[required] ${label}`);
@@ -167,6 +178,9 @@ function validateManifest() {
     const label = `posts[${index}]`;
     requireText(post.slug, `${label}.slug`);
     requireText(post.title, `${label}.title`);
+    if (post.published !== undefined && typeof post.published !== "boolean") {
+      errors.push(`[type] ${label}.published must be boolean when provided`);
+    }
 
     if (post.slug) {
       if (slugs.has(post.slug)) errors.push(`[duplicate slug] ${label}.slug = ${post.slug}`);
@@ -177,6 +191,17 @@ function validateManifest() {
       post.tags = normalizeArray(post.tags);
       fixes.push(`${label}.tags normalized to array`);
       changed = true;
+    }
+
+    if (isPublishedPost(post)) {
+      requireText(post.excerpt, `${label}.excerpt`);
+      if (!post.date && !post.updatedAt) {
+        errors.push(`[required] ${label}.date or ${label}.updatedAt`);
+      }
+      if (post.slug) {
+        const postIndex = path.join(siteDir, "blog", "posts", post.slug, "index.html");
+        ensureFile(postIndex, `${label} published post index`);
+      }
     }
   });
 

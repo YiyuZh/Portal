@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Zenithy - 博客后台</title>
+    <title>Zenithy - 文章管理</title>
     <meta name="theme-color" content="#f8f9fa" />
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
     <link rel="alternate icon" href="../../favicon.svg" />
@@ -114,109 +114,34 @@
         border-radius: 10px;
       }
     </style>
+    <link rel="stylesheet" href="./admin.css" />
   </head>
-  <body class="bg-surface text-on-surface">
-    <aside class="fixed left-0 top-0 flex h-screen w-64 flex-col bg-slate-50">
-      <div class="p-8">
-        <div class="mb-10 flex items-center gap-3">
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white"
-          >
-            <span class="material-symbols-outlined">auto_awesome</span>
-          </div>
-          <div>
-            <h1 class="text-xl font-bold tracking-tight text-slate-800">Zenithy</h1>
-            <p class="text-xs font-medium uppercase tracking-widest text-on-surface-variant">
-              博客后台
-            </p>
-          </div>
+  <body class="admin-body admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img class="admin-brand-mark" src="../../favicon.svg" alt="Zenithy" />
+        <div>
+          <strong>Zenithy</strong>
+          <small>Blog Admin</small>
         </div>
-        <a
-          class="mb-8 flex w-full items-center justify-center gap-2 rounded-full bg-tertiary py-4 font-semibold text-on-tertiary shadow-lg shadow-tertiary/10 transition-all active:scale-95"
-          href="https://blog.zenithy.art/admin/editor.html"
-        >
-          <span class="material-symbols-outlined">add</span>
-          新建文章
-        </a>
-        <nav class="space-y-1">
-          <a
-            class="flex items-center gap-3 border-r-2 border-cyan-800 bg-slate-100/50 px-4 py-3 font-semibold text-cyan-800"
-            href="https://blog.zenithy.art/admin/"
-          >
-            <span class="material-symbols-outlined">article</span>
-            文章列表
-          </a>
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="https://blog.zenithy.art/admin/projects.html"
-          >
-            <span class="material-symbols-outlined">dashboard</span>
-            项目管理
-          </a>
-          <a
-            class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-            href="https://blog.zenithy.art/admin/messages.html"
-          >
-            <span class="material-symbols-outlined">mail</span>
-            留言管理
-          </a>
-        </nav>
       </div>
-      <div class="mt-auto space-y-1 p-8">
-        <button
-          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-          type="button"
-        >
-          <span class="material-symbols-outlined">help_outline</span>
-          帮助
-        </button>
-        <button
-          class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-slate-700"
-          type="button"
-        >
-          <span class="material-symbols-outlined">logout</span>
-          退出
-        </button>
-      </div>
+      <nav class="admin-nav" aria-label="后台导航">
+        <a class="is-active" href="https://blog.zenithy.art/admin/">文章列表</a>
+        <a class="" href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+        <a class="" href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+        <a class="" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
+      </nav>
     </aside>
 
-    <header
-      class="fixed top-0 z-40 flex h-16 w-full items-center justify-between bg-white/80 px-8 pl-64 backdrop-blur-xl"
-    >
-      <div class="flex items-center gap-6">
-        <span class="font-headline text-lg font-semibold text-slate-900">博客管理</span>
-        <div class="relative">
-          <span
-            class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
-            >search</span
-          >
-          <input
-            class="w-64 rounded-full border-0 bg-surface-container-low py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-tertiary"
-            placeholder="搜索文章..."
-            type="text"
-          />
-        </div>
-      </div>
-      <div class="flex items-center gap-4">
-        <button class="p-2 text-slate-600 hover:text-cyan-800">
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
-        <div class="flex items-center gap-3 rounded-full bg-surface-container-low px-3 py-1">
-          <span class="text-sm font-semibold">Alex Rivera</span>
-          <span class="text-xs text-on-surface-variant">Chief Editor</span>
-        </div>
-      </div>
-    </header>
-
-    <main class="min-h-screen pl-64 pt-24">
+    <main class="admin-main">
       <div class="mx-auto max-w-6xl px-8 pb-16">
-        <section class="mb-10 rounded-3xl bg-white p-8 shadow-sm">
+        <section class="admin-card mb-10 p-8">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-xs font-semibold uppercase tracking-[0.3em] text-on-surface-variant">
                 Content Repository
               </p>
-              <h2 class="mt-2 text-3xl font-bold font-headline">文章管理中心</h2>
+              <h2 class="mt-2 text-3xl font-bold font-headline">文章管理</h2>
               <p class="mt-2 text-sm text-on-surface-variant">
                 统一管理博客文章、标签与发布状态，确保内容始终与前台展示一致。
               </p>
@@ -275,11 +200,18 @@
       </div>
     </main>
     <script>
+
       const adminList = document.getElementById("adminPostList");
       const totalPosts = document.getElementById("totalPosts");
       const postCount = document.getElementById("postCount");
       const manifestUrl = "../posts/manifest.json";
       const adminTagFilters = document.getElementById("adminTagFilters");
+      const allTagLabel = "全部";
+
+      function manifestRequest(url) {
+        const marker = url.includes("?") ? "&" : "?";
+        return url + marker + "v=" + Date.now();
+      }
 
       function formatDate(value) {
         if (!value) return "";
@@ -288,17 +220,41 @@
         return date.toISOString().slice(0, 10);
       }
 
+      function postTags(post) {
+        if (Array.isArray(post.tags)) return post.tags.map((tag) => String(tag).trim()).filter(Boolean);
+        if (typeof post.tags === "string") return post.tags.split(",").map((tag) => tag.trim()).filter(Boolean);
+        return [];
+      }
+
+      function isPublishedPost(post) {
+        if (!post || typeof post !== "object") return false;
+        if (post.published === true) return true;
+        if (post.published === false) return false;
+        const status = String(post.status || "").trim().toLowerCase();
+        if (!status) return true;
+        if (["published", "publish", "live", "已发布", "已發佈"].includes(status)) return true;
+        if (["draft", "草稿", "archived", "已归档", "已歸檔", "hidden", "private"].includes(status)) return false;
+        return true;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function filteredByTag(posts, activeTag) {
+        if (!activeTag || activeTag === allTagLabel) return posts;
+        return posts.filter((post) => postTags(post).includes(activeTag));
+      }
+
       function renderTagFilters(posts, activeTag, onSelect) {
         const tagSet = new Set();
-        posts.forEach((post) => {
-          const tags = Array.isArray(post.tags)
-            ? post.tags
-            : typeof post.tags === "string"
-              ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-              : [];
-          tags.forEach((t) => tagSet.add(t));
-        });
-        const tags = ["全部", ...Array.from(tagSet)];
+        posts.forEach((post) => postTags(post).forEach((tag) => tagSet.add(tag)));
+        const tags = [allTagLabel, ...Array.from(tagSet)];
         adminTagFilters.innerHTML = "";
         tags.forEach((tag) => {
           const btn = document.createElement("button");
@@ -314,90 +270,52 @@
       }
 
       function renderAdmin(posts, activeTag) {
-        const filtered =
-          activeTag && activeTag !== "全部"
-            ? posts.filter((post) => {
-                const tags = Array.isArray(post.tags)
-                  ? post.tags
-                  : typeof post.tags === "string"
-                    ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-                    : [];
-                return tags.includes(activeTag);
-              })
-            : posts;
-
+        const filtered = filteredByTag(posts, activeTag);
+        const visibleCount = Math.min(filtered.length, 4);
         totalPosts.textContent = posts.length;
-        postCount.innerHTML = `当前显示 <span class="font-bold text-on-surface">1-${Math.min(
-          filtered.length,
-          4
-        )}</span> / ${filtered.length} 篇`;
+        postCount.innerHTML = '当前显示 <span class="font-bold text-on-surface">' + visibleCount + '</span> / ' + filtered.length + ' 篇';
         adminList.innerHTML = "";
 
         if (!filtered.length) {
-          adminList.innerHTML =
-            '<div class="rounded-xl bg-surface-container-lowest p-6 text-on-surface-variant">暂无文章，请点击“新建文章”开始发布。</div>';
+          adminList.innerHTML = '<div class="rounded-xl bg-surface-container-lowest p-6 text-on-surface-variant">暂无文章，请点击“发布文章”开始发布。</div>';
           return;
         }
 
         filtered.slice(0, 4).forEach((post) => {
-          const cover =
-            post.cover ||
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
-          const status = post.status || "已发布";
-          const statusColor = status === "已发布" ? "text-emerald-600" : "text-slate-500";
-          const statusDot = status === "已发布" ? "bg-emerald-500" : "bg-slate-400";
+          const cover = post.cover || "https://lh3.googleusercontent.com/aida-public/AB6AXuCErMS3mJUiqkOxCCPAxIFo9BMu4MNXZQf7ztgmQ1vHzp8IXUFw2eT36L4hNbg8c926hqdggxfrB-TIm4bdFOG_SiPMSfStr8HoMEH6YhlenkOJ6cTwB-JM2yyRkhpE051_4-g3NT2d8NPR-ohqEHTmpqLsdnHvRTW8HBEU4Q3j9UZF1oNB3CpxLRsRBd21I6Wzg4LlZirMgzwuUwjKUDRXKrLIO_Cm5A9Mw3uppZqTnXT4hNuxGQYZFvY7LEQj_O-Y3yJRhPiMOgGT";
+          const published = isPublishedPost(post);
+          const status = published ? "已发布" : (post.status || "草稿");
+          const statusColor = published ? "text-emerald-600" : "text-slate-500";
+          const statusDot = published ? "bg-emerald-500" : "bg-slate-400";
           adminList.insertAdjacentHTML(
             "beforeend",
-            `<div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">
-              <div class="grid grid-cols-12 items-center gap-6">
-                <div class="col-span-1">
-                  <img alt="Post Thumbnail" class="h-16 w-16 rounded-lg object-cover" src="${cover}" />
-                </div>
-                <div class="col-span-5">
-                  <div class="mb-1 flex items-center gap-2">
-                    <span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">${
-                      post.category || "博客"
-                    }</span>
-                    <span class="text-[10px] font-medium uppercase text-on-surface-variant">${
-                      post.readTime || "5 分钟"
-                    }</span>
-                  </div>
-                  <h3 class="text-lg font-bold text-on-surface group-hover:text-tertiary transition-colors">${
-                    post.title || "Untitled Post"
-                  }</h3>
-                  <p class="line-clamp-1 text-sm text-on-surface-variant">${
-                    post.excerpt || ""
-                  }</p>
-                </div>
-                <div class="col-span-2">
-                  <div class="flex flex-col">
-                    <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">状态</span>
-                    <div class="flex items-center gap-2 text-sm font-semibold ${statusColor}">
-                      <span class="h-2 w-2 rounded-full ${statusDot}"></span>
-                      ${status}
-                    </div>
-                  </div>
-                </div>
-                <div class="col-span-2">
-                  <div class="flex flex-col">
-                    <span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">更新日期</span>
-                    <span class="text-sm font-medium text-on-surface">${formatDate(post.date)}</span>
-                  </div>
-                </div>
-                <div class="col-span-2 flex justify-end gap-2">
-                  <a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="${
-                    post.adminEdit || "https://blog.zenithy.art/admin/editor.html"
-                  }" title="编辑">
-                    <span class="material-symbols-outlined">edit</span>
-                  </a>
-                  <button class="delete-post flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error" data-slug="${
-                    post.slug || ""
-                  }" title="删除">
-                    <span class="material-symbols-outlined">delete</span>
-                  </button>
-                </div>
-              </div>
-            </div>`
+            '<div class="group relative rounded-xl border border-transparent bg-surface-container-lowest p-6 transition-all duration-300 hover:border-outline-variant/10 hover:shadow-xl">' +
+              '<div class="grid grid-cols-12 items-center gap-6">' +
+                '<div class="col-span-1"><img alt="Post Thumbnail" class="h-16 w-16 rounded-lg object-cover" src="' + escapeHtml(cover) + '" /></div>' +
+                '<div class="col-span-5">' +
+                  '<div class="mb-1 flex items-center gap-2">' +
+                    '<span class="rounded bg-tertiary-container/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-on-tertiary-container">' + escapeHtml(post.category || "博客") + '</span>' +
+                    '<span class="text-[10px] font-medium uppercase text-on-surface-variant">' + escapeHtml(post.readTime || "5 分钟") + '</span>' +
+                  '</div>' +
+                  '<h3 class="text-lg font-bold text-on-surface group-hover:text-tertiary transition-colors">' + escapeHtml(post.title || "Untitled Post") + '</h3>' +
+                  '<p class="line-clamp-1 text-sm text-on-surface-variant">' + escapeHtml(post.excerpt || "") + '</p>' +
+                '</div>' +
+                '<div class="col-span-2">' +
+                  '<div class="flex flex-col"><span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">状态</span>' +
+                    '<div class="flex items-center gap-2 text-sm font-semibold ' + statusColor + '"><span class="h-2 w-2 rounded-full ' + statusDot + '"></span>' + escapeHtml(status) + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="col-span-2">' +
+                  '<div class="flex flex-col"><span class="mb-1 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">更新日期</span>' +
+                    '<span class="text-sm font-medium text-on-surface">' + escapeHtml(formatDate(post.updatedAt || post.date)) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="col-span-2 flex justify-end gap-2">' +
+                  '<a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="' + escapeHtml(post.adminEdit || "https://blog.zenithy.art/admin/editor.html") + '" title="编辑"><span class="material-symbols-outlined">edit</span></a>' +
+                  '<button class="delete-post flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error" data-slug="' + escapeHtml(post.slug || "") + '" title="删除"><span class="material-symbols-outlined">delete</span></button>' +
+                '</div>' +
+              '</div>' +
+            '</div>'
           );
         });
       }
@@ -419,24 +337,31 @@
         const ok = confirm("确认删除该文章？删除后请用新的 manifest.json 覆盖原文件。");
         if (!ok) return;
 
-        fetch(manifestUrl)
-          .then((res) => res.json())
+        fetch(manifestRequest(manifestUrl), { cache: "no-store" })
+          .then((res) => {
+            if (!res.ok) throw new Error("manifest request failed");
+            return res.json();
+          })
           .then((manifest) => {
             const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
             const next = posts.filter((post) => post.slug !== slug);
             const updated = { pageSize: manifest.pageSize || 4, posts: next };
             downloadFile("manifest.json", JSON.stringify(updated, null, 2));
-            alert(
-              "已生成更新后的 manifest.json。请替换 /portal/site/blog/posts/manifest.json 并提交到 Git。"
-            );
+            alert("已生成更新后的 manifest.json。请替换 /portal/site/blog/posts/manifest.json 并提交到 Git。");
+          })
+          .catch(() => {
+            alert("读取 manifest 失败，请检查 /blog/posts/manifest.json 是否可访问。");
           });
       });
 
-      fetch(manifestUrl)
-        .then((res) => res.json())
+      fetch(manifestRequest(manifestUrl), { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("manifest request failed");
+          return res.json();
+        })
         .then((manifest) => {
           const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
-          let activeTag = "全部";
+          let activeTag = allTagLabel;
           renderTagFilters(posts, activeTag, (tag) => {
             activeTag = tag;
             renderAdmin(posts, activeTag);

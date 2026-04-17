@@ -1,5 +1,5 @@
 // Zenithy Hero route B animation.
-// site-config.json owns the text; this file only controls the interaction plane.
+// site-config.json owns the text; this file only controls the whole-screen interaction model.
 (function () {
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
   var coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)");
@@ -61,9 +61,11 @@
 
   var active = false;
   var bounds = null;
-  var pointer = { x: 0.82, y: 0.22 };
-  var focus = { x: 0.82, y: 0.22 };
-  var orb = { x: 0.82, y: 0.22 };
+  var interactionTarget = hero;
+  var pointer = { x: 0.8, y: 0.2 };
+  var focus = { x: 0.8, y: 0.2 };
+  var mask = { x: 0.8, y: 0.2 };
+  var orb = { x: 0.86, y: 0.14 };
   var tilt = { x: 0, y: 0 };
 
   function setActive(next) {
@@ -72,7 +74,10 @@
   }
 
   function refreshBounds() {
-    bounds = plane.getBoundingClientRect();
+    // Use the full Hero section as the pointer surface. The visual reveal still
+    // renders inside data-hero-plane, but movement anywhere in the first screen
+    // now drives tilt/orb/mask feedback.
+    bounds = interactionTarget.getBoundingClientRect();
   }
 
   function updatePointer(event) {
@@ -82,18 +87,16 @@
     var rawX = (event.clientX - bounds.left) / bounds.width;
     var rawY = (event.clientY - bounds.top) / bounds.height;
 
-    // One large hero plane drives all motion. The title-stage percentages are
-    // projected from the plane, so moving anywhere in the first screen still
-    // creates continuous reveal/tilt feedback without requiring the pointer to
-    // sit directly on top of the text.
+    // Project the full-screen pointer into the title stage. The reveal stays
+    // close to the typography while the actual pointer can be anywhere in Hero.
     pointer.x = clamp(rawX, 0, 1);
     pointer.y = clamp(rawY, 0, 1);
 
-    focus.x = clamp(0.1 + pointer.x * 0.8, 0.1, 0.9);
-    focus.y = clamp(0.12 + pointer.y * 0.58, 0.12, 0.7);
+    focus.x = clamp(0.08 + pointer.x * 0.84, 0.08, 0.92);
+    focus.y = clamp(0.1 + pointer.y * 0.58, 0.1, 0.68);
   }
 
-  plane.addEventListener(
+  interactionTarget.addEventListener(
     "pointerenter",
     function (event) {
       refreshBounds();
@@ -103,9 +106,9 @@
     { passive: true }
   );
 
-  plane.addEventListener("pointermove", updatePointer, { passive: true });
+  interactionTarget.addEventListener("pointermove", updatePointer, { passive: true });
 
-  plane.addEventListener(
+  interactionTarget.addEventListener(
     "pointerleave",
     function () {
       setActive(false);
@@ -114,7 +117,7 @@
     { passive: true }
   );
 
-  plane.addEventListener(
+  interactionTarget.addEventListener(
     "pointercancel",
     function () {
       setActive(false);
@@ -143,8 +146,9 @@
     var tiltEnabled = boolAttr("data-tilt-enabled", true);
     var orbEnabled = boolAttr("data-orb-enabled", true);
     var driftEnabled = boolAttr("data-orb-drift", true);
-    var maxRotate = numberAttr("data-tilt-max", 13);
-    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.11), 0.03, 0.2);
+    var maxRotate = numberAttr("data-tilt-max", 20);
+    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.14), 0.05, 0.24);
+    var maskStrength = clamp(followStrength * 1.55, 0.14, 0.34);
 
     hero.classList.toggle("is-orb-disabled", !orbEnabled);
 
@@ -155,25 +159,32 @@
       driftY += Math.cos(time / 3600) * 0.032;
     }
 
-    var targetX = active ? focus.x : driftX;
-    var targetY = active ? focus.y : driftY;
+    var orbSide = focus.x < 0.5 ? -1 : 1;
+    var targetMaskX = active ? focus.x : driftX;
+    var targetMaskY = active ? focus.y : driftY;
+    var targetOrbX = active ? clamp(focus.x + orbSide * 0.07, 0.08, 0.92) : driftX;
+    var targetOrbY = active ? clamp(focus.y - 0.085, 0.08, 0.62) : driftY;
 
-    orb.x += (targetX - orb.x) * followStrength;
-    orb.y += (targetY - orb.y) * followStrength;
+    mask.x += (targetMaskX - mask.x) * maskStrength;
+    mask.y += (targetMaskY - mask.y) * maskStrength;
+    orb.x += (targetOrbX - orb.x) * followStrength;
+    orb.y += (targetOrbY - orb.y) * followStrength;
 
-    var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate : 0;
-    var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate : 0;
+    var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate * 2 : 0;
+    var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate * 2 : 0;
 
-    tilt.x += (targetTiltX - tilt.x) * 0.16;
-    tilt.y += (targetTiltY - tilt.y) * 0.16;
+    tilt.x += (targetTiltX - tilt.x) * 0.13;
+    tilt.y += (targetTiltY - tilt.y) * 0.13;
 
-    var x = (orb.x * 100).toFixed(2) + "%";
-    var y = (orb.y * 100).toFixed(2) + "%";
+    var orbX = (orb.x * 100).toFixed(2) + "%";
+    var orbY = (orb.y * 100).toFixed(2) + "%";
+    var maskX = (mask.x * 100).toFixed(2) + "%";
+    var maskY = (mask.y * 100).toFixed(2) + "%";
 
-    hero.style.setProperty("--hero-orb-x", x);
-    hero.style.setProperty("--hero-orb-y", y);
-    hero.style.setProperty("--hero-mask-x", x);
-    hero.style.setProperty("--hero-mask-y", y);
+    hero.style.setProperty("--hero-orb-x", orbX);
+    hero.style.setProperty("--hero-orb-y", orbY);
+    hero.style.setProperty("--hero-mask-x", maskX);
+    hero.style.setProperty("--hero-mask-y", maskY);
     hero.style.setProperty("--hero-tilt-x", tilt.x.toFixed(3) + "deg");
     hero.style.setProperty("--hero-tilt-y", tilt.y.toFixed(3) + "deg");
 

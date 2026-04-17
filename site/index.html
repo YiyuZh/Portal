@@ -913,9 +913,9 @@
                 class="hero-title-system"
                 data-hero-stage
                 data-tilt-enabled="true"
-                data-tilt-max="13"
+                data-tilt-max="20"
                 data-orb-enabled="true"
-                data-orb-follow-strength="0.11"
+                data-orb-follow-strength="0.14"
                 data-orb-drift="true"
                 tabindex="0"
                 aria-label="HELLO, I'M Zenithy"
@@ -1308,9 +1308,9 @@
           if (stage) {
             stage.setAttribute("aria-label", (document.getElementById("page-title").textContent || "").replace(/\s+/g, " ").trim());
             setHeroOption(stage, "data-tilt-enabled", hero.tilt && hero.tilt.enabled !== false, true);
-            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 13);
+            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 20);
             setHeroOption(stage, "data-orb-enabled", hero.orb && hero.orb.enabled !== false, true);
-            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.11);
+            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.14);
             setHeroOption(stage, "data-orb-drift", hero.orb && hero.orb.drift !== false, true);
           }
         }

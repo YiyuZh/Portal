@@ -65,11 +65,6 @@
         margin-bottom: 34px;
       }
 
-      .brand-mark {
-        width: 42px;
-        height: 42px;
-      }
-
       .brand strong {
         display: block;
         letter-spacing: -0.04em;
@@ -349,24 +344,25 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="./admin.css" />
   </head>
-  <body>
+  <body class="admin-body">
     <div class="layout">
-      <aside class="sidebar">
-        <div class="brand">
-          <img class="brand-mark" src="../../favicon.svg" alt="Zenithy" />
-          <div>
-            <strong>Zenithy</strong>
-            <small>Blog Admin</small>
-          </div>
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img class="admin-brand-mark" src="../../favicon.svg" alt="Zenithy" />
+        <div>
+          <strong>Zenithy</strong>
+          <small>Blog Admin</small>
         </div>
-        <nav class="nav" aria-label="后台导航">
-          <a href="https://blog.zenithy.art/admin/">文章列表</a>
-          <a href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
-          <a href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
-          <a class="active" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
-        </nav>
-      </aside>
+      </div>
+      <nav class="admin-nav" aria-label="后台导航">
+        <a class="" href="https://blog.zenithy.art/admin/">文章列表</a>
+        <a class="" href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+        <a class="" href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+        <a class="is-active" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
+      </nav>
+    </aside>
 
       <main class="main">
         <div class="topbar">

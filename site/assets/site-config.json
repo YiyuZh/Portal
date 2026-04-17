@@ -7,11 +7,11 @@
     "metaLine": "AI Process Manger / 18岁 / 广东深圳",
     "tilt": {
       "enabled": true,
-      "maxRotate": 13
+      "maxRotate": 20
     },
     "orb": {
       "enabled": true,
-      "followStrength": 0.11,
+      "followStrength": 0.14,
       "drift": true
     }
   },

@@ -116,19 +116,10 @@
       }
 
       .brand-mark {
-        position: relative;
         width: 20px;
         height: 20px;
-        border-radius: 50%;
-        background: #2b3437;
-      }
-
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 5px;
-        border-radius: 50%;
-        background: #fff;
+        display: block;
+        border-radius: 6px;
       }
 
       .nav-links {
@@ -433,7 +424,7 @@
       <header>
         <nav class="nav">
           <div class="brand">
-            <span class="brand-mark" aria-hidden="true"></span>
+            <img class="brand-mark" src="../favicon.svg" alt="" aria-hidden="true" />
             Zenithy
           </div>
           <div class="nav-links">
@@ -471,7 +462,7 @@
         <div class="footer-inner">
           <div>
             <div class="brand">
-              <span class="brand-mark" aria-hidden="true"></span>
+              <img class="brand-mark" src="../favicon.svg" alt="" aria-hidden="true" />
               Zenithy
             </div>
             <div style="font-size: 12px; color: var(--on-surface-variant)">
@@ -487,10 +478,17 @@
       </footer>
     </div>
     <script>
+
       const grid = document.getElementById("postGrid");
       const pager = document.getElementById("pager");
       const tagFilters = document.getElementById("tagFilters");
       const manifestUrl = "./posts/manifest.json";
+      const allTagLabel = "全部";
+
+      function manifestRequest(url) {
+        const marker = url.includes("?") ? "&" : "?";
+        return url + marker + "v=" + Date.now();
+      }
 
       function formatDate(value) {
         if (!value) return "";
@@ -499,26 +497,48 @@
         return date.toISOString().slice(0, 10);
       }
 
+      function postTags(post) {
+        if (Array.isArray(post.tags)) return post.tags.map((tag) => String(tag).trim()).filter(Boolean);
+        if (typeof post.tags === "string") return post.tags.split(",").map((tag) => tag.trim()).filter(Boolean);
+        return [];
+      }
+
+      function isPublishedPost(post) {
+        if (!post || typeof post !== "object") return false;
+        if (post.published === true) return true;
+        if (post.published === false) return false;
+        const status = String(post.status || "").trim().toLowerCase();
+        if (!status) return true;
+        if (["published", "publish", "live", "已发布", "已發佈"].includes(status)) return true;
+        if (["draft", "草稿", "archived", "已归档", "已歸檔", "hidden", "private"].includes(status)) return false;
+        return true;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function filteredByTag(posts, activeTag) {
+        if (!activeTag || activeTag === allTagLabel) return posts;
+        return posts.filter((post) => postTags(post).includes(activeTag));
+      }
+
       function renderPosts(posts, pageSize, page, activeTag) {
         grid.innerHTML = "";
-        const filtered = activeTag && activeTag !== "全部"
-          ? posts.filter((post) => {
-              const tags = Array.isArray(post.tags)
-                ? post.tags
-                : typeof post.tags === "string"
-                  ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-                  : [];
-              return tags.includes(activeTag);
-            })
-          : posts;
+        const filtered = filteredByTag(posts, activeTag);
 
         if (!filtered.length) {
-          grid.innerHTML = `
-            <article class="card span-12" style="padding:32px;text-align:center;">
-              <h3 style="margin:0 0 12px;font-family:Manrope, sans-serif;">暂无文章</h3>
-              <p style="margin:0;color:#586064;">发布第一篇文章后，这里会自动排版展示。</p>
-            </article>
-          `;
+          grid.innerHTML = [
+            '<article class="card span-12" style="padding:32px;text-align:center;">',
+            '<h3 style="margin:0 0 12px;font-family:Manrope, sans-serif;">暂无文章</h3>',
+            '<p style="margin:0;color:#586064;">发布第一篇文章后，这里会自动排版展示。</p>',
+            '</article>'
+          ].join("");
           pager.innerHTML = "";
           return;
         }
@@ -530,34 +550,33 @@
           const isFeatured = page === 1 && index === 0;
           const spanClass = isFeatured ? "span-8" : index === 1 ? "span-4" : "span-6";
           const cover = post.cover || "";
-          const readMore = post.url || "#";
-          const tag = post.category || "Blog";
-          const date = formatDate(post.date);
+          const readMore = post.url || (post.slug ? "./posts/" + encodeURIComponent(post.slug) + "/" : "#");
+          const tag = post.category || (postTags(post)[0] || "Blog");
+          const date = formatDate(post.updatedAt || post.date);
           const excerpt = post.excerpt || "";
           const title = post.title || "Untitled Post";
+          const imageRatio = isFeatured ? "16 / 8" : "4 / 3";
           const imgBlock = cover
-            ? `<div style="aspect-ratio: ${isFeatured ? "16 / 8" : "4 / 3"}; overflow: hidden">
-                <img src="${cover}" alt="${title}" />
-              </div>`
+            ? '<div style="aspect-ratio: ' + imageRatio + '; overflow: hidden"><img src="' + escapeHtml(cover) + '" alt="' + escapeHtml(title) + '" /></div>'
             : "";
 
           grid.insertAdjacentHTML(
             "beforeend",
-            `<article class="card ${spanClass}">
-              ${imgBlock}
-              <div class="card-body">
-                <div class="meta">
-                  <span class="tag">${tag}</span>
-                  ${date ? `<span class="dot"></span><span>${date}</span>` : ""}
-                </div>
-                <h3>${title}</h3>
-                <p>${excerpt}</p>
-                <a class="read-more" href="${readMore}">
-                  Read More
-                  <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
-                </a>
-              </div>
-            </article>`
+            '<article class="card ' + spanClass + '">' +
+              imgBlock +
+              '<div class="card-body">' +
+                '<div class="meta">' +
+                  '<span class="tag">' + escapeHtml(tag) + '</span>' +
+                  (date ? '<span class="dot"></span><span>' + escapeHtml(date) + '</span>' : '') +
+                '</div>' +
+                '<h3>' + escapeHtml(title) + '</h3>' +
+                '<p>' + escapeHtml(excerpt) + '</p>' +
+                '<a class="read-more" href="' + escapeHtml(readMore) + '">' +
+                  'Read More' +
+                  '<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>' +
+                '</a>' +
+              '</div>' +
+            '</article>'
           );
         });
       }
@@ -567,7 +586,7 @@
         const pages = Math.max(1, Math.ceil(total / pageSize));
         const makeBtn = (label, p, isActive) => {
           const btn = document.createElement("button");
-          btn.className = `page-btn${isActive ? " active" : ""}`;
+          btn.className = "page-btn" + (isActive ? " active" : "");
           btn.textContent = label;
           btn.disabled = isActive;
           btn.addEventListener("click", () => onChange(p));
@@ -576,7 +595,7 @@
 
         const prev = document.createElement("button");
         prev.className = "page-btn";
-        prev.innerHTML = `<span class="material-symbols-outlined">chevron_left</span>`;
+        prev.innerHTML = '<span class="material-symbols-outlined">chevron_left</span>';
         prev.disabled = page === 1;
         prev.addEventListener("click", () => onChange(page - 1));
         pager.appendChild(prev);
@@ -587,7 +606,7 @@
 
         const next = document.createElement("button");
         next.className = "page-btn";
-        next.innerHTML = `<span class="material-symbols-outlined">chevron_right</span>`;
+        next.innerHTML = '<span class="material-symbols-outlined">chevron_right</span>';
         next.disabled = page === pages;
         next.addEventListener("click", () => onChange(page + 1));
         pager.appendChild(next);
@@ -595,45 +614,32 @@
 
       function renderTags(posts, activeTag, onSelect) {
         const tagSet = new Set();
-        posts.forEach((post) => {
-          const tags = Array.isArray(post.tags)
-            ? post.tags
-            : typeof post.tags === "string"
-              ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-              : [];
-          tags.forEach((t) => tagSet.add(t));
-        });
-        const tags = ["全部", ...Array.from(tagSet)];
+        posts.forEach((post) => postTags(post).forEach((tag) => tagSet.add(tag)));
+        const tags = [allTagLabel, ...Array.from(tagSet)];
         tagFilters.innerHTML = "";
         tags.forEach((tag) => {
           const btn = document.createElement("button");
-          btn.className = `pill${tag === activeTag ? " active" : ""}`;
+          btn.className = "pill" + (tag === activeTag ? " active" : "");
           btn.textContent = tag;
           btn.addEventListener("click", () => onSelect(tag));
           tagFilters.appendChild(btn);
         });
       }
 
-      fetch(manifestUrl)
-        .then((res) => res.json())
+      fetch(manifestRequest(manifestUrl), { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("manifest request failed");
+          return res.json();
+        })
         .then((manifest) => {
           const pageSize = manifest.pageSize || 4;
-          const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+          const posts = (Array.isArray(manifest.posts) ? manifest.posts : []).filter(isPublishedPost);
           let page = 1;
-          let activeTag = "全部";
+          let activeTag = allTagLabel;
           const update = (p) => {
             page = p;
+            const total = filteredByTag(posts, activeTag).length;
             renderPosts(posts, pageSize, page, activeTag);
-            const total = activeTag === "全部"
-              ? posts.length
-              : posts.filter((post) => {
-                  const tags = Array.isArray(post.tags)
-                    ? post.tags
-                    : typeof post.tags === "string"
-                      ? post.tags.split(",").map((t) => t.trim()).filter(Boolean)
-                      : [];
-                  return tags.includes(activeTag);
-                }).length;
             renderPager(total, pageSize, page, update);
           };
           renderTags(posts, activeTag, (tag) => {
@@ -647,7 +653,7 @@
           update(1);
         })
         .catch(() => {
-          renderPosts([], 4, 1, "全部");
+          renderPosts([], 4, 1, allTagLabel);
         });
     </script>
   </body>

@@ -18,6 +18,7 @@ const targets = {
   favicon: path.join(siteDir, "favicon.svg"),
   blogIndex: path.join(siteDir, "blog", "index.html"),
   blogPost: path.join(siteDir, "blog", "post.html"),
+  adminCss: path.join(siteDir, "blog", "admin", "admin.css"),
   blogAdmin: path.join(siteDir, "blog", "admin", "index.html"),
   blogEditor: path.join(siteDir, "blog", "admin", "editor.html"),
   projectsAdmin: path.join(siteDir, "blog", "admin", "projects.html"),
@@ -67,6 +68,17 @@ function checkUrl(value, label, options = {}) {
   }
   if (value === "#") return;
   if (!isHttpUrl(value)) errors.push(`[url invalid] ${label}: ${value}`);
+}
+
+function isPublishedPost(post) {
+  if (!post || typeof post !== "object") return false;
+  if (post.published === true) return true;
+  if (post.published === false) return false;
+  const status = String(post.status || "").trim().toLowerCase();
+  if (!status) return true;
+  if (["published", "publish", "live", "已发布", "已發佈"].includes(status)) return true;
+  if (["draft", "草稿", "archived", "已归档", "已歸檔", "hidden", "private"].includes(status)) return false;
+  return true;
 }
 
 function resolveLocalRef(ref, baseDir = siteDir) {
@@ -186,6 +198,42 @@ function checkHomepageStructure() {
   });
 }
 
+function checkFaviconAndBrandLogo() {
+  const pages = [
+    ["homepage", targets.index, "./favicon.svg", "brand-mark"],
+    ["blog index", targets.blogIndex, "../favicon.svg", "brand-mark"],
+    ["blog post", targets.blogPost, "../favicon.svg", "brand-mark"],
+    ["blog admin", targets.blogAdmin, "../../favicon.svg", "admin-brand-mark"],
+    ["blog editor", targets.blogEditor, "../../favicon.svg", "admin-brand-mark"],
+    ["projects admin", targets.projectsAdmin, "../../favicon.svg", "admin-brand-mark"],
+    ["messages admin", targets.messagesAdmin, "../../favicon.svg", "admin-brand-mark"],
+  ];
+
+  pages.forEach(([label, filePath, faviconPath, logoClass]) => {
+    const html = readText(filePath);
+    if (!html) return;
+    if (!html.includes(`rel="icon" type="image/svg+xml" href="${faviconPath}"`)) {
+      errors.push(`[brand icon] ${label} must use ${faviconPath} as SVG favicon`);
+    }
+    if (!html.includes(`rel="alternate icon" href="${faviconPath}"`)) {
+      errors.push(`[brand icon] ${label} must use ${faviconPath} as alternate favicon`);
+    }
+    if (!html.includes(`class="${logoClass}" src="${faviconPath}"`)) {
+      errors.push(`[brand logo] ${label} must render ${faviconPath} with .${logoClass}`);
+    }
+    ["<span class=\"brand-mark\"", "brand-mark::after", "auto_awesome", "Chief Editor", "Alex Rivera"].forEach((legacy) => {
+      if (html.includes(legacy)) {
+        errors.push(`[brand legacy] ${label} still contains legacy logo/shell marker: ${legacy}`);
+      }
+    });
+  });
+
+  const adminCss = readText(targets.adminCss);
+  if (adminCss.includes(".brand-mark")) {
+    errors.push("[brand legacy] admin.css should not style .brand-mark; admin pages must use .admin-brand-mark");
+  }
+}
+
 function checkHomepageMotion() {
   const css = readText(targets.homeVisual);
   const heroJs = readText(targets.homeHero);
@@ -202,8 +250,12 @@ function checkHomepageMotion() {
   }
   if (!heroJs.includes("requestAnimationFrame")) errors.push("[hero] requestAnimationFrame motion loop is missing");
   if (!heroJs.includes("prefers-reduced-motion")) errors.push("[hero] reduced-motion guard is missing");
-  if (!heroJs.includes("data-hero-plane") || !heroJs.includes("plane.getBoundingClientRect")) {
-    errors.push("[hero] large interaction plane pointer logic is missing");
+  if (
+    !heroJs.includes("interactionTarget = hero") ||
+    !heroJs.includes("interactionTarget.getBoundingClientRect") ||
+    !heroJs.includes("data-hero-plane")
+  ) {
+    errors.push("[hero] full-screen Hero interaction target or title-plane projection logic is missing");
   }
   if (!heroJs.includes("data-tilt-max") || !heroJs.includes("data-orb-follow-strength")) {
     errors.push("[hero] tilt/orb config reading is missing");
@@ -367,15 +419,26 @@ function checkManifest() {
   data.posts.forEach((post, index) => {
     const label = `posts[${index}]`;
     if (!post.slug) errors.push(`[required] ${label}.slug`);
+    if (!post.title) errors.push(`[required] ${label}.title`);
+    if (post.published !== undefined && typeof post.published !== "boolean") {
+      errors.push(`[manifest] ${label}.published must be boolean when provided`);
+    }
     if (post.slug) {
       if (slugs.has(post.slug)) errors.push(`[duplicate slug] ${label}.slug = ${post.slug}`);
       slugs.add(post.slug);
-      const folder = path.join(siteDir, "blog", "posts", post.slug);
-      const indexFile = path.join(folder, "index.html");
-      if (!exists(folder)) errors.push(`[post folder] missing ${folder}`);
-      if (!exists(indexFile)) errors.push(`[post index] missing ${indexFile}`);
     }
     if (!Array.isArray(post.tags)) warnings.push(`[type] ${label}.tags should be array`);
+
+    if (isPublishedPost(post)) {
+      if (!post.excerpt) errors.push(`[required] ${label}.excerpt`);
+      if (!post.date && !post.updatedAt) errors.push(`[required] ${label}.date or ${label}.updatedAt`);
+      if (post.slug) {
+        const folder = path.join(siteDir, "blog", "posts", post.slug);
+        const indexFile = path.join(folder, "index.html");
+        if (!exists(folder)) errors.push(`[published post folder] missing ${folder}`);
+        if (!exists(indexFile)) errors.push(`[published post index] missing ${indexFile}`);
+      }
+    }
   });
 }
 
@@ -407,6 +470,10 @@ function checkMessagesManifest() {
 }
 
 function checkBlogAndAdmin() {
+  if (!exists(targets.adminCss)) {
+    errors.push("[admin shell] missing site/blog/admin/admin.css");
+  }
+
   [
     ["blog index", targets.blogIndex],
     ["blog post", targets.blogPost],
@@ -418,6 +485,62 @@ function checkBlogAndAdmin() {
     const html = readText(filePath);
     checkRefs(html, filePath, label);
     compileInlineScripts(html, filePath);
+  });
+
+  const blogIndex = readText(targets.blogIndex);
+  const blogAdmin = readText(targets.blogAdmin);
+  const blogEditor = readText(targets.blogEditor);
+  if (!blogIndex.includes('const manifestUrl = "./posts/manifest.json"')) {
+    errors.push("[blog manifest] front blog index must read ./posts/manifest.json");
+  }
+  if (!blogAdmin.includes('const manifestUrl = "../posts/manifest.json"')) {
+    errors.push("[blog manifest] admin article list must read ../posts/manifest.json");
+  }
+  [
+    ["front blog index", blogIndex],
+    ["admin article list", blogAdmin],
+  ].forEach(([label, html]) => {
+    if (!html.includes("manifestRequest(manifestUrl)") || !html.includes('cache: "no-store"')) {
+      errors.push(`[blog manifest] ${label} must use cache-busted no-store manifest fetch`);
+    }
+    if (!html.includes("isPublishedPost")) {
+      errors.push(`[blog manifest] ${label} must use the shared published/status rule`);
+    }
+  });
+  if (!blogEditor.includes('fetch(manifestRequest("../posts/manifest.json"), { cache: "no-store" })')) {
+    errors.push("[blog editor] publish flow must fetch manifest with cache-busting/no-store");
+  }
+  ["published: true", "updatedAt: now", "posts: [entry]"].forEach((needle) => {
+    if (!blogEditor.includes(needle)) errors.push(`[blog editor] publish flow missing ${needle}`);
+  });
+
+  const adminPages = [
+    ["blog admin", targets.blogAdmin, "文章列表"],
+    ["blog editor", targets.blogEditor, "发布文章"],
+    ["projects admin", targets.projectsAdmin, "项目管理"],
+    ["messages admin", targets.messagesAdmin, "留言管理"],
+  ];
+  adminPages.forEach(([label, filePath, activeLabel]) => {
+    const html = readText(filePath);
+    if (!html.includes('href="./admin.css"')) {
+      errors.push(`[admin shell] ${label} must reference ./admin.css`);
+    }
+    if (!html.includes('class="admin-sidebar"') || !html.includes('class="admin-nav"')) {
+      errors.push(`[admin shell] ${label} must use shared admin sidebar/nav`);
+    }
+    if (!html.includes('src="../../favicon.svg"')) {
+      errors.push(`[admin shell] ${label} logo must reuse ../../favicon.svg`);
+    }
+    ["文章列表", "发布文章", "项目管理", "留言管理"].forEach((navLabel) => {
+      if (!html.includes(navLabel)) errors.push(`[admin shell] ${label} missing nav item ${navLabel}`);
+    });
+    const activePattern = new RegExp(`class="is-active"[^>]*>${activeLabel}<`);
+    if (!activePattern.test(html)) {
+      errors.push(`[admin shell] ${label} active nav should be ${activeLabel}`);
+    }
+    ["Alex Rivera", "Chief Editor", "auto_awesome", 'class="brand-mark" aria-hidden="true"'].forEach((legacy) => {
+      if (html.includes(legacy)) errors.push(`[admin shell] ${label} still contains legacy shell marker: ${legacy}`);
+    });
   });
 
   const projectsAdmin = readText(targets.projectsAdmin);
@@ -518,6 +641,7 @@ function detectUnknownDomains() {
 
 checkRequiredFiles();
 checkHomepageStructure();
+checkFaviconAndBrandLogo();
 checkHomepageMotion();
 checkProjects();
 checkSiteConfig();

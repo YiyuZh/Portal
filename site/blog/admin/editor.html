@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html class="light" lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Zenithy - Blog Editor</title>
+    <title>Zenithy - 发布文章</title>
     <meta name="theme-color" content="#f8f9fa" />
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
     <link rel="alternate icon" href="../../favicon.svg" />
@@ -99,22 +99,7 @@
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
-      .brand-mark {
-        display: inline-flex;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: #2b3437;
-        position: relative;
-      }
-      .brand-mark::after {
-        content: "";
-        position: absolute;
-        inset: 4px;
-        border-radius: 50%;
-        background: #fff;
-      }
-      ::-webkit-scrollbar {
+::-webkit-scrollbar {
         width: 4px;
       }
       ::-webkit-scrollbar-track {
@@ -136,65 +121,30 @@
         font-weight: 700;
       }
     </style>
+    <link rel="stylesheet" href="./admin.css" />
   </head>
-  <body class="bg-surface text-on-surface flex h-screen overflow-hidden">
-    <aside
-      class="hidden md:flex h-full py-8 h-screen w-64 bg-slate-50 font-manrope text-sm tracking-tight shrink-0"
-    >
-      <div class="px-6 mb-10">
-        <div class="flex items-center gap-2">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <h1 class="text-lg font-bold text-slate-900">Zenithy 编辑器</h1>
+  <body class="admin-body admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img class="admin-brand-mark" src="../../favicon.svg" alt="Zenithy" />
+        <div>
+          <strong>Zenithy</strong>
+          <small>Blog Admin</small>
         </div>
-        <p class="text-slate-500 text-xs">内容创作空间</p>
       </div>
-      <nav class="flex-1 space-y-1">
-        <a
-          class="flex items-center gap-3 px-6 py-3 text-teal-700 font-semibold bg-slate-200/50 rounded-r-full"
-          href="https://blog.zenithy.art/admin/"
-        >
-          <span class="material-symbols-outlined">edit_note</span>
-          <span>文章</span>
-        </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="https://blog.zenithy.art/admin/projects.html">
-          <span class="material-symbols-outlined">dashboard</span>
-          <span>项目管理</span>
-        </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="https://blog.zenithy.art/admin/messages.html">
-          <span class="material-symbols-outlined">mail</span>
-          <span>留言管理</span>
-        </a>
-        <a class="flex items-center gap-3 px-6 py-3 text-slate-500" href="#">
-          <span class="material-symbols-outlined">settings</span>
-          <span>设置</span>
-        </a>
+      <nav class="admin-nav" aria-label="后台导航">
+        <a class="" href="https://blog.zenithy.art/admin/">文章列表</a>
+        <a class="is-active" href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+        <a class="" href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+        <a class="" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
       </nav>
-      <div class="px-6 mt-auto">
-        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-200/30">
-          <img
-            alt="User profile"
-            class="w-8 h-8 rounded-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJLBiHTBOmvJ7HC5Ho2CobFzUeBjzol1g-m1sndxfJRYmHwdoAebogU10KLUSIHfaI7b2FG8741Qnis-FvR8iqXy2T7_pQLgmeDHrH4p_r9WIo6O_TMD0HYymt9WIAMdxLjDn7W2r6AcsdRXkUE6A91pungzR2xm7eEyzCvgqogmTJIddDhoXseazHndicgALdngqkP5KQwP6MIPaAzdDmz46YKqmKq8hRvErLE0_wmD8s50l2zhLmk9hAfeFnGcYYcoo2bGIk5lGg"
-          />
-          <div class="overflow-hidden">
-            <p class="font-bold text-slate-900 truncate">Zenithy 管理员</p>
-            <p class="text-[10px] text-slate-500">内容管理</p>
-          </div>
-        </div>
-      </div>
     </aside>
 
-    <div class="flex-1 flex flex-col min-w-0 bg-surface">
-      <header
-        class="flex justify-between items-center h-16 w-full px-8 border-b border-slate-100 bg-white/80 backdrop-blur-xl shadow-sm font-manrope text-sm font-medium sticky top-0 z-10"
-      >
-        <div class="flex items-center gap-6">
-          <span class="text-xl font-black text-slate-900">Zenithy 编辑器</span>
-          <nav class="hidden lg:flex gap-6 items-center">
-            <a class="text-slate-500 hover:text-teal-600" href="#">草稿</a>
-            <a class="text-slate-500 hover:text-teal-600" href="#">已发布</a>
-            <a class="text-slate-500 hover:text-teal-600" href="#">定时发布</a>
-          </nav>
+    <div class="admin-editor-wrap">
+            <header class="admin-editor-topbar">
+        <div>
+          <p class="admin-eyebrow">Blog Editor</p>
+          <h1 class="admin-page-title" style="font-size: clamp(26px, 3vw, 42px); margin: 4px 0 0;">发布文章 / 编辑文章</h1>
         </div>
         <div class="flex items-center gap-3">
           <div class="flex items-center mr-4 border-r border-slate-200 pr-4 gap-2">
@@ -512,13 +462,18 @@
 </html>`;
       }
 
-      function downloadFile(filename, content) {
-        const blob = new Blob([content], { type: "text/html" });
+      function downloadFile(filename, content, type = "text/html") {
+        const blob = new Blob([content], { type });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = filename;
         link.click();
         URL.revokeObjectURL(link.href);
+      }
+
+      function manifestRequest(url) {
+        const marker = url.includes("?") ? "&" : "?";
+        return url + marker + "v=" + Date.now();
       }
 
       document.getElementById("saveDraft").addEventListener("click", saveDraft);
@@ -550,38 +505,47 @@
       document.getElementById("previewText").addEventListener("click", openPreview);
       closePreview.addEventListener("click", closePreviewModal);
       document.getElementById("publishBtn").addEventListener("click", () => {
-        const slug = slugInput.value || "new-post";
+        const slug = slugify(slugInput.value || titleInput.value || "new-post") || "new-post";
+        slugInput.value = slug;
         const html = generateHtml();
+        const now = new Date().toISOString();
+        const entry = {
+          title: titleInput.value || "Untitled Post",
+          excerpt: subtitleInput.value || "",
+          date: now,
+          updatedAt: now,
+          category: categoryInput.value || "Blog",
+          tags: tagList,
+          cover: coverData || "",
+          readTime: estimateReadTime(bodyInput.innerHTML || ""),
+          status: "已发布",
+          published: true,
+          slug: slug,
+          url: `https://blog.zenithy.art/posts/${slug}/`,
+          adminEdit: "https://blog.zenithy.art/admin/editor.html",
+        };
+
         downloadFile("index.html", html);
 
-        fetch("../posts/manifest.json")
-          .then((res) => res.json())
+        fetch(manifestRequest("../posts/manifest.json"), { cache: "no-store" })
+          .then((res) => {
+            if (!res.ok) throw new Error("manifest request failed");
+            return res.json();
+          })
           .then((manifest) => {
             const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
-            const now = new Date().toISOString();
-            const entry = {
-              title: titleInput.value || "Untitled Post",
-              excerpt: subtitleInput.value || "",
-              date: now,
-              category: categoryInput.value || "Blog",
-              tags: tagList,
-              cover: coverData || "",
-              readTime: estimateReadTime(bodyInput.innerHTML || ""),
-              status: "已发布",
-              slug: slug,
-              url: `https://blog.zenithy.art/posts/${slug}/`,
-              adminEdit: "https://blog.zenithy.art/admin/editor.html",
-            };
+            const withoutCurrent = posts.filter((post) => post.slug !== slug);
             const updated = {
               pageSize: manifest.pageSize || 4,
-              posts: [entry, ...posts],
+              posts: [entry, ...withoutCurrent],
             };
-            downloadFile("manifest.json", JSON.stringify(updated, null, 2));
+            downloadFile("manifest.json", JSON.stringify(updated, null, 2), "application/json");
           })
           .catch(() => {
             downloadFile(
               "manifest.json",
-              JSON.stringify({ pageSize: 4, posts: [] }, null, 2)
+              JSON.stringify({ pageSize: 4, posts: [entry] }, null, 2),
+              "application/json"
             );
           });
 
