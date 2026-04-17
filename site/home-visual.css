@@ -155,6 +155,7 @@ body::before {
   --hero-orb-size: clamp(120px, 10.5vw, 210px);
   --hero-mask-size: var(--hero-orb-size);
   --hero-reveal-size: var(--hero-mask-size);
+  --hero-reveal-y: clamp(-46px, -5.4vh, -24px);
   --hero-rotate-x: 0deg;
   --hero-rotate-y: 0deg;
   --hero-depth-leading: 126px;
@@ -277,20 +278,22 @@ body::before {
 .hero-title-reveal {
   position: absolute;
   z-index: 4;
-  inset: 0;
+  top: calc(50% + var(--hero-reveal-y));
+  left: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(8px, 1.4vw, 24px);
   width: 100%;
-  max-width: none;
-  padding-bottom: clamp(38px, 7vh, 86px);
+  max-width: min(92vw, 1240px);
+  min-height: clamp(156px, 18.6vw, 286px);
   color: #fff;
   font-weight: 780;
   letter-spacing: -0.095em;
   pointer-events: none;
   opacity: 0;
   transform:
+    translate(-50%, -50%)
     perspective(1750px)
     rotateX(var(--hero-rotate-x))
     rotateY(var(--hero-rotate-y))
@@ -305,15 +308,10 @@ body::before {
 }
 
 .hero-title-reveal-text {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.12em;
+  display: inline-block;
   color: #fff;
-  font-size: clamp(44px, 7.4vw, 112px);
-  font-weight: 820;
-  letter-spacing: -0.08em;
-  line-height: 0.98;
+  font-size: clamp(48px, 8vw, 132px);
+  line-height: 0.86;
   transform: translateZ(28px);
   white-space: nowrap;
 }
@@ -329,6 +327,7 @@ body::before {
 .hero-interaction-plane:focus-within .hero-title-reveal {
   opacity: 1;
   transform:
+    translate(-50%, -50%)
     perspective(1750px)
     rotateX(var(--hero-rotate-x))
     rotateY(var(--hero-rotate-y))
