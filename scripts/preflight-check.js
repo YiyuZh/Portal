@@ -161,12 +161,13 @@ function checkHomepageStructure() {
     "hero-title-hello",
     "hero-title-im",
     "hero-title-name",
-    "hero-reveal-hello",
-    "hero-reveal-im",
-    "hero-reveal-name",
+    "hero-reveal-text",
     "hero-meta-line",
   ].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[hero] missing #${id}`);
+  });
+  ["hero-reveal-hello", "hero-reveal-im", "hero-reveal-name"].forEach((id) => {
+    if (html.includes(`id="${id}"`)) errors.push(`[hero regression] segmented reveal node #${id} should not be used`);
   });
   if (!html.includes("hero-interaction-plane") || !html.includes("data-hero-plane")) {
     errors.push("[hero] missing large interaction plane (.hero-interaction-plane / data-hero-plane)");
@@ -333,9 +334,12 @@ function checkHomepageMotion() {
   if (css.includes("rgba(13, 17, 16, 0.66)")) {
     errors.push("[hero regression] Zenithy title color is too gray");
   }
-  ["你好", "我是", "詹已誉"].forEach((text) => {
-    if (!indexHtml.includes(text)) errors.push(`[hero] segmented Chinese reveal missing ${text}`);
-  });
+  if (!indexHtml.includes("hero-title-reveal-text") || !indexHtml.includes('setText("hero-reveal-text", hero.revealTitle')) {
+    errors.push("[hero] unified Chinese reveal overlay is missing or not driven by site-config.hero.revealTitle");
+  }
+  if (!css.includes(".hero-title-reveal-text") || !css.includes("color: #fff")) {
+    errors.push("[hero] unified reveal text must be styled as white text");
+  }
   if (!css.includes("--card-tilt-x") || !css.includes("--card-tilt-y") || !css.includes("[data-tilt-layer]")) {
     errors.push("[projects tilt] project card tilt CSS is missing");
   }
@@ -444,11 +448,6 @@ function checkSiteConfig() {
   ["hello", "im"].forEach((field) => {
     if (!data.hero || !data.hero.titleParts || !data.hero.titleParts[field]) {
       errors.push(`[hero config] missing siteConfig.hero.titleParts.${field}`);
-    }
-  });
-  ["hello", "im", "name"].forEach((field) => {
-    if (!data.hero || !data.hero.revealParts || !data.hero.revealParts[field]) {
-      errors.push(`[hero config] missing siteConfig.hero.revealParts.${field}`);
     }
   });
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.maxRotate !== "number") {

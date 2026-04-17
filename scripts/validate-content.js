@@ -257,9 +257,6 @@ function validateSiteConfig() {
   requireText(data.hero && data.hero.titleParts && data.hero.titleParts.im, "siteConfig.hero.titleParts.im");
   requireText(data.hero && data.hero.titleName, "siteConfig.hero.titleName");
   requireText(data.hero && data.hero.revealTitle, "siteConfig.hero.revealTitle");
-  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.hello, "siteConfig.hero.revealParts.hello");
-  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.im, "siteConfig.hero.revealParts.im");
-  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.name, "siteConfig.hero.revealParts.name");
   requireText(data.hero && data.hero.metaLine, "siteConfig.hero.metaLine");
   if (data.hero && (data.hero.subtitle || data.hero.primaryCta || data.hero.secondaryCta)) {
     errors.push("[hero] subtitle/primaryCta/secondaryCta should not be configured; keep project entries in Projects section");

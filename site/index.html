@@ -930,11 +930,7 @@
                 </h1>
               </div>
               <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
-                <span class="hero-title-leading hero-title-leading--zh">
-                  <span id="hero-reveal-hello" class="hero-title-part hero-title-part--hello-zh">你好，</span>
-                  <span id="hero-reveal-im" class="hero-title-part hero-title-part--im-zh">我是</span>
-                </span>
-                <span id="hero-reveal-name" class="hero-title-name hero-title-name--zh">詹已誉</span>
+                <span id="hero-reveal-text" class="hero-title-reveal-text">你好，我是詹已誉</span>
               </div>
               <p id="hero-meta-line" class="hero-meta-line">AI Process Manger / 18岁 / 广东深圳</p>
             </div>
@@ -1315,7 +1311,6 @@
           hero = hero || {};
           var stage = document.querySelector("[data-hero-stage]");
           var titleParts = hero.titleParts || {};
-          var revealParts = hero.revealParts || {};
           var splitLeading = splitHeroLeading(hero.titleLeading);
           var leadingHello = titleParts.hello || splitLeading.hello;
           var leadingIm = titleParts.im || splitLeading.im;
@@ -1330,9 +1325,7 @@
           setText("hero-title-hello", leadingHello);
           setText("hero-title-im", leadingIm);
           setText("hero-title-name", name);
-          setText("hero-reveal-hello", revealParts.hello || "你好，");
-          setText("hero-reveal-im", revealParts.im || "我是");
-          setText("hero-reveal-name", revealParts.name || hero.revealTitle || "詹已誉");
+          setText("hero-reveal-text", hero.revealTitle || "你好，我是詹已誉");
           setText("hero-meta-line", hero.metaLine);
 
           if (stage) {

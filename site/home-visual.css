@@ -286,6 +286,8 @@ body::before {
   max-width: none;
   padding-bottom: clamp(38px, 7vh, 86px);
   color: #fff;
+  font-weight: 780;
+  letter-spacing: -0.095em;
   pointer-events: none;
   opacity: 0;
   transform:
@@ -302,19 +304,16 @@ body::before {
     transform 0.58s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.hero-title-leading--zh {
+.hero-title-reveal-text {
+  display: inline-block;
   color: #fff;
-  letter-spacing: -0.1em;
+  font-size: clamp(48px, 8vw, 132px);
+  line-height: 0.86;
+  transform: translateZ(28px);
+  white-space: nowrap;
 }
 
-.hero-title-name--zh {
-  color: #fff;
-  font-weight: 720;
-  letter-spacing: -0.12em;
-}
-
-.hero-title-reveal .hero-title-part,
-.hero-title-reveal .hero-title-name--zh {
+.hero-title-reveal-text {
   text-shadow:
     0 12px 42px rgba(0, 0, 0, 0.28),
     0 0 1px rgba(255, 255, 255, 0.82);
@@ -1214,7 +1213,7 @@ body::before {
     gap: clamp(8px, 2vw, 14px);
   }
 
-  .hero-title-reveal span {
+  .hero-title-reveal-text {
     font-size: clamp(34px, 10vw, 70px);
   }
 

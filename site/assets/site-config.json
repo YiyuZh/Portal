@@ -8,11 +8,6 @@
     },
     "titleName": "Zenithy",
     "revealTitle": "你好，我是詹已誉",
-    "revealParts": {
-      "hello": "你好，",
-      "im": "我是",
-      "name": "詹已誉"
-    },
     "metaLine": "AI Process Manger / 18岁 / 广东深圳",
     "tilt": {
       "enabled": true,
