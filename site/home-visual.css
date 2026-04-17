@@ -148,9 +148,12 @@ body::before {
   overflow-x: clip;
   --hero-orb-x: 80%;
   --hero-orb-y: 19%;
+  --hero-title-mask-x: 80%;
+  --hero-title-mask-y: 19%;
   --hero-pointer-x: 80%;
   --hero-pointer-y: 22%;
   --hero-orb-size: clamp(120px, 10.5vw, 210px);
+  --hero-reveal-y: -0.12em;
   --hero-rotate-x: 0deg;
   --hero-rotate-y: 0deg;
   --hero-depth-leading: 126px;
@@ -177,6 +180,13 @@ body::before {
   perspective: 1750px;
   isolation: isolate;
   overflow: hidden;
+}
+
+.hero-effects-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
 }
 
 .eyebrow,
@@ -209,6 +219,16 @@ body::before {
   transform-style: preserve-3d;
   outline: none;
   cursor: default;
+}
+
+.hero-title-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: min(92vw, 1240px);
+  margin-inline: auto;
+  transform-style: preserve-3d;
 }
 
 .hero .hero-title {
@@ -274,20 +294,15 @@ body::before {
   position: absolute;
   z-index: 4;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(8px, 1.4vw, 24px);
+  display: grid;
+  place-items: center;
   width: 100%;
-  max-width: none;
-  padding-bottom: clamp(38px, 7vh, 86px);
+  max-width: min(92vw, 1240px);
   color: #fff;
   font-weight: 780;
-  letter-spacing: -0.095em;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(18px);
-  clip-path: circle(0 at var(--hero-orb-x) var(--hero-orb-y));
+  clip-path: circle(0 at var(--hero-title-mask-x) var(--hero-title-mask-y));
   will-change: clip-path, opacity;
   transition:
     opacity 0.42s ease,
@@ -299,10 +314,12 @@ body::before {
   color: #fff;
   font-size: clamp(48px, 8vw, 132px);
   line-height: 0.86;
+  letter-spacing: -0.075em;
   transform:
     perspective(1750px)
     rotateX(var(--hero-rotate-x))
     rotateY(var(--hero-rotate-y))
+    translateY(var(--hero-reveal-y))
     translateZ(162px);
   transform-style: preserve-3d;
   white-space: nowrap;
@@ -319,8 +336,7 @@ body::before {
 .hero.is-hero-active .hero-title-reveal,
 .hero-interaction-plane:focus-within .hero-title-reveal {
   opacity: 1;
-  transform: translateY(0);
-  clip-path: circle(calc(var(--hero-orb-size) / 2) at var(--hero-orb-x) var(--hero-orb-y));
+  clip-path: circle(calc(var(--hero-orb-size) / 2) at var(--hero-title-mask-x) var(--hero-title-mask-y));
 }
 
 .hero-orb {
@@ -1229,7 +1245,10 @@ body::before {
     min-height: 560px;
     --hero-orb-x: 76%;
     --hero-orb-y: 20%;
+    --hero-title-mask-x: 76%;
+    --hero-title-mask-y: 20%;
     --hero-orb-size: clamp(112px, 36vw, 178px);
+    --hero-reveal-y: -0.08em;
   }
 
   .hero .hero-title {
@@ -1274,6 +1293,8 @@ body::before {
   .hero {
     --hero-orb-x: 50%;
     --hero-orb-y: 50%;
+    --hero-title-mask-x: 50%;
+    --hero-title-mask-y: 50%;
     --hero-orb-size: 0px;
     --hero-rotate-x: 0deg;
     --hero-rotate-y: 0deg;

@@ -8,11 +8,12 @@
   var hero = document.querySelector(".hero");
   var plane = document.querySelector("[data-hero-plane]");
   var stage = document.querySelector("[data-hero-stage]");
+  var titleStack = document.querySelector("[data-hero-title-stack]");
   var title = document.getElementById("page-title");
   var reveal = document.getElementById("hero-title-reveal");
   var orbEl = document.querySelector(".hero-orb");
 
-  if (!hero || !plane || !stage || !title || !reveal || !orbEl) {
+  if (!hero || !plane || !stage || !titleStack || !title || !reveal || !orbEl) {
     return;
   }
 
@@ -201,9 +202,16 @@
 
     var orbX = orb.x.toFixed(2) + "px";
     var orbY = orb.y.toFixed(2) + "px";
+    var titleBounds = titleStack.getBoundingClientRect();
+    var orbClientX = planeBounds.left + orb.x;
+    var orbClientY = planeBounds.top + orb.y;
+    var titleMaskX = (orbClientX - titleBounds.left).toFixed(2) + "px";
+    var titleMaskY = (orbClientY - titleBounds.top).toFixed(2) + "px";
 
     hero.style.setProperty("--hero-orb-x", orbX);
     hero.style.setProperty("--hero-orb-y", orbY);
+    hero.style.setProperty("--hero-title-mask-x", titleMaskX);
+    hero.style.setProperty("--hero-title-mask-y", titleMaskY);
     hero.style.setProperty("--hero-pointer-x", (pointer.x * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-pointer-y", (pointer.y * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-rotate-x", tilt.x.toFixed(3) + "deg");
