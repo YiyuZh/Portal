@@ -66,16 +66,13 @@
   var active = false;
   var heroBounds = null;
   var planeBounds = null;
-  var revealBounds = null;
   var orbRadius = 86;
 
   // The pointer source is the whole viewport. This keeps the typography alive
   // even when the cursor reaches the far left/right/top/bottom of the screen.
   var pointer = { x: 0.78, y: 0.22 };
   var targetOrb = { x: 0, y: 0 };
-  var targetMask = { x: 0, y: 0 };
   var orb = { x: 0, y: 0 };
-  var mask = { x: 0, y: 0 };
   var tilt = { x: 0, y: 0 };
 
   function setActive(next) {
@@ -86,14 +83,11 @@
   function refreshBounds() {
     heroBounds = hero.getBoundingClientRect();
     planeBounds = plane.getBoundingClientRect();
-    revealBounds = reveal.getBoundingClientRect();
     var orbRect = orbEl.getBoundingClientRect();
     orbRadius = Math.max(55, (orbRect.width || 172) / 2);
     if (!orb.x && planeBounds.width) {
       orb.x = planeBounds.width * 0.78;
       orb.y = planeBounds.height * 0.24;
-      mask.x = orb.x - (revealBounds.left - planeBounds.left);
-      mask.y = orb.y - (revealBounds.top - planeBounds.top);
     }
   }
 
@@ -120,11 +114,6 @@
 
     targetOrb.x = clamp(rawOrbX, edgePadding, planeBounds.width - edgePadding);
     targetOrb.y = clamp(rawOrbY, edgePadding, planeBounds.height - edgePadding);
-
-    // Same physical center as the clamped orb, converted into reveal-layer
-    // local coordinates so edge safety never separates the black ball and mask.
-    targetMask.x = planeBounds.left + targetOrb.x - revealBounds.left;
-    targetMask.y = planeBounds.top + targetOrb.y - revealBounds.top;
 
     setActive(visible);
   }
@@ -176,7 +165,7 @@
   );
 
   function tick(time) {
-    if (!heroBounds || !planeBounds || !revealBounds) {
+    if (!heroBounds || !planeBounds) {
       refreshBounds();
     }
 
@@ -197,18 +186,12 @@
 
     var idleOrbX = planeBounds && planeBounds.width ? planeBounds.width * clamp(driftX, 0.08, 0.92) : 0;
     var idleOrbY = planeBounds && planeBounds.height ? planeBounds.height * clamp(driftY, 0.08, 0.84) : 0;
-    var idleMaskX = revealBounds && planeBounds ? idleOrbX - (revealBounds.left - planeBounds.left) : idleOrbX;
-    var idleMaskY = revealBounds && planeBounds ? idleOrbY - (revealBounds.top - planeBounds.top) : idleOrbY;
 
     var targetOrbX = active ? targetOrb.x : idleOrbX;
     var targetOrbY = active ? targetOrb.y : idleOrbY;
-    var targetMaskX = active ? targetMask.x : idleMaskX;
-    var targetMaskY = active ? targetMask.y : idleMaskY;
 
     orb.x += (targetOrbX - orb.x) * followStrength;
     orb.y += (targetOrbY - orb.y) * followStrength;
-    mask.x += (targetMaskX - mask.x) * followStrength;
-    mask.y += (targetMaskY - mask.y) * followStrength;
 
     var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate * 2 : 0;
     var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate * 2 : 0;
@@ -218,13 +201,9 @@
 
     var orbX = orb.x.toFixed(2) + "px";
     var orbY = orb.y.toFixed(2) + "px";
-    var maskX = mask.x.toFixed(2) + "px";
-    var maskY = mask.y.toFixed(2) + "px";
 
     hero.style.setProperty("--hero-orb-x", orbX);
     hero.style.setProperty("--hero-orb-y", orbY);
-    hero.style.setProperty("--hero-mask-x", maskX);
-    hero.style.setProperty("--hero-mask-y", maskY);
     hero.style.setProperty("--hero-pointer-x", (pointer.x * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-pointer-y", (pointer.y * 100).toFixed(2) + "%");
     hero.style.setProperty("--hero-rotate-x", tilt.x.toFixed(3) + "deg");

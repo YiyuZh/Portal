@@ -271,7 +271,6 @@ function checkHomepageMotion() {
     !heroJs.includes("event.clientY / viewportHeight") ||
     !heroJs.includes("hero.getBoundingClientRect") ||
     !heroJs.includes("plane.getBoundingClientRect") ||
-    !heroJs.includes("reveal.getBoundingClientRect") ||
     !heroJs.includes("data-hero-plane")
   ) {
     errors.push("[hero] viewport pointer model or Hero geometry mapping is missing");
@@ -293,17 +292,48 @@ function checkHomepageMotion() {
   if (/clamp\([^,\n]+,\s*0\.16\s*,\s*0\.84\s*\)/.test(heroJs) || /clamp\([^,\n]+,\s*0\.1\s*,\s*0\.68\s*\)/.test(heroJs)) {
     errors.push("[hero regression] orb/reveal movement is still clamped into a local title band");
   }
-  if (!heroJs.includes("targetOrb.x = clamp(rawOrbX, edgePadding") || !heroJs.includes("targetMask.x = planeBounds.left + targetOrb.x - revealBounds.left")) {
+  if (!heroJs.includes("targetOrb.x = clamp(rawOrbX, edgePadding")) {
     errors.push("[hero] orb and reveal must be mapped from full Hero/viewport coordinates, not the title stage");
   }
-  if (!heroJs.includes('setProperty("--hero-orb-x", orbX)') || !heroJs.includes('setProperty("--hero-mask-x", maskX)')) {
-    errors.push("[hero] orb and reveal mask centers must be written from the same pointer loop");
+  if (!heroJs.includes('setProperty("--hero-orb-x", orbX)')) {
+    errors.push("[hero] orb center must be written from the full-screen pointer loop");
+  }
+  if (heroJs.includes("--hero-mask-x") || heroJs.includes("--hero-mask-y") || css.includes("--hero-mask-x") || css.includes("--hero-mask-y")) {
+    errors.push("[hero regression] reveal must not use separate --hero-mask-x/y variables; use --hero-orb-x/y");
   }
   if (!heroJs.includes("data-tilt-max") || !heroJs.includes("data-orb-follow-strength")) {
     errors.push("[hero] tilt/orb config reading is missing");
   }
   if (!css.includes("clip-path: circle") || !css.includes(".hero-interaction-plane")) {
     errors.push("[hero] Chinese reveal circle mask or interaction plane CSS is missing");
+  }
+  [
+    "hero-reveal-lens",
+    "hero-mask-lens",
+    "hero-reveal-orb",
+    "hero-glass",
+    "hero-halo",
+    "hero-orb-ghost",
+  ].forEach((legacyClass) => {
+    if (css.includes(legacyClass) || indexHtml.includes(legacyClass)) {
+      errors.push(`[hero regression] transparent reveal lens class should not exist: ${legacyClass}`);
+    }
+  });
+  if (css.includes(".hero-title-reveal::after") || css.includes(".hero-orb::after")) {
+    errors.push("[hero regression] Hero should not draw extra transparent reveal/orb circles with pseudo-elements");
+  }
+  const revealRule = css.match(/\.hero-title-reveal\s*\{[^}]*\}/);
+  if (revealRule && /(background|backdrop-filter)\s*:/.test(revealRule[0])) {
+    errors.push("[hero regression] .hero-title-reveal must not draw an independent translucent/glass circle");
+  }
+  if (!css.includes("clip-path: circle(calc(var(--hero-orb-size) / 2) at var(--hero-orb-x) var(--hero-orb-y))")) {
+    errors.push("[hero] reveal mask must use the same center and radius variables as the black orb");
+  }
+  if (/clip-path:\s*circle\([^;]+var\(--hero-mask-[xy]\)/m.test(css)) {
+    errors.push("[hero regression] reveal clip-path must not use separate --hero-mask-x/y variables");
+  }
+  if (!css.includes("width: var(--hero-orb-size)") || !css.includes("height: var(--hero-orb-size)")) {
+    errors.push("[hero] black orb must use --hero-orb-size for both width and height");
   }
   if (css.includes("clamp(48px, 5.8vw, 92px)") || css.includes("clamp(44px, 16vw, 82px)")) {
     errors.push("[hero regression] black reveal orb is using the old small-dot size");
