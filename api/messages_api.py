@@ -11,7 +11,8 @@ from urllib.parse import parse_qs, urlparse
 
 PORT = int(os.environ.get("PORT", "8000"))
 DB_PATH = os.environ.get("MESSAGES_DB", "/data/messages.sqlite3")
-ADMIN_TOKEN = os.environ.get("MESSAGES_ADMIN_TOKEN", "change-me-before-production")
+ADMIN_TOKEN = os.environ.get("MESSAGES_ADMIN_TOKEN", "")
+TRUST_GATEWAY_AUTH = os.environ.get("MESSAGES_TRUST_GATEWAY_AUTH", "true").lower() in {"1", "true", "yes", "on"}
 CORS_ORIGINS = [
     item.strip()
     for item in os.environ.get(
@@ -101,6 +102,10 @@ class MessagesHandler(BaseHTTPRequestHandler):
             return None
 
     def _require_admin(self):
+        # In production the public admin API path is protected by HireMate/Caddyfile
+        # Basic Auth. Keep token auth as an optional fallback for isolated local use.
+        if TRUST_GATEWAY_AUTH:
+            return True
         token = self.headers.get("X-Admin-Token") or self.headers.get("Authorization", "").removeprefix("Bearer ").strip()
         if not token or token != ADMIN_TOKEN:
             self._send_json(401, {"ok": False, "error": "unauthorized"})

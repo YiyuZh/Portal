@@ -156,6 +156,9 @@ function checkHomepageStructure() {
   if (html.includes("hero-subtitle") || html.includes("hero-actions") || html.includes("hero-cta-primary") || html.includes("hero-cta-secondary")) {
     errors.push("[hero] legacy subtitle/actions/CTA should not be rendered in Hero");
   }
+  if (html.includes("\u7edf\u4e00\u5165\u53e3") || html.includes("Creative Engineering Lab") || html.includes("hero-eyebrow")) {
+    errors.push("[hero] legacy portal eyebrow/subtitle is still present");
+  }
   if (html.includes("统一入口 · 快速访问 · 持续扩展")) {
     errors.push("[hero] legacy portal subtitle is still present");
   }
@@ -226,6 +229,9 @@ function checkHomepageMotion() {
   if (!css.includes("--skill-tilt-x") || !css.includes(".skill-highlight") || !css.includes("skillHeadingFlow")) {
     errors.push("[skills motion] skill card motion CSS is missing");
   }
+  if (!css.includes(".skills-focus-board") || !css.includes(".skill-card--featured") || !css.includes(".skills-focus-stack")) {
+    errors.push("[skills structure] featured skills board CSS is missing");
+  }
   if (!css.includes("skill-card__progress") || !css.includes("is-skills-active")) {
     errors.push("[skills motion] progress line or section active state is missing");
   }
@@ -243,6 +249,9 @@ function checkHomepageMotion() {
   }
   if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-card__progress")) {
     errors.push("[skills motion] skills renderer hooks are missing");
+  }
+  if (!indexHtml.includes("skills-focus-board") || !indexHtml.includes("data-skill-featured") || !indexHtml.includes("skills-focus-stack")) {
+    errors.push("[skills structure] skills must render featured module + support stack");
   }
   if (!indexHtml.includes('card.className = "skill-card skill-card--"')) {
     errors.push("[skills motion] skills must use the dedicated skill-card renderer instead of the generic insight-card model");
@@ -332,7 +341,16 @@ function checkSiteConfig() {
         if (item.highlights !== undefined && !Array.isArray(item.highlights)) {
           errors.push(`[siteConfig] sections.skills.items[${index}].highlights must be array`);
         }
+        if (item.priority !== undefined && typeof item.priority !== "number") {
+          errors.push(`[siteConfig] sections.skills.items[${index}].priority must be number`);
+        }
+        if (item.featured !== undefined && typeof item.featured !== "boolean") {
+          errors.push(`[siteConfig] sections.skills.items[${index}].featured must be boolean`);
+        }
       });
+      if (!items.some((item) => item.featured === true)) {
+        warnings.push("[siteConfig] sections.skills.items has no featured skill; homepage will fall back to the first item");
+      }
     }
   });
 }
@@ -411,8 +429,11 @@ function checkBlogAndAdmin() {
   }
 
   const messagesAdmin = readText(targets.messagesAdmin);
-  if (!messagesAdmin.includes("/admin/messages") || !messagesAdmin.includes("X-Admin-Token")) {
+  if (!messagesAdmin.includes("/admin/messages")) {
     errors.push("[messages admin] API admin flow is missing");
+  }
+  if (messagesAdmin.includes("X-Admin-Token") || messagesAdmin.includes("Admin Token") || messagesAdmin.includes("zenithy_messages_admin_token")) {
+    errors.push("[messages admin] token prompt should be removed; admin API is protected by gateway Basic Auth");
   }
   ["unread", "contacted", "archived", "DELETE", "PATCH"].forEach((needle) => {
     if (!messagesAdmin.includes(needle)) errors.push(`[messages admin] missing ${needle}`);
@@ -433,16 +454,19 @@ function checkMessagesApi() {
   if (!compose.includes("messages-api") || !compose.includes("portal_messages_data")) {
     errors.push("[messages api] docker-compose service or volume is missing");
   }
-  if (!compose.includes("MESSAGES_ADMIN_TOKEN") || !compose.includes("127.0.0.1:18081:8000")) {
-    errors.push("[messages api] admin token or local port mapping is missing");
+  if (!compose.includes("MESSAGES_TRUST_GATEWAY_AUTH") || !compose.includes("127.0.0.1:18081:8000")) {
+    errors.push("[messages api] gateway auth trust flag or local port mapping is missing");
   }
-  if (!envExample.includes("MESSAGES_ADMIN_TOKEN") || !envExample.includes("MESSAGES_CORS_ORIGINS")) {
-    errors.push("[messages api] .env.example must document MESSAGES_ADMIN_TOKEN and MESSAGES_CORS_ORIGINS");
+  if (envExample.includes("MESSAGES_ADMIN_TOKEN")) {
+    errors.push("[messages api] .env.example should not require MESSAGES_ADMIN_TOKEN");
   }
-  ["/api/messages", "/api/admin/messages", "sqlite3", "do_PATCH", "do_DELETE"].forEach((needle) => {
+  if (!envExample.includes("MESSAGES_TRUST_GATEWAY_AUTH") || !envExample.includes("MESSAGES_CORS_ORIGINS")) {
+    errors.push("[messages api] .env.example must document MESSAGES_TRUST_GATEWAY_AUTH and MESSAGES_CORS_ORIGINS");
+  }
+  ["/api/messages", "/api/admin/messages", "sqlite3", "do_PATCH", "do_DELETE", "MESSAGES_TRUST_GATEWAY_AUTH"].forEach((needle) => {
     if (!apiCode.includes(needle)) errors.push(`[messages api] missing ${needle}`);
   });
-  ["POST", "GET", "PATCH", "DELETE", "MESSAGES_ADMIN_TOKEN"].forEach((needle) => {
+  ["POST", "GET", "PATCH", "DELETE", "MESSAGES_TRUST_GATEWAY_AUTH"].forEach((needle) => {
     if (!apiTest.includes(needle)) errors.push(`[messages api test] missing ${needle}`);
   });
   compileScriptFile(targets.messagesApiTest);
@@ -461,8 +485,11 @@ function checkCaddyHint() {
   if (!caddy.includes("/assets/*")) {
     warnings.push("[cross-repo] verify blog.zenithy.art can proxy /assets/* in HireMate/Caddyfile");
   }
-  if (!caddy.includes("portal-messages-api") || !caddy.includes("/api/messages")) {
-    warnings.push("[cross-repo] messages API route is not found; add /api/messages* and /api/admin/messages* proxy in HireMate/Caddyfile");
+  if (!caddy.includes("portal-messages-api") || !caddy.includes("/api/messages") || !caddy.includes("/api/health")) {
+    warnings.push("[cross-repo] messages API route is not found; add /api/messages*, /api/admin/messages* and /api/health proxy in HireMate/Caddyfile");
+  }
+  if (!caddy.includes("/api/admin/messages") || !caddy.includes("basicauth") || !caddy.includes("autsky6666@gmail.com")) {
+    warnings.push("[cross-repo] /api/admin/messages* should be protected by the same Caddy Basic Auth as blog admin");
   }
 }
 

@@ -294,6 +294,12 @@ function validateSiteConfig() {
         if (item.motionVariant !== undefined && !/^[a-z][a-z0-9-]*$/i.test(String(item.motionVariant))) {
           errors.push(`[siteConfig] sections.skills.items[${index}].motionVariant should be a class-safe token`);
         }
+        if (item.priority !== undefined && typeof item.priority !== "number") {
+          errors.push(`[siteConfig] sections.skills.items[${index}].priority must be number when provided`);
+        }
+        if (item.featured !== undefined && typeof item.featured !== "boolean") {
+          errors.push(`[siteConfig] sections.skills.items[${index}].featured must be boolean when provided`);
+        }
       }
     });
   });

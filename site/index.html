@@ -907,16 +907,15 @@
       <main>
         <section class="hero shell" aria-labelledby="page-title">
           <div class="hero-inner">
-            <!-- 由 site-config.json 驱动：hero.eyebrow / hero.titleLeading / hero.titleName / hero.revealTitle / hero.metaLine -->
+            <!-- 由 site-config.json 驱动：hero.titleLeading / hero.titleName / hero.revealTitle / hero.metaLine -->
             <div class="hero-interaction-plane" data-hero-plane>
-              <div id="hero-eyebrow" class="eyebrow">Creative Engineering Lab</div>
               <div
                 class="hero-title-system"
                 data-hero-stage
                 data-tilt-enabled="true"
-                data-tilt-max="8"
+                data-tilt-max="13"
                 data-orb-enabled="true"
-                data-orb-follow-strength="0.08"
+                data-orb-follow-strength="0.11"
                 data-orb-drift="true"
                 tabindex="0"
                 aria-label="HELLO, I'M Zenithy"
@@ -952,18 +951,18 @@
             <h2 id="skills-title">把产品、工程与 AI 应用串起来</h2>
             <p id="skills-desc">这里先作为能力结构占位，后续视觉阶段再强化节奏与表达，不影响现有项目入口。</p>
           </div>
-          <div class="insight-grid" id="skills-list">
-            <article class="insight-card">
+          <div class="skills-focus-board" id="skills-list">
+            <article class="skill-card skill-card--featured">
               <span>Product</span>
               <h3>产品判断</h3>
               <p>从真实使用场景出发，拆解用户路径、核心价值和可持续迭代方向。</p>
             </article>
-            <article class="insight-card">
+            <article class="skill-card">
               <span>Engineering</span>
               <h3>全栈实现</h3>
               <p>关注静态门户、前后端联动、部署链路和可回滚的生产化交付。</p>
             </article>
-            <article class="insight-card">
+            <article class="skill-card">
               <span>AI Application</span>
               <h3>AI 应用落地</h3>
               <p>围绕简历解析、智能问答、评估反馈等场景，把模型能力转成可用产品。</p>
@@ -1301,7 +1300,6 @@
             name = "";
           }
 
-          setText("hero-eyebrow", hero.eyebrow);
           setText("hero-title-leading", leading);
           setText("hero-title-name", name);
           setText("hero-reveal-title", hero.revealTitle);
@@ -1310,9 +1308,9 @@
           if (stage) {
             stage.setAttribute("aria-label", (document.getElementById("page-title").textContent || "").replace(/\s+/g, " ").trim());
             setHeroOption(stage, "data-tilt-enabled", hero.tilt && hero.tilt.enabled !== false, true);
-            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 8);
+            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 13);
             setHeroOption(stage, "data-orb-enabled", hero.orb && hero.orb.enabled !== false, true);
-            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.08);
+            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.11);
             setHeroOption(stage, "data-orb-drift", hero.orb && hero.orb.drift !== false, true);
           }
         }
@@ -1452,14 +1450,36 @@
           var container = document.getElementById(containerId);
           if (!container || !Array.isArray(items) || !items.length) return;
           container.innerHTML = "";
-          items.forEach(function (item, index) {
+
+          var normalizedItems = items.map(function (item, index) {
+            var priority = Number(item.priority);
+            return {
+              item: item,
+              originalIndex: index,
+              priority: Number.isFinite(priority) ? priority : index + 10,
+              featured: item.featured === true
+            };
+          }).sort(function (a, b) {
+            if (a.featured !== b.featured) return a.featured ? -1 : 1;
+            if (a.priority !== b.priority) return a.priority - b.priority;
+            return a.originalIndex - b.originalIndex;
+          });
+
+          var featuredEntry = normalizedItems[0];
+          var secondaryEntries = normalizedItems.slice(1);
+          var stack = document.createElement("div");
+          stack.className = "skills-focus-stack";
+
+          function buildSkillCard(entry, index, isFeatured) {
+            var item = entry.item || {};
             var card = document.createElement("article");
             var variant = item.motionVariant || "signal";
             var metric = Number(item.metric);
             var hasMetric = Number.isFinite(metric);
             var highlights = Array.isArray(item.highlights) ? item.highlights : [];
-            card.className = "skill-card skill-card--" + escapeHtml(variant);
+            card.className = "skill-card skill-card--" + escapeHtml(variant) + (isFeatured ? " skill-card--featured" : " skill-card--support");
             card.setAttribute("data-skill-card", "true");
+            card.setAttribute("data-skill-featured", isFeatured ? "true" : "false");
             card.setAttribute("data-skill-index", String(index));
             card.style.setProperty("--reveal-delay", index * 90 + "ms");
             card.style.setProperty("--skill-index", index);
@@ -1478,7 +1498,23 @@
               }).join("") + '</div>' : "",
             ].join("");
 
-            container.appendChild(card);
+            return card;
+          }
+
+          if (featuredEntry) {
+            var featuredCard = buildSkillCard(featuredEntry, 0, true);
+            container.appendChild(featuredCard);
+            if (window.ZenithyReveal) {
+              window.ZenithyReveal.observe(featuredCard);
+            }
+            if (window.ZenithySkills) {
+              window.ZenithySkills.refresh(featuredCard);
+            }
+          }
+
+          secondaryEntries.forEach(function (entry, index) {
+            var card = buildSkillCard(entry, index + 1, false);
+            stack.appendChild(card);
             if (window.ZenithyReveal) {
               window.ZenithyReveal.observe(card);
             }
@@ -1486,6 +1522,10 @@
               window.ZenithySkills.refresh(card);
             }
           });
+
+          if (secondaryEntries.length) {
+            container.appendChild(stack);
+          }
         }
 
         function applySiteConfig(config) {

@@ -10,7 +10,6 @@ const apiScript = path.join(rootDir, "api", "messages_api.py");
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "zenithy-messages-"));
 const dbPath = path.join(tempDir, "messages.sqlite3");
 const port = String(19000 + Math.floor(Math.random() * 1000));
-const token = "test-token";
 
 function request(method, pathname, body, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -100,7 +99,7 @@ async function main() {
       ...process.env,
       PORT: port,
       MESSAGES_DB: dbPath,
-      MESSAGES_ADMIN_TOKEN: token,
+      MESSAGES_TRUST_GATEWAY_AUTH: "true",
       CORS_ORIGINS: "http://127.0.0.1:8080",
     },
     stdio: ["ignore", "pipe", "pipe"],
@@ -117,7 +116,7 @@ async function main() {
     const id = created && created.message && created.message.id;
     if (!id) throw new Error("POST did not return message id");
 
-    const listed = await request("GET", "/api/admin/messages", null, { "X-Admin-Token": token });
+    const listed = await request("GET", "/api/admin/messages");
     if (!Array.isArray(listed.messages) || listed.messages.length !== 1) {
       throw new Error("GET did not return exactly one message");
     }
@@ -125,16 +124,13 @@ async function main() {
     const patched = await request(
       "PATCH",
       `/api/admin/messages/${encodeURIComponent(id)}`,
-      { status: "contacted" },
-      { "X-Admin-Token": token }
+      { status: "contacted" }
     );
     if (!patched.message || patched.message.status !== "contacted") {
       throw new Error("PATCH did not update status");
     }
 
-    const deleted = await request("DELETE", `/api/admin/messages/${encodeURIComponent(id)}`, null, {
-      "X-Admin-Token": token,
-    });
+    const deleted = await request("DELETE", `/api/admin/messages/${encodeURIComponent(id)}`);
     if (!deleted.ok) throw new Error("DELETE did not return ok");
 
     console.log("Messages API QA passed.");

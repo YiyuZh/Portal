@@ -1,6 +1,5 @@
 {
   "hero": {
-    "eyebrow": "Creative Engineering Lab",
     "title": "HELLO, I'M Zenithy",
     "titleLeading": "HELLO, I'M",
     "titleName": "Zenithy",
@@ -8,11 +7,11 @@
     "metaLine": "AI Process Manger / 18岁 / 广东深圳",
     "tilt": {
       "enabled": true,
-      "maxRotate": 8
+      "maxRotate": 13
     },
     "orb": {
       "enabled": true,
-      "followStrength": 0.08,
+      "followStrength": 0.11,
       "drift": true
     }
   },
@@ -35,7 +34,7 @@
       "description": "Skills 不是技术名词堆叠，而是围绕产品判断、工程交付和 AI 应用落地形成的一套工作方式。",
       "items": [
         {
-          "label": "01 / Product Sense",
+          "label": "03 / Product Sense",
           "title": "从场景判断价值",
           "description": "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。",
           "metric": 3,
@@ -46,7 +45,8 @@
             "用户路径",
             "MVP 优先级"
           ],
-          "motionVariant": "orbit"
+          "motionVariant": "orbit",
+          "priority": 3
         },
         {
           "label": "02 / Full-stack Delivery",
@@ -60,10 +60,11 @@
             "API 设计",
             "部署回滚"
           ],
-          "motionVariant": "grid"
+          "motionVariant": "grid",
+          "priority": 2
         },
         {
-          "label": "03 / AI Application",
+          "label": "01 / AI Application",
           "title": "让模型进入业务闭环",
           "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可被验证的产品能力。",
           "metric": 4,
@@ -74,7 +75,9 @@
             "结构化评估",
             "流式反馈"
           ],
-          "motionVariant": "signal"
+          "motionVariant": "signal",
+          "priority": 1,
+          "featured": true
         }
       ]
     },

@@ -61,10 +61,9 @@
 
   var active = false;
   var bounds = null;
-  var stageBounds = null;
-  var pointer = { x: 0.72, y: 0.28 };
-  var focus = { x: 0.72, y: 0.28 };
-  var orb = { x: 0.72, y: 0.28 };
+  var pointer = { x: 0.82, y: 0.22 };
+  var focus = { x: 0.82, y: 0.22 };
+  var orb = { x: 0.82, y: 0.22 };
   var tilt = { x: 0, y: 0 };
 
   function setActive(next) {
@@ -74,7 +73,6 @@
 
   function refreshBounds() {
     bounds = plane.getBoundingClientRect();
-    stageBounds = stage.getBoundingClientRect();
   }
 
   function updatePointer(event) {
@@ -84,15 +82,15 @@
     var rawX = (event.clientX - bounds.left) / bounds.width;
     var rawY = (event.clientY - bounds.top) / bounds.height;
 
-    // The plane is intentionally taller than the title. Clamp the focus so the
-    // orb reveals the headline instead of sitting on top of the center text.
-    pointer.x = clamp(rawX, 0.12, 0.9);
-    pointer.y = clamp(rawY, 0.1, 0.68);
+    // One large hero plane drives all motion. The title-stage percentages are
+    // projected from the plane, so moving anywhere in the first screen still
+    // creates continuous reveal/tilt feedback without requiring the pointer to
+    // sit directly on top of the text.
+    pointer.x = clamp(rawX, 0, 1);
+    pointer.y = clamp(rawY, 0, 1);
 
-    if (stageBounds && stageBounds.width && stageBounds.height) {
-      focus.x = clamp((event.clientX - stageBounds.left) / stageBounds.width, 0.08, 0.92);
-      focus.y = clamp((event.clientY - stageBounds.top) / stageBounds.height, 0.06, 0.78);
-    }
+    focus.x = clamp(0.1 + pointer.x * 0.8, 0.1, 0.9);
+    focus.y = clamp(0.12 + pointer.y * 0.58, 0.12, 0.7);
   }
 
   plane.addEventListener(
@@ -145,16 +143,16 @@
     var tiltEnabled = boolAttr("data-tilt-enabled", true);
     var orbEnabled = boolAttr("data-orb-enabled", true);
     var driftEnabled = boolAttr("data-orb-drift", true);
-    var maxRotate = numberAttr("data-tilt-max", 8);
-    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.08), 0.03, 0.2);
+    var maxRotate = numberAttr("data-tilt-max", 13);
+    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.11), 0.03, 0.2);
 
     hero.classList.toggle("is-orb-disabled", !orbEnabled);
 
-    var driftX = 0.72;
-    var driftY = 0.28;
+    var driftX = 0.82;
+    var driftY = 0.22;
     if (driftEnabled) {
-      driftX += Math.sin(time / 3000) * 0.045 + Math.sin(time / 5600) * 0.018;
-      driftY += Math.cos(time / 3600) * 0.038;
+      driftX += Math.sin(time / 3000) * 0.04 + Math.sin(time / 5600) * 0.018;
+      driftY += Math.cos(time / 3600) * 0.032;
     }
 
     var targetX = active ? focus.x : driftX;
@@ -166,8 +164,8 @@
     var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate : 0;
     var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate : 0;
 
-    tilt.x += (targetTiltX - tilt.x) * 0.12;
-    tilt.y += (targetTiltY - tilt.y) * 0.12;
+    tilt.x += (targetTiltX - tilt.x) * 0.16;
+    tilt.y += (targetTiltY - tilt.y) * 0.16;
 
     var x = (orb.x * 100).toFixed(2) + "%";
     var y = (orb.y * 100).toFixed(2) + "%";

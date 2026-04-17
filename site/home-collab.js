@@ -66,6 +66,9 @@
         if (!response.ok || payload.ok === false) {
           throw new Error(payload.error || "submit_failed");
         }
+        if (!payload.message || !payload.message.id) {
+          throw new Error("server_not_persisted");
+        }
         return payload;
       });
     });
@@ -94,13 +97,13 @@
     var entry = createMessageEntry(name, email, message);
     setFeedback("正在提交留言...", "info");
     submitToApi(entry)
-      .then(function () {
+      .then(function (payload) {
         event.target.reset();
-        setFeedback("留言已提交，我会在后台查看并处理。", "success");
+        setFeedback("留言已写入服务器，后台可见。编号：" + payload.message.id, "success");
       })
       .catch(function () {
         downloadJson(entry.id + ".json", entry);
-        setFeedback("当前已生成本地备份，请稍后重试或后台导入。", "info");
+        setFeedback("未写入服务器，后台暂时看不到；已下载本地备份，请稍后重试或后台导入。", "info");
       });
   }
 

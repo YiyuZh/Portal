@@ -21,16 +21,34 @@
         --radius: 28px;
         --shadow: 0 28px 80px rgba(12, 15, 16, 0.08);
       }
-      * { box-sizing: border-box; }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
         background: var(--bg);
         color: var(--text);
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
-      a { color: inherit; text-decoration: none; }
-      button, input, select { font: inherit; }
-      .layout { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 100vh; }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .layout {
+        display: grid;
+        min-height: 100vh;
+        grid-template-columns: 260px minmax(0, 1fr);
+      }
+
       .sidebar {
         position: sticky;
         top: 0;
@@ -39,49 +57,83 @@
         border-right: 1px solid var(--line);
         background: #f2f5f6;
       }
-      .brand { display: flex; gap: 12px; align-items: center; margin-bottom: 34px; }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 34px;
+      }
+
       .brand-mark {
-        display: grid;
         width: 42px;
         height: 42px;
-        place-items: center;
-        border-radius: 50%;
-        background: var(--ink);
-        color: #fff;
-        font-weight: 900;
       }
-      .brand strong { display: block; letter-spacing: -0.04em; }
-      .brand small, .eyebrow {
+
+      .brand strong {
+        display: block;
+        letter-spacing: -0.04em;
+      }
+
+      .brand small,
+      .eyebrow {
         color: var(--muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.16em;
         text-transform: uppercase;
       }
-      .nav { display: grid; gap: 6px; }
+
+      .nav {
+        display: grid;
+        gap: 6px;
+      }
+
       .nav a {
         border-radius: 999px;
         color: var(--muted);
         padding: 12px 14px;
         font-weight: 700;
       }
-      .nav a.active { background: var(--ink); color: #fff; }
-      .main { padding: clamp(24px, 4vw, 54px); }
+
+      .nav a.active {
+        background: var(--ink);
+        color: #fff;
+      }
+
+      .main {
+        padding: clamp(24px, 4vw, 54px);
+      }
+
       .topbar {
         display: flex;
-        gap: 18px;
         align-items: flex-start;
         justify-content: space-between;
+        gap: 18px;
         margin-bottom: 28px;
       }
+
       h1 {
         margin: 8px 0 10px;
         font-size: clamp(38px, 5vw, 72px);
         line-height: 0.95;
         letter-spacing: -0.07em;
       }
-      .lead { max-width: 760px; color: var(--muted); font-size: 17px; line-height: 1.8; }
-      .toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+
+      .lead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.8;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
       .button {
         display: inline-flex;
         min-height: 42px;
@@ -95,29 +147,59 @@
         font-weight: 800;
         padding: 0 16px;
       }
-      .button.primary { background: var(--ink); color: #fff; }
-      .button.danger { color: var(--danger); }
-      .token-input {
-        min-height: 42px;
-        min-width: min(340px, 100%);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: #fff;
-        outline: none;
-        padding: 0 16px;
+
+      .button.primary {
+        background: var(--ink);
+        color: #fff;
       }
-      .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
-      .stat, .panel {
+
+      .button.danger {
+        color: var(--danger);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+      }
+
+      .stat,
+      .panel {
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: rgba(255, 255, 255, 0.82);
         box-shadow: var(--shadow);
       }
-      .stat { padding: 20px; }
-      .stat strong { display: block; font-size: 30px; letter-spacing: -0.06em; }
-      .content { display: grid; grid-template-columns: minmax(360px, 0.85fr) minmax(360px, 1fr); gap: 18px; }
-      .panel { min-height: 460px; padding: 18px; }
-      .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
+      .stat {
+        padding: 20px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 30px;
+        letter-spacing: -0.06em;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: minmax(360px, 0.85fr) minmax(360px, 1fr);
+        gap: 18px;
+      }
+
+      .panel {
+        min-height: 460px;
+        padding: 18px;
+      }
+
+      .filter-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
       .filter {
         border: 1px solid var(--line);
         border-radius: 999px;
@@ -127,12 +209,21 @@
         font-weight: 800;
         padding: 9px 12px;
       }
-      .filter.active { background: var(--ink); color: #fff; }
-      .message-list { display: grid; gap: 10px; }
+
+      .filter.active {
+        background: var(--ink);
+        color: #fff;
+      }
+
+      .message-list {
+        display: grid;
+        gap: 10px;
+      }
+
       .message-card {
         display: grid;
-        gap: 8px;
         width: 100%;
+        gap: 8px;
         border: 1px solid var(--line);
         border-radius: 22px;
         background: #fff;
@@ -141,8 +232,21 @@
         padding: 16px;
         text-align: left;
       }
-      .message-card.active { border-color: rgba(3, 104, 126, 0.34); box-shadow: 0 12px 32px rgba(3, 104, 126, 0.08); }
-      .message-card header, .detail-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+
+      .message-card.active {
+        border-color: rgba(3, 104, 126, 0.34);
+        box-shadow: 0 12px 32px rgba(3, 104, 126, 0.08);
+      }
+
+      .message-card header,
+      .detail-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
       .pill {
         display: inline-flex;
         min-height: 24px;
@@ -156,12 +260,41 @@
         padding: 0 9px;
         text-transform: uppercase;
       }
-      .pill.unread { background: #e8f7f3; color: #006b55; }
-      .pill.contacted { background: #e8f0fb; color: #285c9f; }
-      .pill.archived { background: #efefef; color: #6d7477; }
-      .message-preview, .empty, .help { color: var(--muted); line-height: 1.7; }
-      .detail { display: grid; gap: 18px; }
-      .detail h2 { margin: 0; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -0.06em; }
+
+      .pill.unread {
+        background: #e8f7f3;
+        color: #006b55;
+      }
+
+      .pill.contacted {
+        background: #e8f0fb;
+        color: #285c9f;
+      }
+
+      .pill.archived {
+        background: #efefef;
+        color: #6d7477;
+      }
+
+      .message-preview,
+      .empty,
+      .help {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .detail {
+        display: grid;
+        gap: 18px;
+      }
+
+      .detail h2 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1;
+        letter-spacing: -0.06em;
+      }
+
       .message-body {
         white-space: pre-wrap;
         border: 1px solid var(--line);
@@ -170,6 +303,7 @@
         line-height: 1.8;
         padding: 18px;
       }
+
       select {
         width: 220px;
         border: 1px solid var(--line);
@@ -178,6 +312,7 @@
         color: var(--text);
         padding: 12px 14px;
       }
+
       .notice {
         margin-top: 18px;
         border: 1px solid rgba(3, 104, 126, 0.16);
@@ -186,11 +321,32 @@
         color: #006b55;
         padding: 14px 16px;
       }
+
+      .notice.error {
+        border-color: rgba(159, 64, 61, 0.2);
+        background: rgba(159, 64, 61, 0.08);
+        color: var(--danger);
+      }
+
       @media (max-width: 980px) {
-        .layout, .content, .stats { grid-template-columns: 1fr; }
-        .sidebar { position: static; height: auto; }
-        .topbar { display: grid; }
-        .toolbar { justify-content: flex-start; }
+        .layout,
+        .content,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+          height: auto;
+        }
+
+        .topbar {
+          display: grid;
+        }
+
+        .toolbar {
+          justify-content: flex-start;
+        }
       }
     </style>
   </head>
@@ -198,7 +354,7 @@
     <div class="layout">
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">Z</div>
+          <img class="brand-mark" src="../../favicon.svg" alt="Zenithy" />
           <div>
             <strong>Zenithy</strong>
             <small>Blog Admin</small>
@@ -218,12 +374,10 @@
             <p class="eyebrow">Messages API</p>
             <h1>留言管理</h1>
             <p class="lead">
-              这里直接连接真实 Messages API。输入 Admin Token 后即可查看留言、标记状态、归档或删除。
+              留言管理接口现在由博客后台同一套账号密码保护。进入后台后可直接查看留言、更新状态、归档或删除，不需要再额外输入第二道口令。
             </p>
           </div>
           <div class="toolbar">
-            <input id="adminToken" class="token-input" type="password" autocomplete="current-password" placeholder="Admin Token" />
-            <button id="saveTokenBtn" class="button" type="button">保存 Token</button>
             <button id="reloadBtn" class="button primary" type="button">刷新留言</button>
           </div>
         </div>
@@ -248,7 +402,7 @@
 
           <div class="panel">
             <article id="messageDetail" class="detail">
-              <p class="empty">请输入 Admin Token 并点击“刷新留言”。</p>
+              <p class="empty">点击“刷新留言”查看最新留言。</p>
             </article>
           </div>
         </section>
@@ -274,27 +428,24 @@
       const listEl = document.getElementById("messageList");
       const detailEl = document.getElementById("messageDetail");
       const noticeEl = document.getElementById("notice");
-      const tokenInput = document.getElementById("adminToken");
-      tokenInput.value = localStorage.getItem("zenithy_messages_admin_token") || "";
 
       function escapeHtml(value) {
-        return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-      }
-
-      function token() {
-        return tokenInput.value.trim();
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
       }
 
       function showNotice(message, isError) {
         noticeEl.textContent = message;
         noticeEl.hidden = false;
-        noticeEl.style.color = isError ? "#9f403d" : "#006b55";
+        noticeEl.classList.toggle("error", Boolean(isError));
       }
 
       function api(path, options = {}) {
         const headers = Object.assign({ "Content-Type": "application/json" }, options.headers || {});
-        if (path.startsWith("/admin/")) headers["X-Admin-Token"] = token();
-        return fetch(apiBase() + path, Object.assign({}, options, { headers })).then((res) =>
+        return fetch(apiBase() + path, Object.assign({}, options, { headers, credentials: "same-origin" })).then((res) =>
           res.json().catch(() => ({})).then((payload) => {
             if (!res.ok || payload.ok === false) throw new Error(payload.error || "request_failed");
             return payload;
@@ -325,20 +476,23 @@
           listEl.innerHTML = '<p class="empty">暂无留言。</p>';
           return;
         }
-        listEl.innerHTML = list.map((item) => {
-          const active = item.id === selectedId ? " active" : "";
-          return `
-            <button class="message-card${active}" type="button" data-id="${escapeHtml(item.id)}">
-              <header>
-                <strong>${escapeHtml(item.name || "未留姓名")}</strong>
-                <span class="pill ${escapeHtml(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span>
-              </header>
-              <span class="help">${escapeHtml(item.email)}</span>
-              <p class="message-preview">${escapeHtml(item.message).slice(0, 88)}${item.message.length > 88 ? "..." : ""}</p>
-              <small class="help">${escapeHtml(formatTime(item.createdAt))}</small>
-            </button>
-          `;
-        }).join("");
+        listEl.innerHTML = list
+          .map((item) => {
+            const active = item.id === selectedId ? " active" : "";
+            const preview = String(item.message || "");
+            return `
+              <button class="message-card${active}" type="button" data-id="${escapeHtml(item.id)}">
+                <header>
+                  <strong>${escapeHtml(item.name || "未留姓名")}</strong>
+                  <span class="pill ${escapeHtml(item.status)}">${escapeHtml(statusLabels[item.status] || item.status)}</span>
+                </header>
+                <span class="help">${escapeHtml(item.email)}</span>
+                <p class="message-preview">${escapeHtml(preview).slice(0, 88)}${preview.length > 88 ? "..." : ""}</p>
+                <small class="help">${escapeHtml(formatTime(item.createdAt))}</small>
+              </button>
+            `;
+          })
+          .join("");
       }
 
       function renderDetail() {
@@ -374,11 +528,6 @@
       }
 
       function loadMessages() {
-        if (!token()) {
-          showNotice("请先输入 Admin Token。", true);
-          render();
-          return;
-        }
         api("/admin/messages")
           .then((data) => {
             messages = Array.isArray(data.messages) ? data.messages : [];
@@ -386,13 +535,8 @@
             render();
             showNotice("留言已刷新。");
           })
-          .catch((error) => showNotice("读取失败：" + error.message, true));
+          .catch((error) => showNotice("读取失败：" + error.message + "。请确认已通过博客后台账号密码登录，并确认 HireMate/Caddyfile 已把 /api/admin/messages* 反代到 portal-messages-api。", true));
       }
-
-      document.getElementById("saveTokenBtn").addEventListener("click", () => {
-        localStorage.setItem("zenithy_messages_admin_token", token());
-        showNotice("Token 已保存在当前浏览器。");
-      });
 
       document.getElementById("reloadBtn").addEventListener("click", loadMessages);
 
@@ -442,7 +586,7 @@
       });
 
       render();
-      if (token()) loadMessages();
+      loadMessages();
     </script>
   </body>
 </html>

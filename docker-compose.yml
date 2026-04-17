@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
     environment:
       MESSAGES_DB: /data/messages.sqlite3
-      MESSAGES_ADMIN_TOKEN: ${MESSAGES_ADMIN_TOKEN:-change-me-before-production}
+      MESSAGES_TRUST_GATEWAY_AUTH: ${MESSAGES_TRUST_GATEWAY_AUTH:-true}
       CORS_ORIGINS: ${MESSAGES_CORS_ORIGINS:-https://zenithy.art,https://blog.zenithy.art,http://127.0.0.1:8080,http://localhost:8080,http://127.0.0.1:18080}
     volumes:
       - portal_messages_data:/data
