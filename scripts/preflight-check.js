@@ -295,6 +295,9 @@ function checkHomepageMotion() {
   if (!heroJs.includes("targetOrb.x = clamp(rawOrbX, edgePadding")) {
     errors.push("[hero] orb and reveal must be mapped from full Hero/viewport coordinates, not the title stage");
   }
+  if (!heroJs.includes("edgePadding = orbRadius * 0.15")) {
+    errors.push("[hero regression] black orb edge clamp must stay loose enough to reach the top/bottom/left/right edges");
+  }
   if (!heroJs.includes('setProperty("--hero-orb-x", orbX)')) {
     errors.push("[hero] orb center must be written from the full-screen pointer loop");
   }
@@ -344,6 +347,36 @@ function checkHomepageMotion() {
   const revealRule = css.match(/\.hero-title-reveal\s*\{[^}]*\}/);
   if (revealRule && /(background|backdrop-filter)\s*:/.test(revealRule[0])) {
     errors.push("[hero regression] .hero-title-reveal must not draw an independent translucent/glass circle");
+  }
+  const titleSystemRule = css.match(/\.hero-title-system\s*\{[^}]*\}/);
+  if (
+    titleSystemRule &&
+    (/z-index\s*:\s*2\b/.test(titleSystemRule[0]) ||
+      /opacity\s*:\s*0\b/.test(titleSystemRule[0]) ||
+      /animation\s*:\s*heroTitleReveal/.test(titleSystemRule[0]))
+  ) {
+    errors.push("[hero regression] .hero-title-system must not create a stacking context above the black orb");
+  }
+  const baseRule = css.match(/\.hero-title-base\s*\{[^}]*\}/);
+  const effectsRule = css.match(/\.hero-effects-layer\s*\{[^}]*\}/);
+  if (!baseRule || !/z-index\s*:\s*1\b/.test(baseRule[0])) {
+    errors.push("[hero layering] black title base must stay below the black orb with z-index: 1");
+  }
+  if (!effectsRule || !/z-index\s*:\s*2\b/.test(effectsRule[0])) {
+    errors.push("[hero layering] black orb effects layer must sit above the black title with z-index: 2");
+  }
+  if (!revealRule || !/z-index\s*:\s*3\b/.test(revealRule[0])) {
+    errors.push("[hero layering] white reveal title must sit above the black orb with z-index: 3");
+  }
+  const orbRule = css.match(/\.hero-orb\s*\{[^}]*\}/);
+  if (orbRule) {
+    if (/mix-blend-mode\s*:/.test(orbRule[0])) {
+      errors.push("[hero regression] black orb must not use mix-blend-mode because it lets the base title bleed through");
+    }
+    const opacityMatch = orbRule[0].match(/opacity\s*:\s*([0-9.]+)/);
+    if (opacityMatch && Number(opacityMatch[1]) < 0.96) {
+      errors.push("[hero regression] black orb opacity must stay >= 0.96 so it covers the black base title");
+    }
   }
   if (!css.includes("clip-path: circle(calc(var(--hero-orb-size) / 2) at var(--hero-title-mask-x) var(--hero-title-mask-y))")) {
     errors.push("[hero] reveal mask must use the black orb size and the orb-derived title stack center");

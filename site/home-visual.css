@@ -205,16 +205,12 @@ body::before {
 
 .hero-title-system {
   position: relative;
-  z-index: 2;
   display: grid;
   place-items: center;
   width: 100%;
   max-width: min(92vw, 1240px);
   margin-inline: auto;
   min-height: clamp(156px, 18.6vw, 286px);
-  opacity: 0;
-  transform: translateY(22px) scale(0.985);
-  animation: heroTitleReveal 1.05s cubic-bezier(0.2, 0.8, 0.2, 1) 0.16s forwards;
   perspective: 1750px;
   transform-style: preserve-3d;
   outline: none;
@@ -244,7 +240,7 @@ body::before {
 
 .hero-title-base {
   position: relative;
-  z-index: 3;
+  z-index: 1;
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -292,7 +288,7 @@ body::before {
 
 .hero-title-reveal {
   position: absolute;
-  z-index: 4;
+  z-index: 3;
   inset: 0;
   display: grid;
   place-items: center;
@@ -341,7 +337,7 @@ body::before {
 
 .hero-orb {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
   left: var(--hero-orb-x);
   top: var(--hero-orb-y);
   width: var(--hero-orb-size);
@@ -355,11 +351,10 @@ body::before {
     0 38px 96px rgba(13, 17, 16, 0.24),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   transform: translate(-50%, -50%) scale(0.88);
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
   will-change: left, top, transform;
   animation: heroOrbEnter 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) 0.22s forwards;
-  mix-blend-mode: normal;
 }
 
 .hero.is-orb-disabled .hero-orb {
@@ -1426,11 +1421,11 @@ body::before {
 
 @keyframes heroOrbEnter {
   from {
-    opacity: 0;
+    opacity: 0.98;
     transform: translate(-50%, -50%) scale(0.74);
   }
   to {
-    opacity: 0.94;
+    opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
 }

@@ -111,7 +111,7 @@
 
     var rawOrbX = event.clientX - planeBounds.left;
     var rawOrbY = event.clientY - planeBounds.top;
-    var edgePadding = orbRadius * 0.35;
+    var edgePadding = orbRadius * 0.15;
 
     targetOrb.x = clamp(rawOrbX, edgePadding, planeBounds.width - edgePadding);
     targetOrb.y = clamp(rawOrbY, edgePadding, planeBounds.height - edgePadding);
