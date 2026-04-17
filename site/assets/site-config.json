@@ -2,16 +2,25 @@
   "hero": {
     "title": "HELLO, I'M Zenithy",
     "titleLeading": "HELLO, I'M",
+    "titleParts": {
+      "hello": "HELLO,",
+      "im": "I'M"
+    },
     "titleName": "Zenithy",
     "revealTitle": "你好，我是詹已誉",
+    "revealParts": {
+      "hello": "你好，",
+      "im": "我是",
+      "name": "詹已誉"
+    },
     "metaLine": "AI Process Manger / 18岁 / 广东深圳",
     "tilt": {
       "enabled": true,
-      "maxRotate": 20
+      "maxRotate": 24
     },
     "orb": {
       "enabled": true,
-      "followStrength": 0.14,
+      "followStrength": 0.18,
       "drift": true
     }
   },

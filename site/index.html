@@ -921,12 +921,19 @@
                 aria-label="HELLO, I'M Zenithy"
               >
                 <h1 id="page-title" class="hero-title hero-title-base">
-                  <span id="hero-title-leading" class="hero-title-leading">HELLO, I'M</span>
+                  <span id="hero-title-leading" class="hero-title-leading">
+                    <span id="hero-title-hello" class="hero-title-part hero-title-part--hello">HELLO,</span>
+                    <span id="hero-title-im" class="hero-title-part hero-title-part--im">I'M</span>
+                  </span>
                   <span id="hero-title-name" class="hero-title-name">Zenithy</span>
                 </h1>
                 <div class="hero-orb" aria-hidden="true"></div>
                 <div id="hero-title-reveal" class="hero-title hero-title-reveal" aria-hidden="true">
-                  <span id="hero-reveal-title">你好，我是詹已誉</span>
+                  <span class="hero-title-leading hero-title-leading--zh">
+                    <span id="hero-reveal-hello" class="hero-title-part hero-title-part--hello-zh">你好，</span>
+                    <span id="hero-reveal-im" class="hero-title-part hero-title-part--im-zh">我是</span>
+                  </span>
+                  <span id="hero-reveal-name" class="hero-title-name hero-title-name--zh">詹已誉</span>
                 </div>
               </div>
               <p id="hero-meta-line" class="hero-meta-line">AI Process Manger / 18岁 / 广东深圳</p>
@@ -1289,28 +1296,51 @@
           }
         }
 
+        function splitHeroLeading(value) {
+          var text = String(value || "HELLO, I'M").trim();
+          var match = text.match(/^(.*?)(I['’]M)$/i);
+          if (match) {
+            return {
+              hello: match[1].trim() || "HELLO,",
+              im: match[2].trim() || "I'M",
+            };
+          }
+          return {
+            hello: text || "HELLO,",
+            im: "I'M",
+          };
+        }
+
         function applyHero(hero) {
           hero = hero || {};
           var stage = document.querySelector("[data-hero-stage]");
-          var leading = hero.titleLeading;
-          var name = hero.titleName;
+          var titleParts = hero.titleParts || {};
+          var revealParts = hero.revealParts || {};
+          var splitLeading = splitHeroLeading(hero.titleLeading);
+          var leadingHello = titleParts.hello || splitLeading.hello;
+          var leadingIm = titleParts.im || splitLeading.im;
+          var name = hero.titleName || "Zenithy";
 
-          if (!leading && !name && hero.title) {
-            leading = hero.title;
-            name = "";
+          if (!hero.titleLeading && !hero.titleName && hero.title) {
+            splitLeading = splitHeroLeading(hero.title.replace(name, "").trim());
+            leadingHello = titleParts.hello || splitLeading.hello;
+            leadingIm = titleParts.im || splitLeading.im;
           }
 
-          setText("hero-title-leading", leading);
+          setText("hero-title-hello", leadingHello);
+          setText("hero-title-im", leadingIm);
           setText("hero-title-name", name);
-          setText("hero-reveal-title", hero.revealTitle);
+          setText("hero-reveal-hello", revealParts.hello || "你好，");
+          setText("hero-reveal-im", revealParts.im || "我是");
+          setText("hero-reveal-name", revealParts.name || hero.revealTitle || "詹已誉");
           setText("hero-meta-line", hero.metaLine);
 
           if (stage) {
             stage.setAttribute("aria-label", (document.getElementById("page-title").textContent || "").replace(/\s+/g, " ").trim());
             setHeroOption(stage, "data-tilt-enabled", hero.tilt && hero.tilt.enabled !== false, true);
-            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 20);
+            setHeroOption(stage, "data-tilt-max", hero.tilt && hero.tilt.maxRotate, 24);
             setHeroOption(stage, "data-orb-enabled", hero.orb && hero.orb.enabled !== false, true);
-            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.14);
+            setHeroOption(stage, "data-orb-follow-strength", hero.orb && hero.orb.followStrength, 0.18);
             setHeroOption(stage, "data-orb-drift", hero.orb && hero.orb.drift !== false, true);
           }
         }

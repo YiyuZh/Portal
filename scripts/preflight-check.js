@@ -156,7 +156,16 @@ function checkHomepageStructure() {
     if (!html.includes(`id="${id}"`)) errors.push(`[data container] missing #${id}`);
   });
 
-  ["hero-title-leading", "hero-title-name", "hero-reveal-title", "hero-meta-line"].forEach((id) => {
+  [
+    "hero-title-leading",
+    "hero-title-hello",
+    "hero-title-im",
+    "hero-title-name",
+    "hero-reveal-hello",
+    "hero-reveal-im",
+    "hero-reveal-name",
+    "hero-meta-line",
+  ].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[hero] missing #${id}`);
   });
   if (!html.includes("hero-interaction-plane") || !html.includes("data-hero-plane")) {
@@ -245,24 +254,47 @@ function checkHomepageMotion() {
 
   if (!css.includes("prefers-reduced-motion")) errors.push("[motion] CSS reduced-motion fallback is missing");
   if (!css.includes(".is-reveal") || !css.includes(".is-visible")) errors.push("[reveal] CSS classes are missing");
-  if (!css.includes("--hero-tilt-x") || !css.includes("rotateX") || !css.includes("rotateY")) {
+  if (!css.includes("--hero-rotate-x") || !css.includes("--hero-rotate-y") || !css.includes("rotateX") || !css.includes("rotateY")) {
     errors.push("[hero] 3D tilt CSS is missing");
   }
   if (!heroJs.includes("requestAnimationFrame")) errors.push("[hero] requestAnimationFrame motion loop is missing");
   if (!heroJs.includes("prefers-reduced-motion")) errors.push("[hero] reduced-motion guard is missing");
   if (
     !heroJs.includes("interactionTarget = hero") ||
-    !heroJs.includes("interactionTarget.getBoundingClientRect") ||
+    !heroJs.includes("heroBounds = interactionTarget.getBoundingClientRect") ||
+    !heroJs.includes("stage.getBoundingClientRect") ||
     !heroJs.includes("data-hero-plane")
   ) {
     errors.push("[hero] full-screen Hero interaction target or title-plane projection logic is missing");
   }
+  [
+    "0.1 + pointer.y * 0.58",
+    "0.68",
+    "0.07",
+    "0.085",
+  ].forEach((legacy) => {
+    if (heroJs.includes(legacy)) {
+      errors.push(`[hero regression] old compressed/offset interaction model still contains ${legacy}`);
+    }
+  });
   if (!heroJs.includes("data-tilt-max") || !heroJs.includes("data-orb-follow-strength")) {
     errors.push("[hero] tilt/orb config reading is missing");
   }
   if (!css.includes("clip-path: circle") || !css.includes(".hero-interaction-plane")) {
     errors.push("[hero] Chinese reveal circle mask or interaction plane CSS is missing");
   }
+  if (css.includes("clamp(48px, 5.8vw, 92px)") || css.includes("clamp(44px, 16vw, 82px)")) {
+    errors.push("[hero regression] black reveal orb is using the old small-dot size");
+  }
+  if (!css.includes("--hero-mask-size: clamp(180px, 19vw, 340px)")) {
+    errors.push("[hero] black reveal orb must stay large enough for the Chinese reveal");
+  }
+  if (css.includes("rgba(13, 17, 16, 0.66)")) {
+    errors.push("[hero regression] Zenithy title color is too gray");
+  }
+  ["你好", "我是", "詹已誉"].forEach((text) => {
+    if (!indexHtml.includes(text)) errors.push(`[hero] segmented Chinese reveal missing ${text}`);
+  });
   if (!css.includes("--card-tilt-x") || !css.includes("--card-tilt-y") || !css.includes("[data-tilt-layer]")) {
     errors.push("[projects tilt] project card tilt CSS is missing");
   }
@@ -368,8 +400,20 @@ function checkSiteConfig() {
   ["titleLeading", "titleName", "revealTitle", "metaLine"].forEach((field) => {
     if (!data.hero || !data.hero[field]) errors.push(`[hero config] missing siteConfig.hero.${field}`);
   });
+  ["hello", "im"].forEach((field) => {
+    if (!data.hero || !data.hero.titleParts || !data.hero.titleParts[field]) {
+      errors.push(`[hero config] missing siteConfig.hero.titleParts.${field}`);
+    }
+  });
+  ["hello", "im", "name"].forEach((field) => {
+    if (!data.hero || !data.hero.revealParts || !data.hero.revealParts[field]) {
+      errors.push(`[hero config] missing siteConfig.hero.revealParts.${field}`);
+    }
+  });
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.maxRotate !== "number") {
     errors.push("[hero config] tilt.maxRotate must be number");
+  } else if (data.hero.tilt.maxRotate < 22 || data.hero.tilt.maxRotate > 28) {
+    errors.push("[hero config] tilt.maxRotate should stay between 22 and 28");
   }
   if (!data.hero || !data.hero.orb || typeof data.hero.orb.followStrength !== "number") {
     errors.push("[hero config] orb.followStrength must be number");
@@ -555,12 +599,33 @@ function checkBlogAndAdmin() {
   if (!messagesAdmin.includes("/admin/messages")) {
     errors.push("[messages admin] API admin flow is missing");
   }
+  if (!messagesAdmin.includes('class="admin-shell"') || !messagesAdmin.includes('class="admin-main"')) {
+    errors.push("[messages admin] messages.html must use the shared admin-shell/admin-main layout");
+  }
+  [
+    'class="lead"',
+    "<div class=\"layout\"",
+    ".layout",
+    ".sidebar",
+    ".lead",
+    "不需要额外输入第二道口令",
+    "不需要再额外输入第二道口令",
+  ].forEach((legacy) => {
+    if (messagesAdmin.includes(legacy)) {
+      errors.push(`[messages admin] old explanatory text or legacy shell remains: ${legacy}`);
+    }
+  });
   if (messagesAdmin.includes("X-Admin-Token") || messagesAdmin.includes("Admin Token") || messagesAdmin.includes("zenithy_messages_admin_token")) {
     errors.push("[messages admin] token prompt should be removed; admin API is protected by gateway Basic Auth");
   }
   ["unread", "contacted", "archived", "DELETE", "PATCH"].forEach((needle) => {
     if (!messagesAdmin.includes(needle)) errors.push(`[messages admin] missing ${needle}`);
   });
+
+  const adminCss = readText(targets.adminCss);
+  if (!adminCss.includes("grid-template-columns: 280px minmax(0, 1fr)") || !adminCss.includes("white-space: nowrap")) {
+    errors.push("[admin shell] sidebar width/nowrap guard is missing; nav text may be clipped");
+  }
 }
 
 function checkMessagesApi() {

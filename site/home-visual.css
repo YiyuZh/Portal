@@ -145,10 +145,14 @@ body::before {
   --hero-orb-y: 19%;
   --hero-mask-x: 80%;
   --hero-mask-y: 19%;
-  --hero-mask-size: clamp(48px, 5.8vw, 92px);
-  --hero-reveal-size: clamp(220px, 26vw, 390px);
-  --hero-tilt-x: 0deg;
-  --hero-tilt-y: 0deg;
+  --hero-pointer-x: 80%;
+  --hero-pointer-y: 22%;
+  --hero-mask-size: clamp(180px, 19vw, 340px);
+  --hero-reveal-size: var(--hero-mask-size);
+  --hero-rotate-x: 0deg;
+  --hero-rotate-y: 0deg;
+  --hero-depth-leading: 126px;
+  --hero-depth-name: 56px;
 }
 
 .hero-inner {
@@ -203,6 +207,7 @@ body::before {
 .hero .hero-title {
   grid-area: 1 / 1;
   margin: 0;
+  width: 100%;
   max-width: min(1240px, 100%);
   font-size: clamp(64px, 10.2vw, 162px);
   line-height: 0.78;
@@ -220,8 +225,8 @@ body::before {
   color: var(--text-strong);
   transform:
     perspective(1750px)
-    rotateX(var(--hero-tilt-x))
-    rotateY(var(--hero-tilt-y))
+    rotateX(var(--hero-rotate-x))
+    rotateY(var(--hero-rotate-y))
     translateZ(48px);
   transform-style: preserve-3d;
   will-change: transform;
@@ -229,36 +234,49 @@ body::before {
 }
 
 .hero-title-leading {
-  display: inline-block;
+  display: inline-flex;
+  align-items: baseline;
+  gap: clamp(6px, 0.8vw, 14px);
   font-weight: 1000;
   letter-spacing: -0.112em;
   text-transform: uppercase;
-  transform: translateY(-0.025em) translateZ(104px);
+  transform: translateY(-0.025em) translateZ(var(--hero-depth-leading));
   transform-style: preserve-3d;
+}
+
+.hero-title-part {
+  display: inline-block;
+  transform-style: preserve-3d;
+}
+
+.hero-title-part--im {
+  transform: translateY(0.01em) translateZ(18px);
 }
 
 .hero-title-name {
   display: inline-block;
   font-size: 0.86em;
-  font-weight: 145;
+  font-weight: 300;
   letter-spacing: -0.145em;
-  color: rgba(13, 17, 16, 0.66);
-  transform: translateX(0.018em) translateY(0.11em) translateZ(38px) rotateZ(-0.6deg);
+  color: rgba(8, 10, 12, 0.92);
+  transform: translateX(0.018em) translateY(0.11em) translateZ(var(--hero-depth-name)) rotateZ(-0.6deg);
   transform-style: preserve-3d;
 }
 
 .hero-title-reveal {
   position: relative;
   z-index: 5;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: clamp(8px, 1.4vw, 24px);
   color: #fff;
   pointer-events: none;
   opacity: 0;
   transform:
     perspective(1750px)
-    rotateX(var(--hero-tilt-x))
-    rotateY(var(--hero-tilt-y))
+    rotateX(var(--hero-rotate-x))
+    rotateY(var(--hero-rotate-y))
     translateY(18px)
     translateZ(132px);
   clip-path: circle(0 at var(--hero-mask-x) var(--hero-mask-y));
@@ -269,15 +287,19 @@ body::before {
     transform 0.58s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.hero-title-reveal span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 1.12em;
-  font-size: clamp(44px, 7.4vw, 112px);
-  font-weight: 820;
-  letter-spacing: -0.08em;
-  line-height: 0.98;
+.hero-title-leading--zh {
+  color: #fff;
+  letter-spacing: -0.1em;
+}
+
+.hero-title-name--zh {
+  color: #fff;
+  font-weight: 720;
+  letter-spacing: -0.12em;
+}
+
+.hero-title-reveal .hero-title-part,
+.hero-title-reveal .hero-title-name--zh {
   text-shadow:
     0 12px 42px rgba(0, 0, 0, 0.28),
     0 0 1px rgba(255, 255, 255, 0.82);
@@ -289,11 +311,11 @@ body::before {
   opacity: 1;
   transform:
     perspective(1750px)
-    rotateX(var(--hero-tilt-x))
-    rotateY(var(--hero-tilt-y))
+    rotateX(var(--hero-rotate-x))
+    rotateY(var(--hero-rotate-y))
     translateY(0)
     translateZ(162px);
-  clip-path: circle(var(--hero-reveal-size) at var(--hero-mask-x) var(--hero-mask-y));
+  clip-path: circle(calc(var(--hero-reveal-size) / 2) at var(--hero-mask-x) var(--hero-mask-y));
 }
 
 .hero-title-reveal::after {
@@ -308,7 +330,7 @@ body::before {
 
 .hero-orb {
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   left: var(--hero-orb-x);
   top: var(--hero-orb-y);
   width: var(--hero-mask-size);
@@ -317,11 +339,11 @@ body::before {
   background:
     radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.16), transparent 18%),
     radial-gradient(circle at 70% 76%, rgba(255, 255, 255, 0.1), transparent 22%),
-    var(--surface-ink);
+    #050606;
   box-shadow:
-    0 30px 82px rgba(13, 17, 16, 0.18),
+    0 38px 96px rgba(13, 17, 16, 0.24),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  transform: translate(-50%, -50%) scale(0.64);
+  transform: translate(-50%, -50%) scale(0.88);
   opacity: 0;
   pointer-events: none;
   will-change: left, top, transform;
@@ -332,10 +354,10 @@ body::before {
 .hero-orb::after {
   content: "";
   position: absolute;
-  inset: -28px;
+  inset: -16px;
   border-radius: inherit;
   border: 1px solid rgba(13, 17, 16, 0.08);
-  opacity: 0.7;
+  opacity: 0.42;
 }
 
 .hero.is-orb-disabled .hero-orb {
@@ -1221,8 +1243,8 @@ body::before {
     min-height: 560px;
     --hero-orb-x: 76%;
     --hero-orb-y: 20%;
-    --hero-mask-size: clamp(44px, 16vw, 82px);
-    --hero-reveal-size: clamp(104px, 30vw, 150px);
+    --hero-mask-size: clamp(160px, 44vw, 220px);
+    --hero-reveal-size: var(--hero-mask-size);
   }
 
   .hero .hero-title {
@@ -1270,6 +1292,9 @@ body::before {
     --hero-mask-x: 50%;
     --hero-mask-y: 50%;
     --hero-mask-size: 0px;
+    --hero-reveal-size: 0px;
+    --hero-rotate-x: 0deg;
+    --hero-rotate-y: 0deg;
   }
 
   .hero-title-system,
@@ -1399,11 +1424,11 @@ body::before {
 @keyframes heroOrbEnter {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.52);
+    transform: translate(-50%, -50%) scale(0.74);
   }
   to {
-    opacity: 0.46;
-    transform: translate(-50%, -50%) scale(0.78);
+    opacity: 0.94;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 

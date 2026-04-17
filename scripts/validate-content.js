@@ -253,8 +253,13 @@ function validateSiteConfig() {
 
   requireText(data.hero && data.hero.title, "siteConfig.hero.title");
   requireText(data.hero && data.hero.titleLeading, "siteConfig.hero.titleLeading");
+  requireText(data.hero && data.hero.titleParts && data.hero.titleParts.hello, "siteConfig.hero.titleParts.hello");
+  requireText(data.hero && data.hero.titleParts && data.hero.titleParts.im, "siteConfig.hero.titleParts.im");
   requireText(data.hero && data.hero.titleName, "siteConfig.hero.titleName");
   requireText(data.hero && data.hero.revealTitle, "siteConfig.hero.revealTitle");
+  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.hello, "siteConfig.hero.revealParts.hello");
+  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.im, "siteConfig.hero.revealParts.im");
+  requireText(data.hero && data.hero.revealParts && data.hero.revealParts.name, "siteConfig.hero.revealParts.name");
   requireText(data.hero && data.hero.metaLine, "siteConfig.hero.metaLine");
   if (data.hero && (data.hero.subtitle || data.hero.primaryCta || data.hero.secondaryCta)) {
     errors.push("[hero] subtitle/primaryCta/secondaryCta should not be configured; keep project entries in Projects section");
@@ -265,6 +270,8 @@ function validateSiteConfig() {
   }
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.maxRotate !== "number") {
     errors.push("[hero] tilt.maxRotate must be number");
+  } else if (data.hero.tilt.maxRotate < 22 || data.hero.tilt.maxRotate > 28) {
+    errors.push("[hero] tilt.maxRotate should stay between 22 and 28 for the full-screen typography interaction");
   }
   if (!data.hero || !data.hero.orb || typeof data.hero.orb.enabled !== "boolean") {
     errors.push("[hero] orb.enabled must be boolean");

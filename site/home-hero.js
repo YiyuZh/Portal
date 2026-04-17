@@ -1,5 +1,6 @@
-// Zenithy Hero route B animation.
-// site-config.json owns the text; this file only controls the whole-screen interaction model.
+// Zenithy Hero interaction model.
+// Text still comes from site-config.json; this file only owns pointer, tilt,
+// the shared orb/reveal center, and reduced-motion guards.
 (function () {
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
   var coarsePointer = window.matchMedia && window.matchMedia("(pointer: coarse)");
@@ -54,18 +55,23 @@
   hero.classList.add("is-hero-ready");
 
   if (shouldReduceMotion()) {
-    hero.style.setProperty("--hero-tilt-x", "0deg");
-    hero.style.setProperty("--hero-tilt-y", "0deg");
+    hero.style.setProperty("--hero-rotate-x", "0deg");
+    hero.style.setProperty("--hero-rotate-y", "0deg");
+    hero.style.setProperty("--hero-pointer-x", "50%");
+    hero.style.setProperty("--hero-pointer-y", "50%");
     return;
   }
 
   var active = false;
-  var bounds = null;
+  var heroBounds = null;
+  var stageBounds = null;
   var interactionTarget = hero;
-  var pointer = { x: 0.8, y: 0.2 };
-  var focus = { x: 0.8, y: 0.2 };
-  var mask = { x: 0.8, y: 0.2 };
-  var orb = { x: 0.86, y: 0.14 };
+
+  // The pointer uses the full Hero rectangle. Stage coordinates are a true
+  // geometric projection into the typography stage, not a compressed shortcut.
+  var pointer = { x: 0.78, y: 0.22 };
+  var stagePoint = { x: 0.78, y: 0.24 };
+  var center = { x: 0.78, y: 0.24 };
   var tilt = { x: 0, y: 0 };
 
   function setActive(next) {
@@ -74,26 +80,19 @@
   }
 
   function refreshBounds() {
-    // Use the full Hero section as the pointer surface. The visual reveal still
-    // renders inside data-hero-plane, but movement anywhere in the first screen
-    // now drives tilt/orb/mask feedback.
-    bounds = interactionTarget.getBoundingClientRect();
+    heroBounds = interactionTarget.getBoundingClientRect();
+    stageBounds = stage.getBoundingClientRect();
   }
 
   function updatePointer(event) {
-    if (!bounds) refreshBounds();
-    if (!bounds.width || !bounds.height) return;
+    if (!heroBounds || !stageBounds) refreshBounds();
+    if (!heroBounds.width || !heroBounds.height || !stageBounds.width || !stageBounds.height) return;
 
-    var rawX = (event.clientX - bounds.left) / bounds.width;
-    var rawY = (event.clientY - bounds.top) / bounds.height;
+    pointer.x = clamp((event.clientX - heroBounds.left) / heroBounds.width, 0, 1);
+    pointer.y = clamp((event.clientY - heroBounds.top) / heroBounds.height, 0, 1);
 
-    // Project the full-screen pointer into the title stage. The reveal stays
-    // close to the typography while the actual pointer can be anywhere in Hero.
-    pointer.x = clamp(rawX, 0, 1);
-    pointer.y = clamp(rawY, 0, 1);
-
-    focus.x = clamp(0.08 + pointer.x * 0.84, 0.08, 0.92);
-    focus.y = clamp(0.1 + pointer.y * 0.58, 0.1, 0.68);
+    stagePoint.x = clamp((event.clientX - stageBounds.left) / stageBounds.width, 0, 1);
+    stagePoint.y = clamp((event.clientY - stageBounds.top) / stageBounds.height, 0, 1);
   }
 
   interactionTarget.addEventListener(
@@ -112,7 +111,8 @@
     "pointerleave",
     function () {
       setActive(false);
-      bounds = null;
+      heroBounds = null;
+      stageBounds = null;
     },
     { passive: true }
   );
@@ -121,7 +121,8 @@
     "pointercancel",
     function () {
       setActive(false);
-      bounds = null;
+      heroBounds = null;
+      stageBounds = null;
     },
     { passive: true }
   );
@@ -137,7 +138,8 @@
   window.addEventListener(
     "resize",
     function () {
-      bounds = null;
+      heroBounds = null;
+      stageBounds = null;
     },
     { passive: true }
   );
@@ -146,47 +148,41 @@
     var tiltEnabled = boolAttr("data-tilt-enabled", true);
     var orbEnabled = boolAttr("data-orb-enabled", true);
     var driftEnabled = boolAttr("data-orb-drift", true);
-    var maxRotate = numberAttr("data-tilt-max", 20);
-    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.14), 0.05, 0.24);
-    var maskStrength = clamp(followStrength * 1.55, 0.14, 0.34);
+    var maxRotate = clamp(numberAttr("data-tilt-max", 24), 0, 28);
+    var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.18), 0.08, 0.34);
 
     hero.classList.toggle("is-orb-disabled", !orbEnabled);
 
-    var driftX = 0.82;
+    var driftX = 0.78;
     var driftY = 0.22;
     if (driftEnabled) {
-      driftX += Math.sin(time / 3000) * 0.04 + Math.sin(time / 5600) * 0.018;
-      driftY += Math.cos(time / 3600) * 0.032;
+      driftX += Math.sin(time / 2800) * 0.065 + Math.sin(time / 5400) * 0.026;
+      driftY += Math.cos(time / 3300) * 0.045;
     }
 
-    var orbSide = focus.x < 0.5 ? -1 : 1;
-    var targetMaskX = active ? focus.x : driftX;
-    var targetMaskY = active ? focus.y : driftY;
-    var targetOrbX = active ? clamp(focus.x + orbSide * 0.07, 0.08, 0.92) : driftX;
-    var targetOrbY = active ? clamp(focus.y - 0.085, 0.08, 0.62) : driftY;
+    var targetCenterX = active ? stagePoint.x : clamp(driftX, 0.08, 0.92);
+    var targetCenterY = active ? stagePoint.y : clamp(driftY, 0.08, 0.84);
 
-    mask.x += (targetMaskX - mask.x) * maskStrength;
-    mask.y += (targetMaskY - mask.y) * maskStrength;
-    orb.x += (targetOrbX - orb.x) * followStrength;
-    orb.y += (targetOrbY - orb.y) * followStrength;
+    center.x += (targetCenterX - center.x) * followStrength;
+    center.y += (targetCenterY - center.y) * followStrength;
 
     var targetTiltX = active && tiltEnabled ? (0.5 - pointer.y) * maxRotate * 2 : 0;
     var targetTiltY = active && tiltEnabled ? (pointer.x - 0.5) * maxRotate * 2 : 0;
 
-    tilt.x += (targetTiltX - tilt.x) * 0.13;
-    tilt.y += (targetTiltY - tilt.y) * 0.13;
+    tilt.x += (targetTiltX - tilt.x) * 0.16;
+    tilt.y += (targetTiltY - tilt.y) * 0.16;
 
-    var orbX = (orb.x * 100).toFixed(2) + "%";
-    var orbY = (orb.y * 100).toFixed(2) + "%";
-    var maskX = (mask.x * 100).toFixed(2) + "%";
-    var maskY = (mask.y * 100).toFixed(2) + "%";
+    var centerX = (center.x * 100).toFixed(2) + "%";
+    var centerY = (center.y * 100).toFixed(2) + "%";
 
-    hero.style.setProperty("--hero-orb-x", orbX);
-    hero.style.setProperty("--hero-orb-y", orbY);
-    hero.style.setProperty("--hero-mask-x", maskX);
-    hero.style.setProperty("--hero-mask-y", maskY);
-    hero.style.setProperty("--hero-tilt-x", tilt.x.toFixed(3) + "deg");
-    hero.style.setProperty("--hero-tilt-y", tilt.y.toFixed(3) + "deg");
+    hero.style.setProperty("--hero-orb-x", centerX);
+    hero.style.setProperty("--hero-orb-y", centerY);
+    hero.style.setProperty("--hero-mask-x", centerX);
+    hero.style.setProperty("--hero-mask-y", centerY);
+    hero.style.setProperty("--hero-pointer-x", (pointer.x * 100).toFixed(2) + "%");
+    hero.style.setProperty("--hero-pointer-y", (pointer.y * 100).toFixed(2) + "%");
+    hero.style.setProperty("--hero-rotate-x", tilt.x.toFixed(3) + "deg");
+    hero.style.setProperty("--hero-rotate-y", tilt.y.toFixed(3) + "deg");
 
     window.requestAnimationFrame(tick);
   }
