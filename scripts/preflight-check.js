@@ -269,20 +269,35 @@ function checkHomepageMotion() {
     !heroJs.includes("event.clientX / viewportWidth") ||
     !heroJs.includes("event.clientY / viewportHeight") ||
     !heroJs.includes("hero.getBoundingClientRect") ||
+    !heroJs.includes("plane.getBoundingClientRect") ||
+    !heroJs.includes("reveal.getBoundingClientRect") ||
     !heroJs.includes("data-hero-plane")
   ) {
     errors.push("[hero] viewport pointer model or Hero geometry mapping is missing");
   }
   [
     "0.1 + pointer.y * 0.58",
-    "0.68",
     "0.07",
     "0.085",
+    "stagePoint",
+    "targetCenter",
   ].forEach((legacy) => {
     if (heroJs.includes(legacy)) {
       errors.push(`[hero regression] old compressed/offset interaction model still contains ${legacy}`);
     }
   });
+  if (heroJs.includes("stage.getBoundingClientRect")) {
+    errors.push("[hero regression] black orb/reveal movement must not use the title stage rect as its boundary");
+  }
+  if (/clamp\([^,\n]+,\s*0\.16\s*,\s*0\.84\s*\)/.test(heroJs) || /clamp\([^,\n]+,\s*0\.1\s*,\s*0\.68\s*\)/.test(heroJs)) {
+    errors.push("[hero regression] orb/reveal movement is still clamped into a local title band");
+  }
+  if (!heroJs.includes("targetOrb.x = clamp(rawOrbX, edgePadding") || !heroJs.includes("targetMask.x = planeBounds.left + targetOrb.x - revealBounds.left")) {
+    errors.push("[hero] orb and reveal must be mapped from full Hero/viewport coordinates, not the title stage");
+  }
+  if (!heroJs.includes('setProperty("--hero-orb-x", orbX)') || !heroJs.includes('setProperty("--hero-mask-x", maskX)')) {
+    errors.push("[hero] orb and reveal mask centers must be written from the same pointer loop");
+  }
   if (!heroJs.includes("data-tilt-max") || !heroJs.includes("data-orb-follow-strength")) {
     errors.push("[hero] tilt/orb config reading is missing");
   }
@@ -298,15 +313,22 @@ function checkHomepageMotion() {
   if (!css.includes("--hero-orb-size")) {
     errors.push("[hero] medium black reveal orb variable --hero-orb-size is missing");
   }
-  if (!css.includes("--hero-orb-size: clamp(128px, 11vw, 220px)")) {
-    errors.push("[hero] black reveal orb should use the medium clamp(128px, 11vw, 220px) size");
+  if (!css.includes("--hero-orb-size: clamp(120px, 10.5vw, 210px)")) {
+    errors.push("[hero] black reveal orb should use the medium clamp(120px, 10.5vw, 210px) size");
   }
   const orbSizeMatch = css.match(/--hero-orb-size:\s*clamp\([^;]+,\s*[^;]+,\s*(\d+)px\)/);
-  if (orbSizeMatch && Number(orbSizeMatch[1]) > 240) {
-    errors.push("[hero regression] black reveal orb max size should stay under 240px");
+  if (orbSizeMatch && Number(orbSizeMatch[1]) > 220) {
+    errors.push("[hero regression] black reveal orb max size should stay under 220px");
   }
   if (!css.includes("overflow-x: clip") || !css.includes("overflow: hidden")) {
     errors.push("[hero overflow] Hero/page must guard against horizontal overflow");
+  }
+  if (
+    !css.includes("max-width: min(92vw, 1240px)") ||
+    !css.includes("width: 100vw") ||
+    !css.includes("margin-left: calc(50% - 50vw)")
+  ) {
+    errors.push("[hero overflow] Hero stage width guard is missing");
   }
   if (css.includes("rgba(13, 17, 16, 0.66)")) {
     errors.push("[hero regression] Zenithy title color is too gray");
