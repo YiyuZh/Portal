@@ -37,11 +37,13 @@
 
 html {
   background: var(--surface);
+  overflow-x: clip;
 }
 
 body {
   font-family: var(--font-display);
   color: var(--text);
+  overflow-x: clip;
   background:
     radial-gradient(circle at 50% -10%, rgba(13, 17, 16, 0.08), transparent 32%),
     radial-gradient(circle at 8% 18%, rgba(13, 17, 16, 0.035), transparent 24%),
@@ -141,13 +143,16 @@ body::before {
 .hero {
   min-height: clamp(680px, 92vh, 900px);
   padding-top: clamp(94px, 12vh, 132px);
+  overflow: hidden;
+  overflow-x: clip;
   --hero-orb-x: 80%;
   --hero-orb-y: 19%;
   --hero-mask-x: 80%;
   --hero-mask-y: 19%;
   --hero-pointer-x: 80%;
   --hero-pointer-y: 22%;
-  --hero-mask-size: clamp(180px, 19vw, 340px);
+  --hero-orb-size: clamp(128px, 11vw, 220px);
+  --hero-mask-size: var(--hero-orb-size);
   --hero-reveal-size: var(--hero-mask-size);
   --hero-rotate-x: 0deg;
   --hero-rotate-y: 0deg;
@@ -166,7 +171,8 @@ body::before {
   display: grid;
   align-content: center;
   justify-items: center;
-  width: min(1220px, 100%);
+  width: min(92vw, 1220px);
+  max-width: 100%;
   min-height: clamp(540px, 72vh, 740px);
   padding: clamp(34px, 5.6vw, 68px) 0 clamp(18px, 2.8vw, 34px);
   perspective: 1750px;
@@ -192,7 +198,7 @@ body::before {
   display: grid;
   place-items: center;
   width: 100%;
-  max-width: min(1240px, 100%);
+  max-width: min(92vw, 1240px);
   margin-inline: auto;
   min-height: clamp(156px, 18.6vw, 286px);
   opacity: 0;
@@ -208,8 +214,8 @@ body::before {
   grid-area: 1 / 1;
   margin: 0;
   width: 100%;
-  max-width: min(1240px, 100%);
-  font-size: clamp(64px, 10.2vw, 162px);
+  max-width: min(92vw, 1240px);
+  font-size: clamp(64px, 9vw, 150px);
   line-height: 0.78;
   letter-spacing: -0.108em;
   text-align: center;
@@ -1243,7 +1249,8 @@ body::before {
     min-height: 560px;
     --hero-orb-x: 76%;
     --hero-orb-y: 20%;
-    --hero-mask-size: clamp(160px, 44vw, 220px);
+    --hero-orb-size: clamp(112px, 38vw, 180px);
+    --hero-mask-size: var(--hero-orb-size);
     --hero-reveal-size: var(--hero-mask-size);
   }
 
@@ -1291,6 +1298,7 @@ body::before {
     --hero-orb-y: 50%;
     --hero-mask-x: 50%;
     --hero-mask-y: 50%;
+    --hero-orb-size: 0px;
     --hero-mask-size: 0px;
     --hero-reveal-size: 0px;
     --hero-rotate-x: 0deg;

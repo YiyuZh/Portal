@@ -270,8 +270,8 @@ function validateSiteConfig() {
   }
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.maxRotate !== "number") {
     errors.push("[hero] tilt.maxRotate must be number");
-  } else if (data.hero.tilt.maxRotate < 22 || data.hero.tilt.maxRotate > 28) {
-    errors.push("[hero] tilt.maxRotate should stay between 22 and 28 for the full-screen typography interaction");
+  } else if (data.hero.tilt.maxRotate < 18 || data.hero.tilt.maxRotate > 22) {
+    errors.push("[hero] tilt.maxRotate should stay between 18 and 22 for the full-screen typography interaction");
   }
   if (!data.hero || !data.hero.orb || typeof data.hero.orb.enabled !== "boolean") {
     errors.push("[hero] orb.enabled must be boolean");

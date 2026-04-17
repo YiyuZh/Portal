@@ -260,12 +260,18 @@ function checkHomepageMotion() {
   if (!heroJs.includes("requestAnimationFrame")) errors.push("[hero] requestAnimationFrame motion loop is missing");
   if (!heroJs.includes("prefers-reduced-motion")) errors.push("[hero] reduced-motion guard is missing");
   if (
-    !heroJs.includes("interactionTarget = hero") ||
-    !heroJs.includes("heroBounds = interactionTarget.getBoundingClientRect") ||
-    !heroJs.includes("stage.getBoundingClientRect") ||
+    !heroJs.includes('window.addEventListener("pointermove"') &&
+    !heroJs.includes('document.addEventListener("pointermove"')
+  ) {
+    errors.push("[hero] pointermove must be sourced from window/document so screen edges still drive Hero");
+  }
+  if (
+    !heroJs.includes("event.clientX / viewportWidth") ||
+    !heroJs.includes("event.clientY / viewportHeight") ||
+    !heroJs.includes("hero.getBoundingClientRect") ||
     !heroJs.includes("data-hero-plane")
   ) {
-    errors.push("[hero] full-screen Hero interaction target or title-plane projection logic is missing");
+    errors.push("[hero] viewport pointer model or Hero geometry mapping is missing");
   }
   [
     "0.1 + pointer.y * 0.58",
@@ -286,8 +292,21 @@ function checkHomepageMotion() {
   if (css.includes("clamp(48px, 5.8vw, 92px)") || css.includes("clamp(44px, 16vw, 82px)")) {
     errors.push("[hero regression] black reveal orb is using the old small-dot size");
   }
-  if (!css.includes("--hero-mask-size: clamp(180px, 19vw, 340px)")) {
-    errors.push("[hero] black reveal orb must stay large enough for the Chinese reveal");
+  ["clamp(180px, 19vw, 340px)", "19vw", "340px"].forEach((legacy) => {
+    if (css.includes(legacy)) errors.push(`[hero regression] black reveal orb is still too large: ${legacy}`);
+  });
+  if (!css.includes("--hero-orb-size")) {
+    errors.push("[hero] medium black reveal orb variable --hero-orb-size is missing");
+  }
+  if (!css.includes("--hero-orb-size: clamp(128px, 11vw, 220px)")) {
+    errors.push("[hero] black reveal orb should use the medium clamp(128px, 11vw, 220px) size");
+  }
+  const orbSizeMatch = css.match(/--hero-orb-size:\s*clamp\([^;]+,\s*[^;]+,\s*(\d+)px\)/);
+  if (orbSizeMatch && Number(orbSizeMatch[1]) > 240) {
+    errors.push("[hero regression] black reveal orb max size should stay under 240px");
+  }
+  if (!css.includes("overflow-x: clip") || !css.includes("overflow: hidden")) {
+    errors.push("[hero overflow] Hero/page must guard against horizontal overflow");
   }
   if (css.includes("rgba(13, 17, 16, 0.66)")) {
     errors.push("[hero regression] Zenithy title color is too gray");
@@ -412,8 +431,8 @@ function checkSiteConfig() {
   });
   if (!data.hero || !data.hero.tilt || typeof data.hero.tilt.maxRotate !== "number") {
     errors.push("[hero config] tilt.maxRotate must be number");
-  } else if (data.hero.tilt.maxRotate < 22 || data.hero.tilt.maxRotate > 28) {
-    errors.push("[hero config] tilt.maxRotate should stay between 22 and 28");
+  } else if (data.hero.tilt.maxRotate < 18 || data.hero.tilt.maxRotate > 22) {
+    errors.push("[hero config] tilt.maxRotate should stay between 18 and 22");
   }
   if (!data.hero || !data.hero.orb || typeof data.hero.orb.followStrength !== "number") {
     errors.push("[hero config] orb.followStrength must be number");

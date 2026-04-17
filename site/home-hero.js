@@ -64,13 +64,11 @@
 
   var active = false;
   var heroBounds = null;
-  var stageBounds = null;
-  var interactionTarget = hero;
 
-  // The pointer uses the full Hero rectangle. Stage coordinates are a true
-  // geometric projection into the typography stage, not a compressed shortcut.
+  // The pointer source is the whole viewport. This keeps the typography alive
+  // even when the cursor reaches the far left/right/top/bottom of the screen.
   var pointer = { x: 0.78, y: 0.22 };
-  var stagePoint = { x: 0.78, y: 0.24 };
+  var targetCenter = { x: 0.78, y: 0.24 };
   var center = { x: 0.78, y: 0.24 };
   var tilt = { x: 0, y: 0 };
 
@@ -80,49 +78,48 @@
   }
 
   function refreshBounds() {
-    heroBounds = interactionTarget.getBoundingClientRect();
-    stageBounds = stage.getBoundingClientRect();
+    heroBounds = hero.getBoundingClientRect();
+  }
+
+  function heroIsVisible() {
+    if (!heroBounds) refreshBounds();
+    var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+    return heroBounds.bottom > 0 && heroBounds.top < viewportHeight;
   }
 
   function updatePointer(event) {
-    if (!heroBounds || !stageBounds) refreshBounds();
-    if (!heroBounds.width || !heroBounds.height || !stageBounds.width || !stageBounds.height) return;
+    refreshBounds();
+    if (!heroBounds.width || !heroBounds.height) return;
 
-    pointer.x = clamp((event.clientX - heroBounds.left) / heroBounds.width, 0, 1);
-    pointer.y = clamp((event.clientY - heroBounds.top) / heroBounds.height, 0, 1);
+    var viewportWidth = window.innerWidth || document.documentElement.clientWidth || 1;
+    var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 1;
+    var visible = heroIsVisible();
 
-    stagePoint.x = clamp((event.clientX - stageBounds.left) / stageBounds.width, 0, 1);
-    stagePoint.y = clamp((event.clientY - stageBounds.top) / stageBounds.height, 0, 1);
+    pointer.x = clamp(event.clientX / viewportWidth, 0, 1);
+    pointer.y = clamp(event.clientY / viewportHeight, 0, 1);
+
+    targetCenter.x = clamp((event.clientX - heroBounds.left) / heroBounds.width, 0.035, 0.965);
+    targetCenter.y = clamp((event.clientY - heroBounds.top) / heroBounds.height, 0.08, 0.92);
+
+    setActive(visible);
   }
 
-  interactionTarget.addEventListener(
-    "pointerenter",
-    function (event) {
-      refreshBounds();
-      setActive(true);
-      updatePointer(event);
-    },
-    { passive: true }
-  );
+  window.addEventListener("pointermove", updatePointer, { passive: true });
 
-  interactionTarget.addEventListener("pointermove", updatePointer, { passive: true });
-
-  interactionTarget.addEventListener(
+  window.addEventListener(
     "pointerleave",
     function () {
       setActive(false);
       heroBounds = null;
-      stageBounds = null;
     },
     { passive: true }
   );
 
-  interactionTarget.addEventListener(
+  window.addEventListener(
     "pointercancel",
     function () {
       setActive(false);
       heroBounds = null;
-      stageBounds = null;
     },
     { passive: true }
   );
@@ -139,7 +136,16 @@
     "resize",
     function () {
       heroBounds = null;
-      stageBounds = null;
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    "scroll",
+    function () {
+      heroBounds = null;
+      refreshBounds();
+      setActive(heroIsVisible() && active);
     },
     { passive: true }
   );
@@ -148,7 +154,7 @@
     var tiltEnabled = boolAttr("data-tilt-enabled", true);
     var orbEnabled = boolAttr("data-orb-enabled", true);
     var driftEnabled = boolAttr("data-orb-drift", true);
-    var maxRotate = clamp(numberAttr("data-tilt-max", 24), 0, 28);
+    var maxRotate = clamp(numberAttr("data-tilt-max", 20), 0, 24);
     var followStrength = clamp(numberAttr("data-orb-follow-strength", 0.18), 0.08, 0.34);
 
     hero.classList.toggle("is-orb-disabled", !orbEnabled);
@@ -160,8 +166,8 @@
       driftY += Math.cos(time / 3300) * 0.045;
     }
 
-    var targetCenterX = active ? stagePoint.x : clamp(driftX, 0.08, 0.92);
-    var targetCenterY = active ? stagePoint.y : clamp(driftY, 0.08, 0.84);
+    var targetCenterX = active ? targetCenter.x : clamp(driftX, 0.08, 0.92);
+    var targetCenterY = active ? targetCenter.y : clamp(driftY, 0.08, 0.84);
 
     center.x += (targetCenterX - center.x) * followStrength;
     center.y += (targetCenterY - center.y) * followStrength;
