@@ -15,7 +15,9 @@ services:
       retries: 3
 
   messages-api:
-    build: ./api
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     image: portal-messages-api:prod
     container_name: portal-messages-api
     restart: unless-stopped
@@ -23,6 +25,14 @@ services:
       MESSAGES_DB: /data/messages.sqlite3
       MESSAGES_TRUST_GATEWAY_AUTH: ${MESSAGES_TRUST_GATEWAY_AUTH:-true}
       CORS_ORIGINS: ${MESSAGES_CORS_ORIGINS:-https://zenithy.art,https://blog.zenithy.art,http://127.0.0.1:8080,http://localhost:8080,http://127.0.0.1:18080}
+      PORTAL_SECURITY_ENABLED: ${PORTAL_SECURITY_ENABLED:-true}
+      PORTAL_MESSAGE_RATE_LIMIT: ${PORTAL_MESSAGE_RATE_LIMIT:-5}
+      PORTAL_MESSAGE_DAILY_LIMIT: ${PORTAL_MESSAGE_DAILY_LIMIT:-30}
+      PORTAL_MESSAGE_WINDOW_SECONDS: ${PORTAL_MESSAGE_WINDOW_SECONDS:-600}
+      PORTAL_ADMIN_RATE_LIMIT: ${PORTAL_ADMIN_RATE_LIMIT:-90}
+      PORTAL_ADMIN_WINDOW_SECONDS: ${PORTAL_ADMIN_WINDOW_SECONDS:-300}
+      PORTAL_MESSAGE_MAX_CHARS: ${PORTAL_MESSAGE_MAX_CHARS:-1200}
+      PORTAL_MESSAGE_MAX_LINKS: ${PORTAL_MESSAGE_MAX_LINKS:-3}
     volumes:
       - portal_messages_data:/data
     ports:

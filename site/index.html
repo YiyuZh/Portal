@@ -1012,15 +1012,19 @@
             <form id="collab-form" class="collab-form" novalidate>
               <label>
                 <span>姓名（可选）</span>
-                <input id="collab-name" name="name" type="text" autocomplete="name" placeholder="你的名字" />
+                <input id="collab-name" name="name" type="text" autocomplete="name" maxlength="80" placeholder="你的名字" />
               </label>
               <label>
                 <span>邮箱（必填）</span>
-                <input id="collab-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+                <input id="collab-email" name="email" type="email" autocomplete="email" maxlength="160" placeholder="you@example.com" required />
               </label>
               <label>
                 <span>想法 / 留言（必填）</span>
-                <textarea id="collab-message" name="message" rows="5" placeholder="简单说说你想一起推进什么..." required></textarea>
+                <textarea id="collab-message" name="message" rows="5" maxlength="1200" placeholder="简单说说你想一起推进什么..." required></textarea>
+              </label>
+              <label class="collab-honeypot" aria-hidden="true">
+                <span>Website</span>
+                <input id="collab-website" name="website" type="text" tabindex="-1" autocomplete="off" />
               </label>
               <div class="collab-form-actions">
                 <button class="button button-primary" type="submit">提交留言</button>

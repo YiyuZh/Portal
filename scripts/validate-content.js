@@ -16,6 +16,9 @@ const targets = {
   siteConfig: path.join(siteDir, "assets", "site-config.json"),
   manifest: path.join(siteDir, "blog", "posts", "manifest.json"),
   messagesManifest: path.join(siteDir, "blog", "messages", "manifest.json"),
+  securityPrd: path.join(rootDir, "security", "PRD.md"),
+  securityReadme: path.join(rootDir, "security", "README.md"),
+  securityModule: path.join(rootDir, "security", "guards.py"),
 };
 
 const errors = [];
@@ -193,6 +196,15 @@ function validateManifest() {
       changed = true;
     }
 
+    if (post.slug) {
+      const expectedEditUrl = `https://blog.zenithy.art/admin/editor.html?slug=${encodeURIComponent(post.slug)}`;
+      if (post.adminEdit !== expectedEditUrl) {
+        post.adminEdit = expectedEditUrl;
+        fixes.push(`${label}.adminEdit normalized to slug edit URL`);
+        changed = true;
+      }
+    }
+
     if (isPublishedPost(post)) {
       requireText(post.excerpt, `${label}.excerpt`);
       if (!post.date && !post.updatedAt) {
@@ -340,7 +352,14 @@ function validateHomepageFiles() {
   });
 }
 
+function validateSecurityFiles() {
+  ensureFile(targets.securityPrd, "security PRD");
+  ensureFile(targets.securityReadme, "security README");
+  ensureFile(targets.securityModule, "security guards module");
+}
+
 validateHomepageFiles();
+validateSecurityFiles();
 validateProjects();
 validateManifest();
 validateMessagesManifest();

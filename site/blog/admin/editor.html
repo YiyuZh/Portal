@@ -328,6 +328,10 @@
 
     <script>
       const storageKey = "zenithy_blog_draft_v1";
+      const manifestUrl = "../posts/manifest.json";
+      const editorBaseUrl = "https://blog.zenithy.art/admin/editor.html";
+      const params = new URLSearchParams(window.location.search);
+      const editingSlug = String(params.get("slug") || params.get("edit") || "").trim();
       const titleInput = document.getElementById("titleInput");
       const subtitleInput = document.getElementById("subtitleInput");
       const bodyInput = document.getElementById("bodyInput");
@@ -340,6 +344,8 @@
 
       let coverData = "";
       let slugTouched = false;
+      let editingPost = null;
+      let currentManifest = null;
 
       function slugify(text) {
         return text
@@ -349,6 +355,53 @@
           .replace(/\s+/g, "-")
           .replace(/-+/g, "-")
           .slice(0, 60);
+      }
+
+      function currentStorageKey() {
+        return editingSlug ? storageKey + "_edit_" + editingSlug : storageKey;
+      }
+
+      function editorUrl(slug) {
+        return slug ? editorBaseUrl + "?slug=" + encodeURIComponent(slug) : editorBaseUrl;
+      }
+
+      function postUrl(slug) {
+        return `https://blog.zenithy.art/posts/${slug}/`;
+      }
+
+      function postFileUrl(slug) {
+        return "../posts/" + encodeURIComponent(slug) + "/index.html";
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function setCoverPreview(src) {
+        coverData = src || "";
+        if (coverData) {
+          coverBox.style.backgroundImage = `url(${coverData})`;
+          coverBox.style.backgroundSize = "cover";
+          coverBox.style.backgroundPosition = "center";
+        } else {
+          coverBox.style.backgroundImage = "";
+          coverBox.style.backgroundSize = "";
+          coverBox.style.backgroundPosition = "";
+        }
+      }
+
+      function setCategoryValue(value) {
+        const category = value || "Uncategorized";
+        const options = Array.from(categoryInput.options).map((option) => option.value);
+        if (!options.includes(category)) {
+          categoryInput.add(new Option(category, category));
+        }
+        categoryInput.value = category;
       }
 
       titleInput.addEventListener("input", () => {
@@ -366,10 +419,7 @@
         if (!file) return;
         const reader = new FileReader();
         reader.onload = () => {
-          coverData = reader.result;
-          coverBox.style.backgroundImage = `url(${coverData})`;
-          coverBox.style.backgroundSize = "cover";
-          coverBox.style.backgroundPosition = "center";
+          setCoverPreview(reader.result);
         };
         reader.readAsDataURL(file);
       });
@@ -400,12 +450,12 @@
       }
 
       function saveDraft() {
-        localStorage.setItem(storageKey, JSON.stringify(collectDraft()));
+        localStorage.setItem(currentStorageKey(), JSON.stringify(collectDraft()));
         alert("Draft saved to this browser.");
       }
 
       function loadDraft() {
-        const raw = localStorage.getItem(storageKey);
+        const raw = localStorage.getItem(currentStorageKey());
         if (!raw) return;
         try {
           const draft = JSON.parse(raw);
@@ -413,32 +463,101 @@
           subtitleInput.value = draft.subtitle || "";
           bodyInput.innerHTML = draft.body || "";
           slugInput.value = draft.slug || "";
-          categoryInput.value = draft.category || "Uncategorized";
-          tagsInput.value = draft.tags || "";
+          setCategoryValue(draft.category || "Uncategorized");
+          tagsInput.value = Array.isArray(draft.tags) ? draft.tags.join(", ") : (draft.tags || "");
           seoInput.value = draft.seo || "";
-          coverData = draft.cover || "";
-          if (coverData) {
-            coverBox.style.backgroundImage = `url(${coverData})`;
-            coverBox.style.backgroundSize = "cover";
-            coverBox.style.backgroundPosition = "center";
-          }
+          setCoverPreview(draft.cover || "");
         } catch (err) {
           console.warn("Failed to load draft", err);
         }
       }
 
+      function hydrateFromPost(post) {
+        editingPost = post || null;
+        titleInput.value = (post && post.title) || "";
+        subtitleInput.value = (post && (post.excerpt || post.subtitle)) || "";
+        slugInput.value = (post && post.slug) || "";
+        slugTouched = true;
+        if (editingSlug) {
+          slugInput.readOnly = true;
+          slugInput.classList.add("opacity-70", "cursor-not-allowed");
+          slugInput.title = "编辑已发布文章时固定原 slug；如需改路径，请新建文章并同步迁移目录。";
+        }
+        setCategoryValue((post && post.category) || "Uncategorized");
+        tagsInput.value = Array.isArray(post && post.tags) ? post.tags.join(", ") : ((post && post.tags) || "");
+        seoInput.value = (post && (post.seo || post.description)) || "";
+        setCoverPreview((post && post.cover) || "");
+      }
+
+      function parseExistingPostHtml(html, fallbackPost) {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const title = doc.querySelector("h1");
+        const subtitle = doc.querySelector(".subtitle");
+        const article = doc.querySelector("article.article");
+        const description = doc.querySelector('meta[name="description"]');
+        const cover = doc.querySelector(".feature img");
+
+        titleInput.value = (title && title.textContent.trim()) || titleInput.value;
+        subtitleInput.value = (subtitle && subtitle.textContent.trim()) || subtitleInput.value;
+        if (article) bodyInput.innerHTML = article.innerHTML.trim();
+        if (description && description.getAttribute("content")) {
+          seoInput.value = description.getAttribute("content");
+        }
+        if (cover && cover.getAttribute("src")) {
+          setCoverPreview(cover.getAttribute("src"));
+        } else if (fallbackPost && fallbackPost.cover) {
+          setCoverPreview(fallbackPost.cover);
+        }
+      }
+
+      function loadPublishedPost(slug) {
+        if (!slug) {
+          loadDraft();
+          return;
+        }
+
+        slugInput.value = slug;
+        slugTouched = true;
+
+        fetch(manifestRequest(manifestUrl), { cache: "no-store" })
+          .then((res) => {
+            if (!res.ok) throw new Error("manifest request failed");
+            return res.json();
+          })
+          .then((manifest) => {
+            currentManifest = manifest;
+            const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
+            const post = posts.find((item) => item.slug === slug);
+            if (!post) throw new Error("post not found in manifest");
+            hydrateFromPost(post);
+            return fetch(manifestRequest(postFileUrl(slug)), { cache: "no-store" })
+              .then((res) => {
+                if (!res.ok) throw new Error("post html request failed");
+                return res.text();
+              })
+              .then((html) => parseExistingPostHtml(html, post))
+              .catch((err) => {
+                console.warn("Loaded manifest metadata but failed to load post HTML", err);
+              });
+          })
+          .catch((err) => {
+            console.error("Failed to load published post", err);
+            alert("读取已发布文章失败：请确认 manifest.json 中存在该 slug，且 /blog/posts/" + slug + "/index.html 可访问。");
+          });
+      }
+
       function generateHtml() {
         const draft = collectDraft();
         const coverHtml = draft.cover
-          ? `<div class="feature"><img src="${draft.cover}" alt="Cover image" /></div>`
+          ? `<div class="feature"><img src="${escapeHtml(draft.cover)}" alt="Cover image" /></div>`
           : "";
         return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${draft.title || "Zenithy Blog Post"}</title>
-  <meta name="description" content="${draft.seo || ""}" />
+  <title>${escapeHtml(draft.title || "Zenithy Blog Post")}</title>
+  <meta name="description" content="${escapeHtml(draft.seo || "")}" />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Inter:wght@300..700&display=swap" rel="stylesheet"/>
   <style>
     body{font-family:Inter, sans-serif;margin:0;background:#f8f9fa;color:#2b3437;}
@@ -454,8 +573,8 @@
 <body>
   ${coverHtml}
   <div class="container">
-    <h1>${draft.title || ""}</h1>
-    <div class="subtitle">${draft.subtitle || ""}</div>
+    <h1>${escapeHtml(draft.title || "")}</h1>
+    <div class="subtitle">${escapeHtml(draft.subtitle || "")}</div>
     <article class="article">${draft.body || ""}</article>
   </div>
 </body>
@@ -474,6 +593,16 @@
       function manifestRequest(url) {
         const marker = url.includes("?") ? "&" : "?";
         return url + marker + "v=" + Date.now();
+      }
+
+      function buildUpdatedManifest(manifest, entry, slug) {
+        const source = manifest && typeof manifest === "object" ? manifest : currentManifest;
+        const posts = Array.isArray(source && source.posts) ? source.posts : [];
+        const withoutCurrent = posts.filter((post) => post.slug !== slug);
+        return {
+          pageSize: (source && source.pageSize) || 4,
+          posts: [entry, ...withoutCurrent],
+        };
       }
 
       document.getElementById("saveDraft").addEventListener("click", saveDraft);
@@ -505,46 +634,43 @@
       document.getElementById("previewText").addEventListener("click", openPreview);
       closePreview.addEventListener("click", closePreviewModal);
       document.getElementById("publishBtn").addEventListener("click", () => {
-        const slug = slugify(slugInput.value || titleInput.value || "new-post") || "new-post";
+        const draft = collectDraft();
+        const slug = slugify(draft.slug || draft.title || "new-post") || "new-post";
         slugInput.value = slug;
         const html = generateHtml();
         const now = new Date().toISOString();
         const entry = {
-          title: titleInput.value || "Untitled Post",
-          excerpt: subtitleInput.value || "",
+          title: draft.title || "Untitled Post",
+          excerpt: draft.subtitle || "",
           date: now,
           updatedAt: now,
-          category: categoryInput.value || "Blog",
-          tags: tagList,
-          cover: coverData || "",
-          readTime: estimateReadTime(bodyInput.innerHTML || ""),
+          category: draft.category || "Blog",
+          tags: draft.tags,
+          cover: draft.cover || "",
+          readTime: estimateReadTime(draft.body || ""),
           status: "已发布",
           published: true,
           slug: slug,
-          url: `https://blog.zenithy.art/posts/${slug}/`,
-          adminEdit: "https://blog.zenithy.art/admin/editor.html",
+          url: postUrl(slug),
+          adminEdit: editorUrl(slug),
         };
 
         downloadFile("index.html", html);
 
-        fetch(manifestRequest("../posts/manifest.json"), { cache: "no-store" })
+        fetch(manifestRequest(manifestUrl), { cache: "no-store" })
           .then((res) => {
             if (!res.ok) throw new Error("manifest request failed");
             return res.json();
           })
           .then((manifest) => {
-            const posts = Array.isArray(manifest.posts) ? manifest.posts : [];
-            const withoutCurrent = posts.filter((post) => post.slug !== slug);
-            const updated = {
-              pageSize: manifest.pageSize || 4,
-              posts: [entry, ...withoutCurrent],
-            };
+            const updated = buildUpdatedManifest(manifest, entry, slug);
             downloadFile("manifest.json", JSON.stringify(updated, null, 2), "application/json");
           })
           .catch(() => {
+            const fallback = buildUpdatedManifest(currentManifest, entry, slug);
             downloadFile(
               "manifest.json",
-              JSON.stringify({ pageSize: 4, posts: [entry] }, null, 2),
+              JSON.stringify(fallback, null, 2),
               "application/json"
             );
           });
@@ -556,11 +682,15 @@
         );
       });
       document.getElementById("clearDraft").addEventListener("click", () => {
-        localStorage.removeItem(storageKey);
+        localStorage.removeItem(currentStorageKey());
         alert("Draft cleared from this browser.");
       });
 
-      loadDraft();
+      if (editingSlug) {
+        loadPublishedPost(editingSlug);
+      } else {
+        loadDraft();
+      }
     </script>
   </body>
 </html>

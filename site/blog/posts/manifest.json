@@ -14,7 +14,7 @@
       "published": true,
       "slug": "new-post",
       "url": "https://blog.zenithy.art/posts/new-post/",
-      "adminEdit": "https://blog.zenithy.art/admin/editor.html"
+      "adminEdit": "https://blog.zenithy.art/admin/editor.html?slug=new-post"
     }
   ]
 }

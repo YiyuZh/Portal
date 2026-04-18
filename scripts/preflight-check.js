@@ -28,6 +28,10 @@ const targets = {
   manifest: path.join(siteDir, "blog", "posts", "manifest.json"),
   messagesManifest: path.join(siteDir, "blog", "messages", "manifest.json"),
   messagesApiTest: path.join(rootDir, "scripts", "test-messages-api.js"),
+  securityTest: path.join(rootDir, "scripts", "test-security-guards.js"),
+  securityPrd: path.join(rootDir, "security", "PRD.md"),
+  securityReadme: path.join(rootDir, "security", "README.md"),
+  securityModule: path.join(rootDir, "security", "guards.py"),
 };
 
 const errors = [];
@@ -430,11 +434,11 @@ function checkHomepageMotion() {
     errors.push("[hero overflow] Hero/page must guard against horizontal overflow");
   }
   if (
-    !css.includes("max-width: min(92vw, 1240px)") ||
-    !css.includes("width: 100vw") ||
-    !css.includes("margin-left: calc(50% - 50vw)")
+    !css.includes("max-width: min(112vw, 1500px)") ||
+    !css.includes("width: min(124vw, 1760px)") ||
+    !css.includes("margin-left: calc(50% - min(62vw, 880px))")
   ) {
-    errors.push("[hero overflow] Hero stage width guard is missing");
+    errors.push("[hero overflow] Hero wide tilt safety stage is missing");
   }
   if (css.includes("rgba(13, 17, 16, 0.66)")) {
     errors.push("[hero regression] Zenithy title color is too gray");
@@ -617,6 +621,12 @@ function checkManifest() {
       slugs.add(post.slug);
     }
     if (!Array.isArray(post.tags)) warnings.push(`[type] ${label}.tags should be array`);
+    if (post.slug) {
+      const expectedEditUrl = `https://blog.zenithy.art/admin/editor.html?slug=${encodeURIComponent(post.slug)}`;
+      if (post.adminEdit !== expectedEditUrl) {
+        errors.push(`[manifest] ${label}.adminEdit must be ${expectedEditUrl}`);
+      }
+    }
 
     if (isPublishedPost(post)) {
       if (!post.excerpt) errors.push(`[required] ${label}.excerpt`);
@@ -696,12 +706,31 @@ function checkBlogAndAdmin() {
       errors.push(`[blog manifest] ${label} must use the shared published/status rule`);
     }
   });
-  if (!blogEditor.includes('fetch(manifestRequest("../posts/manifest.json"), { cache: "no-store" })')) {
-    errors.push("[blog editor] publish flow must fetch manifest with cache-busting/no-store");
+  if (!blogEditor.includes('const manifestUrl = "../posts/manifest.json"')) {
+    errors.push("[blog editor] editor must use ../posts/manifest.json as its manifest source");
   }
-  ["published: true", "updatedAt: now", "posts: [entry]"].forEach((needle) => {
+  if (!blogEditor.includes('fetch(manifestRequest(manifestUrl), { cache: "no-store" })')) {
+    errors.push("[blog editor] publish/edit flow must fetch manifest with cache-busting/no-store");
+  }
+  ["published: true", "updatedAt: now", "posts: [entry,"].forEach((needle) => {
     if (!blogEditor.includes(needle)) errors.push(`[blog editor] publish flow missing ${needle}`);
   });
+  if (!blogAdmin.includes("editUrlForPost(post)")) {
+    errors.push("[blog editor] admin article list must generate editor.html?slug=<slug> edit links");
+  }
+  [
+    "URLSearchParams(window.location.search)",
+    "const editingSlug",
+    "loadPublishedPost(editingSlug)",
+    "parseExistingPostHtml",
+    "adminEdit: editorUrl(slug)",
+    "slugInput.readOnly = true",
+  ].forEach((needle) => {
+    if (!blogEditor.includes(needle)) errors.push(`[blog editor] edit-published flow missing ${needle}`);
+  });
+  if (/const entry = \{[\s\S]*?tags:\s*tagList/.test(blogEditor)) {
+    errors.push("[blog editor] publish flow still references undefined tagList instead of collectDraft().tags");
+  }
 
   const adminPages = [
     ["blog admin", targets.blogAdmin, "文章列表"],
@@ -778,14 +807,30 @@ function checkMessagesApi() {
   const apiDockerfile = path.join(rootDir, "api", "Dockerfile");
   const apiScript = path.join(rootDir, "api", "messages_api.py");
   const compose = readText(composePath);
+  const apiDocker = readText(apiDockerfile);
   const apiCode = readText(apiScript);
   const envExample = readText(targets.envExample);
   const apiTest = readText(targets.messagesApiTest);
+  const securityTest = readText(targets.securityTest);
+  const indexHtml = readText(targets.index);
+  const collabJs = readText(targets.homeCollab);
+  const securityCode = readText(targets.securityModule);
+  const packageJson = readText(path.join(rootDir, "package.json"));
 
   if (!exists(apiDockerfile)) errors.push(`[messages api] missing ${apiDockerfile}`);
   if (!exists(apiScript)) errors.push(`[messages api] missing ${apiScript}`);
+  if (!exists(targets.securityPrd)) errors.push(`[security] missing ${targets.securityPrd}`);
+  if (!exists(targets.securityReadme)) errors.push(`[security] missing ${targets.securityReadme}`);
+  if (!exists(targets.securityModule)) errors.push(`[security] missing ${targets.securityModule}`);
+  if (!exists(targets.securityTest)) errors.push(`[security] missing ${targets.securityTest}`);
   if (!compose.includes("messages-api") || !compose.includes("portal_messages_data")) {
     errors.push("[messages api] docker-compose service or volume is missing");
+  }
+  if (!compose.includes("PORTAL_SECURITY_ENABLED") || !compose.includes("PORTAL_MESSAGE_RATE_LIMIT") || !compose.includes("PORTAL_ADMIN_RATE_LIMIT")) {
+    errors.push("[security] docker-compose must pass lightweight security environment variables to messages-api");
+  }
+  if (!apiDocker.includes("COPY ./security /app/security")) {
+    errors.push("[security] messages API Dockerfile must copy the root security module");
   }
   if (!compose.includes("MESSAGES_TRUST_GATEWAY_AUTH") || !compose.includes("127.0.0.1:18081:8000")) {
     errors.push("[messages api] gateway auth trust flag or local port mapping is missing");
@@ -796,13 +841,38 @@ function checkMessagesApi() {
   if (!envExample.includes("MESSAGES_TRUST_GATEWAY_AUTH") || !envExample.includes("MESSAGES_CORS_ORIGINS")) {
     errors.push("[messages api] .env.example must document MESSAGES_TRUST_GATEWAY_AUTH and MESSAGES_CORS_ORIGINS");
   }
+  ["PORTAL_SECURITY_ENABLED", "PORTAL_MESSAGE_RATE_LIMIT", "PORTAL_ADMIN_RATE_LIMIT", "PORTAL_MESSAGE_MAX_CHARS"].forEach((needle) => {
+    if (!envExample.includes(needle)) errors.push(`[security] .env.example missing ${needle}`);
+  });
   ["/api/messages", "/api/admin/messages", "sqlite3", "do_PATCH", "do_DELETE", "MESSAGES_TRUST_GATEWAY_AUTH"].forEach((needle) => {
     if (!apiCode.includes(needle)) errors.push(`[messages api] missing ${needle}`);
+  });
+  ["LightweightSecurity", "check_public_message", "check_admin_api"].forEach((needle) => {
+    if (!apiCode.includes(needle)) errors.push(`[security] messages_api.py must call ${needle}`);
+  });
+  ["SlidingWindowLimiter", "check_honeypot", "message_max_chars", "admin_rate_limit", "normalize_text", "client_ip"].forEach((needle) => {
+    if (!securityCode.includes(needle)) errors.push(`[security] guards.py missing ${needle}`);
+  });
+  ["security_block", "Retry-After"].forEach((needle) => {
+    if (!apiCode.includes(needle)) errors.push(`[security] messages_api.py missing ${needle}`);
+  });
+  ["id=\"collab-website\"", "maxlength=\"1200\""].forEach((needle) => {
+    if (!indexHtml.includes(needle)) errors.push(`[security] homepage Collab form missing ${needle}`);
+  });
+  ["collab-website", "website: entry.website", "message.length > 1200"].forEach((needle) => {
+    if (!collabJs.includes(needle)) errors.push(`[security] home-collab.js missing ${needle}`);
   });
   ["POST", "GET", "PATCH", "DELETE", "MESSAGES_TRUST_GATEWAY_AUTH"].forEach((needle) => {
     if (!apiTest.includes(needle)) errors.push(`[messages api test] missing ${needle}`);
   });
+  ["spam_detected", "message_too_large", "duplicate_message", "rate_limited", "admin_rate_limited"].forEach((needle) => {
+    if (!securityTest.includes(needle)) errors.push(`[security test] missing ${needle}`);
+  });
+  if (!packageJson.includes('"test:security"') || !packageJson.includes("test-security-guards.js") || !packageJson.includes("npm run test:security")) {
+    errors.push("[security] package.json must expose test:security and include it in qa");
+  }
   compileScriptFile(targets.messagesApiTest);
+  compileScriptFile(targets.securityTest);
 }
 
 function checkCaddyHint() {

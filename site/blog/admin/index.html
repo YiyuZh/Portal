@@ -246,6 +246,12 @@
           .replace(/'/g, "&#039;");
       }
 
+      function editUrlForPost(post) {
+        const slug = String((post && post.slug) || "").trim();
+        const base = "https://blog.zenithy.art/admin/editor.html";
+        return slug ? base + "?slug=" + encodeURIComponent(slug) : base;
+      }
+
       function filteredByTag(posts, activeTag) {
         if (!activeTag || activeTag === allTagLabel) return posts;
         return posts.filter((post) => postTags(post).includes(activeTag));
@@ -311,7 +317,7 @@
                   '</div>' +
                 '</div>' +
                 '<div class="col-span-2 flex justify-end gap-2">' +
-                  '<a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="' + escapeHtml(post.adminEdit || "https://blog.zenithy.art/admin/editor.html") + '" title="编辑"><span class="material-symbols-outlined">edit</span></a>' +
+                  '<a class="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-tertiary-container/20 hover:text-tertiary" href="' + escapeHtml(editUrlForPost(post)) + '" title="编辑"><span class="material-symbols-outlined">edit</span></a>' +
                   '<button class="delete-post flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error" data-slug="' + escapeHtml(post.slug || "") + '" title="删除"><span class="material-symbols-outlined">delete</span></button>' +
                 '</div>' +
               '</div>' +

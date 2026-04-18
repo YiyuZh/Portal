@@ -3,16 +3,26 @@ import json
 import os
 import re
 import sqlite3
+import sys
 import uuid
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, os.pardir))
+for module_dir in (CURRENT_DIR, PARENT_DIR):
+    if module_dir not in sys.path:
+        sys.path.insert(0, module_dir)
+
+from security.guards import LightweightSecurity, SecurityConfig
 
 
 PORT = int(os.environ.get("PORT", "8000"))
 DB_PATH = os.environ.get("MESSAGES_DB", "/data/messages.sqlite3")
 ADMIN_TOKEN = os.environ.get("MESSAGES_ADMIN_TOKEN", "")
 TRUST_GATEWAY_AUTH = os.environ.get("MESSAGES_TRUST_GATEWAY_AUTH", "true").lower() in {"1", "true", "yes", "on"}
+SECURITY = LightweightSecurity(SecurityConfig.from_env())
 CORS_ORIGINS = [
     item.strip()
     for item in os.environ.get(
@@ -82,15 +92,28 @@ class MessagesHandler(BaseHTTPRequestHandler):
             return origin
         return CORS_ORIGINS[0] if CORS_ORIGINS else "*"
 
-    def _send_json(self, status, payload):
+    def _send_json(self, status, payload, extra_headers=None):
         body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", self._origin())
         self.send_header("Vary", "Origin")
+        for key, value in (extra_headers or {}).items():
+            self.send_header(key, str(value))
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_security_block(self, decision):
+        headers = {}
+        if decision.retry_after:
+            headers["Retry-After"] = decision.retry_after
+        print(
+            "security_block path=%s ip=%s error=%s status=%s retry_after=%s"
+            % (self.path, decision.client_ip or SECURITY.client_ip(self), decision.error, decision.status, decision.retry_after),
+            flush=True,
+        )
+        self._send_json(decision.status, {"ok": False, "error": decision.error}, headers)
 
     def _read_json(self):
         length = int(self.headers.get("Content-Length", "0") or "0")
@@ -128,6 +151,10 @@ class MessagesHandler(BaseHTTPRequestHandler):
         if parsed.path == "/api/admin/messages":
             if not self._require_admin():
                 return
+            decision = SECURITY.check_admin_api(self)
+            if not decision.ok:
+                self._send_security_block(decision)
+                return
             query = parse_qs(parsed.query)
             status = (query.get("status") or [""])[0]
             sql = "SELECT * FROM messages"
@@ -150,9 +177,14 @@ class MessagesHandler(BaseHTTPRequestHandler):
         data = self._read_json()
         if data is None:
             return
-        name = str(data.get("name") or "").strip()
-        email = str(data.get("email") or "").strip()
-        message = str(data.get("message") or "").strip()
+        decision = SECURITY.check_public_message(self, data)
+        if not decision.ok:
+            self._send_security_block(decision)
+            return
+        payload = decision.payload
+        name = payload["name"]
+        email = payload["email"]
+        message = payload["message"]
         if not EMAIL_RE.match(email):
             self._send_json(400, {"ok": False, "error": "invalid_email"})
             return
@@ -180,6 +212,10 @@ class MessagesHandler(BaseHTTPRequestHandler):
             return
         if not self._require_admin():
             return
+        decision = SECURITY.check_admin_api(self)
+        if not decision.ok:
+            self._send_security_block(decision)
+            return
         message_id = parsed.path.rsplit("/", 1)[-1]
         data = self._read_json()
         if data is None:
@@ -206,6 +242,10 @@ class MessagesHandler(BaseHTTPRequestHandler):
             self._send_json(404, {"ok": False, "error": "not_found"})
             return
         if not self._require_admin():
+            return
+        decision = SECURITY.check_admin_api(self)
+        if not decision.ok:
+            self._send_security_block(decision)
             return
         message_id = parsed.path.rsplit("/", 1)[-1]
         with connect() as conn:

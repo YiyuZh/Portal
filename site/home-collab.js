@@ -34,7 +34,7 @@
     URL.revokeObjectURL(link.href);
   }
 
-  function createMessageEntry(name, email, message) {
+  function createMessageEntry(name, email, message, website) {
     var now = new Date();
     var id = "msg-" + now.toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
     return {
@@ -42,6 +42,7 @@
       name: name || "",
       email: email,
       message: message,
+      website: website || "",
       status: "unread",
       createdAt: now.toISOString(),
       source: "zenithy-home",
@@ -58,6 +59,7 @@
         name: entry.name,
         email: entry.email,
         message: entry.message,
+        website: entry.website,
       }),
     }).then(function (response) {
       return response.json().catch(function () {
@@ -80,6 +82,7 @@
     var name = getValue("collab-name");
     var email = getValue("collab-email");
     var message = getValue("collab-message");
+    var website = getValue("collab-website");
 
     if (!email) {
       setFeedback("请先填写邮箱。", "error");
@@ -94,7 +97,12 @@
       return;
     }
 
-    var entry = createMessageEntry(name, email, message);
+    if (message.length > 1200) {
+      setFeedback("留言内容有点长，请压缩到 1200 字以内再提交。", "error");
+      return;
+    }
+
+    var entry = createMessageEntry(name, email, message, website);
     setFeedback("正在提交留言...", "info");
     submitToApi(entry)
       .then(function (payload) {
