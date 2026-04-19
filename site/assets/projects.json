@@ -1,4 +1,4 @@
-{
+﻿{
   "projects": [
     {
       "id": "hiremate",
@@ -10,7 +10,11 @@
       "projectType": "AI Recruitment Platform",
       "badge": "Live Project",
       "sequence": "01",
-      "keywords": ["Resume Parsing", "Candidate Screening", "HR Workflow"],
+      "keywords": [
+        "Resume Parsing",
+        "Candidate Screening",
+        "HR Workflow"
+      ],
       "index": "01 / Archive",
       "primaryLabel": "进入 HireMate",
       "primaryUrl": "https://hiremate.zenithy.art",
@@ -20,7 +24,11 @@
       "tertiaryUrl": "",
       "quaternaryLabel": "",
       "quaternaryUrl": "",
-      "features": ["简历解析与结构化", "候选人评估辅助", "批量初筛流程"],
+      "features": [
+        "简历解析与结构化",
+        "候选人评估辅助",
+        "批量初筛流程"
+      ],
       "image": "./assets/hiremate-dashboard.jpg"
     },
     {
@@ -31,10 +39,18 @@
       "description": "支持简历解析、多轮对话面试与评估报告，还原更接近真实岗位的面试体验与能力判断过程。",
       "summaryLong": "AI-Interview（智面）把简历理解、岗位问题生成、多轮面试对话和评估反馈串成完整链路，用来验证 AI 在招聘评估场景里的可用性与稳定性。",
       "projectType": "AI Interview System",
-      "badge": "Core Product",
+      "badge": "Product",
       "sequence": "02",
-      "keywords": ["Interview Agent", "Evaluation Report", "Conversation Flow"],
-      "features": ["动态多轮对话生成", "实时反馈与评估结果", "简历解析与岗位匹配"],
+      "keywords": [
+        "Interview Agent",
+        "Evaluation Report",
+        "Conversation Flow"
+      ],
+      "features": [
+        "动态多轮对话生成",
+        "实时反馈与评估结果",
+        "简历解析与岗位匹配"
+      ],
       "index": "02 / Core",
       "primaryLabel": "用户端",
       "primaryUrl": "https://interview.zenithy.art",
@@ -45,6 +61,35 @@
       "quaternaryLabel": "",
       "quaternaryUrl": "",
       "image": "./assets/ai-interview-portrait.jpg"
+    },
+    {
+      "id": "Photograph",
+      "name": "智摄",
+      "english": "Phoro",
+      "title": "AI摄影分析系统",
+      "description": "AI摄影分析系统",
+      "summaryLong": "Ai自动拆分镜头关键帧，解析视频曝光度，色调调色等后期要素，辅助个人摄影爱好者学习借鉴。",
+      "projectType": "Product",
+      "badge": "Photograph",
+      "sequence": "03",
+      "keywords": [
+        "Ai Agent",
+        "Conversation Flow"
+      ],
+      "features": [
+        "动态多轮对话生成",
+        "实时反馈与评估结果"
+      ],
+      "index": "03 / Photo",
+      "primaryLabel": "进入项目",
+      "primaryUrl": "https://photo.zenithy.art",
+      "secondaryLabel": "",
+      "secondaryUrl": "",
+      "tertiaryLabel": "",
+      "tertiaryUrl": "",
+      "quaternaryLabel": "",
+      "quaternaryUrl": "",
+      "image": "./assets/photo.png"
     }
   ]
 }
