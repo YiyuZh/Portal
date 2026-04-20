@@ -943,13 +943,49 @@
         </section>
 
         <section id="projects" class="showcase shell" aria-labelledby="projects-title">
-          <div class="section-heading">
-            <p id="projects-kicker" class="section-kicker">Projects</p>
-            <h2 id="projects-title">正在构建的 AI 产品入口</h2>
-            <p id="projects-desc">Zenithy 当前优先展示两个已上线项目：一个面向招聘筛选，一个面向模拟面试与评估。</p>
+          <div class="section-heading showcase-heading">
+            <div class="showcase-heading-copy">
+              <p id="projects-kicker" class="section-kicker">Projects</p>
+              <h2 id="projects-title">正在构建的 AI 产品入口</h2>
+              <p id="projects-desc">Zenithy 当前优先展示两个已上线项目：一个面向招聘筛选，一个面向模拟面试与评估。</p>
+            </div>
+            <div class="showcase-controls" aria-label="项目切换控制">
+              <button
+                id="projects-prev"
+                class="showcase-control action-circle"
+                type="button"
+                aria-label="查看上一个项目"
+                aria-controls="projects-grid"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M14.5 6.5L8.5 12l6 5.5" />
+                </svg>
+              </button>
+              <button
+                id="projects-next"
+                class="showcase-control action-circle"
+                type="button"
+                aria-label="查看下一个项目"
+                aria-controls="projects-grid"
+                disabled
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9.5 6.5l6 5.5l-6 5.5" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <div id="projects-grid" class="showcase-grid" aria-live="polite"></div>
+          <div
+            id="projects-scroller"
+            class="showcase-scroller"
+            tabindex="0"
+            role="region"
+            aria-label="Zenithy 首页项目横向滑动列表"
+          >
+            <div id="projects-grid" class="showcase-grid showcase-grid--rail" aria-live="polite"></div>
+          </div>
         </section>
 
         <section id="skills" class="section-block shell" aria-labelledby="skills-title">
@@ -1441,6 +1477,228 @@
               window.ZenithyProjectTilt.refresh(article);
             }
           });
+
+          if (window.requestAnimationFrame) {
+            window.requestAnimationFrame(function () {
+              setupProjectRail();
+            });
+          } else {
+            setupProjectRail();
+          }
+        }
+
+        function setupProjectRail() {
+          var scroller = document.getElementById("projects-scroller");
+          var grid = document.getElementById("projects-grid");
+          var prevButton = document.getElementById("projects-prev");
+          var nextButton = document.getElementById("projects-next");
+          if (!scroller || !grid || !prevButton || !nextButton) return;
+          var wheelSnapTimer = 0;
+          var dragPointerId = null;
+          var dragStartX = 0;
+          var dragStartScrollLeft = 0;
+          var dragMoved = false;
+          var suppressClickUntil = 0;
+
+          function getCardOffsets() {
+            var cards = Array.prototype.slice.call(grid.querySelectorAll(".showcase-card"));
+            var scrollerRect = scroller.getBoundingClientRect();
+            return cards.map(function (card) {
+              return scroller.scrollLeft + (card.getBoundingClientRect().left - scrollerRect.left);
+            });
+          }
+
+          function updateControls() {
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            var hasOverflow = maxScroll > 12;
+            var atStart = scroller.scrollLeft <= 12;
+            var atEnd = scroller.scrollLeft >= maxScroll - 12;
+
+            prevButton.disabled = !hasOverflow || atStart;
+            nextButton.disabled = !hasOverflow || atEnd;
+            scroller.setAttribute("data-has-overflow", hasOverflow ? "true" : "false");
+          }
+
+          function snapToNearestCard() {
+            var offsets = getCardOffsets();
+            if (!offsets.length) return;
+
+            var current = scroller.scrollLeft;
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            var nearest = offsets[0];
+
+            offsets.forEach(function (offset) {
+              if (Math.abs(offset - current) < Math.abs(nearest - current)) {
+                nearest = offset;
+              }
+            });
+
+            scroller.scrollTo({
+              left: Math.max(0, Math.min(nearest, maxScroll)),
+              behavior: "smooth",
+            });
+          }
+
+          function scrollRail(direction) {
+            var offsets = getCardOffsets();
+            if (!offsets.length) return;
+
+            var current = scroller.scrollLeft;
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            var threshold = 28;
+            var target = direction > 0 ? maxScroll : 0;
+
+            if (direction > 0) {
+              for (var i = 0; i < offsets.length; i += 1) {
+                if (offsets[i] > current + threshold) {
+                  target = offsets[i];
+                  break;
+                }
+              }
+            } else {
+              for (var j = offsets.length - 1; j >= 0; j -= 1) {
+                if (offsets[j] < current - threshold) {
+                  target = offsets[j];
+                  break;
+                }
+              }
+            }
+
+            scroller.scrollTo({
+              left: Math.max(0, Math.min(target, maxScroll)),
+              behavior: "smooth",
+            });
+          }
+
+          function handleWheel(event) {
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            if (maxScroll <= 12) return;
+
+            var dominantDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+            if (!dominantDelta) return;
+
+            event.preventDefault();
+
+            var isMouseWheelStep =
+              event.deltaMode === 1 ||
+              (Math.abs(event.deltaY) >= 72 && Math.abs(event.deltaX) < 10);
+
+            if (isMouseWheelStep && Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+              scrollRail(dominantDelta > 0 ? 1 : -1);
+              return;
+            }
+
+            scroller.scrollLeft = Math.max(0, Math.min(scroller.scrollLeft + dominantDelta, maxScroll));
+            updateControls();
+
+            if (wheelSnapTimer) {
+              window.clearTimeout(wheelSnapTimer);
+            }
+            wheelSnapTimer = window.setTimeout(function () {
+              snapToNearestCard();
+            }, 140);
+          }
+
+          function isDesktopDragEnabled() {
+            return window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+          }
+
+          function beginDrag(event) {
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            if (
+              !isDesktopDragEnabled() ||
+              event.pointerType !== "mouse" ||
+              event.button !== 0 ||
+              maxScroll <= 12 ||
+              event.target.closest("a, button, input, textarea, select, label")
+            ) {
+              return;
+            }
+
+            dragPointerId = event.pointerId;
+            dragStartX = event.clientX;
+            dragStartScrollLeft = scroller.scrollLeft;
+            dragMoved = false;
+
+            scroller.classList.add("is-drag-ready");
+            if (typeof scroller.setPointerCapture === "function") {
+              scroller.setPointerCapture(event.pointerId);
+            }
+            event.preventDefault();
+          }
+
+          function moveDrag(event) {
+            if (dragPointerId !== event.pointerId) return;
+
+            var deltaX = event.clientX - dragStartX;
+            if (!dragMoved && Math.abs(deltaX) > 6) {
+              dragMoved = true;
+              scroller.classList.add("is-dragging");
+            }
+            if (!dragMoved) return;
+
+            var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+            scroller.scrollLeft = Math.max(0, Math.min(dragStartScrollLeft - deltaX, maxScroll));
+            updateControls();
+            event.preventDefault();
+          }
+
+          function endDrag(event) {
+            if (dragPointerId !== event.pointerId) return;
+
+            if (dragMoved) {
+              suppressClickUntil = Date.now() + 220;
+              snapToNearestCard();
+            }
+
+            dragPointerId = null;
+            dragMoved = false;
+            scroller.classList.remove("is-drag-ready");
+            scroller.classList.remove("is-dragging");
+          }
+
+          if (scroller.dataset.railReady !== "true") {
+            prevButton.addEventListener("click", function () {
+              scrollRail(-1);
+            });
+
+            nextButton.addEventListener("click", function () {
+              scrollRail(1);
+            });
+
+            scroller.addEventListener("scroll", updateControls, { passive: true });
+            scroller.addEventListener("keydown", function (event) {
+              if (event.key === "ArrowRight") {
+                event.preventDefault();
+                scrollRail(1);
+              } else if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                scrollRail(-1);
+              }
+            });
+            scroller.addEventListener("wheel", handleWheel, { passive: false });
+            scroller.addEventListener("pointerdown", beginDrag);
+            scroller.addEventListener("pointermove", moveDrag);
+            scroller.addEventListener("pointerup", endDrag);
+            scroller.addEventListener("pointercancel", endDrag);
+            scroller.addEventListener("lostpointercapture", function () {
+              dragPointerId = null;
+              dragMoved = false;
+              scroller.classList.remove("is-drag-ready");
+              scroller.classList.remove("is-dragging");
+            });
+            scroller.addEventListener("click", function (event) {
+              if (Date.now() < suppressClickUntil) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+            }, true);
+
+            window.addEventListener("resize", updateControls);
+            scroller.dataset.railReady = "true";
+          }
+
+          updateControls();
         }
 
         function applySection(prefix, section) {

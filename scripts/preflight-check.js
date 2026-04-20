@@ -156,7 +156,7 @@ function checkHomepageStructure() {
     if (!html.includes(`id="${id}"`)) errors.push(`[section] missing #${id}`);
   });
 
-  ["projects-grid", "skills-list", "collab-list"].forEach((id) => {
+  ["projects-grid", "projects-scroller", "projects-prev", "projects-next", "skills-list", "collab-list"].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[data container] missing #${id}`);
   });
 
@@ -200,6 +200,15 @@ function checkHomepageStructure() {
   }
   if (!html.includes("ZenithyReveal") || !html.includes("is-reveal")) {
     errors.push("[reveal] section reveal logic is missing");
+  }
+  if (!html.includes("setupProjectRail") || !html.includes("showcase-grid--rail")) {
+    errors.push("[projects rail] horizontal rail controls are missing");
+  }
+  if (!html.includes('addEventListener("wheel", handleWheel') || !html.includes("snapToNearestCard")) {
+    errors.push("[projects rail] wheel-based horizontal switching is missing");
+  }
+  if (!html.includes('addEventListener("pointerdown", beginDrag') || !html.includes("setPointerCapture")) {
+    errors.push("[projects rail] desktop drag-to-scroll support is missing");
   }
   if (/<a[^>]+href="#(?:projects|skills|collab|about|contact)"/i.test(html)) {
     errors.push("[hash nav] do not use href=\"#section\" as primary navigation");
@@ -718,6 +727,9 @@ function checkBlogAndAdmin() {
   if (!blogAdmin.includes("editUrlForPost(post)")) {
     errors.push("[blog editor] admin article list must generate editor.html?slug=<slug> edit links");
   }
+  if (!blogAdmin.includes('const base = "./editor.html"')) {
+    errors.push("[blog editor] admin article list should use relative ./editor.html edit links for local/prod consistency");
+  }
   [
     "URLSearchParams(window.location.search)",
     "const editingSlug",
@@ -725,8 +737,33 @@ function checkBlogAndAdmin() {
     "parseExistingPostHtml",
     "adminEdit: editorUrl(slug)",
     "slugInput.readOnly = true",
+    "setEditorMode",
+    'publishBtn.textContent = isEditMode ? "更新发布" : "发布"',
+    'editorPageTitle.textContent = isEditMode ? "编辑文章" : "发布文章"',
   ].forEach((needle) => {
     if (!blogEditor.includes(needle)) errors.push(`[blog editor] edit-published flow missing ${needle}`);
+  });
+  if (!blogEditor.includes("date: (existing && existing.date) || now")) {
+    errors.push("[blog editor] edit-published flow must preserve the original publish date when updating an existing post");
+  }
+  [
+    "insertImageBtn",
+    "bodyImageLayout",
+    "bodyImageFile",
+    "bodyImageUrl",
+    "insertBodyImage",
+    "buildArticleImageHtml",
+    "readFileAsDataUrl",
+    "setSelectedMediaBlock",
+    "updateMediaBlock",
+    "mediaSelectionHint",
+    "article-media.is-selected",
+    "article-media--wide",
+    "article-media--center",
+    "article-media--left",
+    "article-media--right",
+  ].forEach((needle) => {
+    if (!blogEditor.includes(needle)) errors.push(`[blog editor] image insertion/layout support missing ${needle}`);
   });
   if (/const entry = \{[\s\S]*?tags:\s*tagList/.test(blogEditor)) {
     errors.push("[blog editor] publish flow still references undefined tagList instead of collectDraft().tags");

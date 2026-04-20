@@ -248,7 +248,7 @@
 
       function editUrlForPost(post) {
         const slug = String((post && post.slug) || "").trim();
-        const base = "https://blog.zenithy.art/admin/editor.html";
+        const base = "./editor.html";
         return slug ? base + "?slug=" + encodeURIComponent(slug) : base;
       }
 

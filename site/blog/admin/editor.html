@@ -120,6 +120,54 @@
         font-size: 1.6rem;
         font-weight: 700;
       }
+      .editor-prose .article-media {
+        display: block;
+        margin: 2.5rem 0;
+        cursor: pointer;
+      }
+      .editor-prose .article-media img {
+        display: block;
+        width: 100%;
+        border-radius: 1.5rem;
+        background: #f1f4f6;
+        object-fit: cover;
+      }
+      .editor-prose .article-media figcaption {
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #586064;
+        text-align: center;
+      }
+      .editor-prose .article-media--wide {
+        width: 100%;
+      }
+      .editor-prose .article-media--center {
+        width: min(78%, 640px);
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .editor-prose .article-media--left {
+        width: min(68%, 520px);
+        margin-right: auto;
+      }
+      .editor-prose .article-media--right {
+        width: min(68%, 520px);
+        margin-left: auto;
+      }
+      .editor-prose .article-media.is-selected img {
+        outline: 3px solid rgba(3, 104, 126, 0.35);
+        outline-offset: 6px;
+      }
+      @media (max-width: 768px) {
+        .editor-prose .article-media--center,
+        .editor-prose .article-media--left,
+        .editor-prose .article-media--right {
+          width: 100%;
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
     </style>
     <link rel="stylesheet" href="./admin.css" />
   </head>
@@ -140,11 +188,17 @@
       </nav>
     </aside>
 
-    <div class="admin-editor-wrap">
+      <div class="admin-editor-wrap">
             <header class="admin-editor-topbar">
         <div>
           <p class="admin-eyebrow">Blog Editor</p>
-          <h1 class="admin-page-title" style="font-size: clamp(26px, 3vw, 42px); margin: 4px 0 0;">发布文章 / 编辑文章</h1>
+          <h1 id="editorPageTitle" class="admin-page-title" style="font-size: clamp(26px, 3vw, 42px); margin: 4px 0 0;">发布文章</h1>
+          <p
+            id="editorModeHint"
+            class="mt-3 text-sm font-medium text-on-surface-variant"
+          >
+            当前为新建模式，发布后会生成新的文章文件与 manifest 更新包。
+          </p>
         </div>
         <div class="flex items-center gap-3">
           <div class="flex items-center mr-4 border-r border-slate-200 pr-4 gap-2">
@@ -170,11 +224,11 @@
             预览
           </button>
           <button
-            id="publishBtn"
-            class="px-6 py-2 bg-tertiary text-on-tertiary rounded-full font-bold hover:bg-tertiary-dim shadow-lg shadow-tertiary/10"
-          >
-            发布
-          </button>
+              id="publishBtn"
+              class="px-6 py-2 bg-tertiary text-on-tertiary rounded-full font-bold hover:bg-tertiary-dim shadow-lg shadow-tertiary/10"
+            >
+              发布
+            </button>
         </div>
       </header>
 
@@ -216,14 +270,37 @@
                 <div
                   class="bg-surface-container-lowest shadow-xl rounded-full border border-outline-variant/10 px-4 py-2 flex items-center gap-1 pointer-events-auto backdrop-blur-md bg-white/90"
                 >
-                  <button class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant">
+                  <button
+                    id="formatBoldBtn"
+                    class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant"
+                    title="加粗"
+                    type="button"
+                  >
                     <span class="material-symbols-outlined text-xl">format_bold</span>
                   </button>
-                  <button class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant">
+                  <button
+                    id="formatItalicBtn"
+                    class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant"
+                    title="斜体"
+                    type="button"
+                  >
                     <span class="material-symbols-outlined text-xl">format_italic</span>
                   </button>
-                  <button class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant">
+                  <button
+                    id="insertLinkBtn"
+                    class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant"
+                    title="插入链接"
+                    type="button"
+                  >
                     <span class="material-symbols-outlined text-xl">link</span>
+                  </button>
+                  <button
+                    id="insertImageShortcutBtn"
+                    class="p-2 hover:bg-surface-container-low rounded-full text-on-surface-variant"
+                    title="插入图片"
+                    type="button"
+                  >
+                    <span class="material-symbols-outlined text-xl">image</span>
                   </button>
                 </div>
               </div>
@@ -295,6 +372,88 @@
                 rows="4"
               ></textarea>
             </div>
+            <div class="space-y-3 border-t border-outline-variant/10 pt-6">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <h3 class="font-manrope font-bold text-sm text-on-surface">正文图片</h3>
+                  <p id="mediaSelectionHint" class="text-xs text-on-surface-variant mt-1">
+                    在当前光标位置插入图片，并选择宽幅、居中、左对齐或右对齐版式。
+                  </p>
+                </div>
+                <button
+                  id="resetMediaFields"
+                  class="text-xs font-semibold text-on-surface-variant hover:text-on-surface"
+                  type="button"
+                >
+                  清空
+                </button>
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                  >图片地址</label
+                >
+                <input
+                  id="bodyImageUrl"
+                  class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10"
+                  placeholder="https://... 或 ../posts/your-post/image.jpg"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                  >或上传图片</label
+                >
+                <input
+                  id="bodyImageFile"
+                  class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2"
+                  type="file"
+                  accept="image/*"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                  >图片说明</label
+                >
+                <input
+                  id="bodyImageAlt"
+                  class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10"
+                  placeholder="给图片一个简短说明，便于可访问性"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                  >图注</label
+                >
+                <input
+                  id="bodyImageCaption"
+                  class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10"
+                  placeholder="可选，显示在图片下方"
+                  type="text"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="block text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                  >排版</label
+                >
+                <select
+                  id="bodyImageLayout"
+                  class="w-full bg-surface-container-lowest border-outline-variant/15 rounded-lg text-sm px-3 py-2 focus:border-tertiary focus:ring-4 focus:ring-tertiary/10 appearance-none"
+                >
+                  <option value="wide">宽幅展示</option>
+                  <option value="center">居中版式</option>
+                  <option value="left">左对齐版式</option>
+                  <option value="right">右对齐版式</option>
+                </select>
+              </div>
+              <button
+                id="insertImageBtn"
+                class="w-full px-4 py-2.5 rounded-full bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800"
+                type="button"
+              >
+                插入正文图片
+              </button>
+            </div>
             <div class="pt-6 mt-6 border-t border-outline-variant/10">
               <button id="clearDraft" class="w-full text-error hover:bg-error/5 p-2 rounded-lg text-xs font-bold uppercase">
                 删除草稿
@@ -332,6 +491,8 @@
       const editorBaseUrl = "https://blog.zenithy.art/admin/editor.html";
       const params = new URLSearchParams(window.location.search);
       const editingSlug = String(params.get("slug") || params.get("edit") || "").trim();
+      const editorPageTitle = document.getElementById("editorPageTitle");
+      const editorModeHint = document.getElementById("editorModeHint");
       const titleInput = document.getElementById("titleInput");
       const subtitleInput = document.getElementById("subtitleInput");
       const bodyInput = document.getElementById("bodyInput");
@@ -341,11 +502,27 @@
       const seoInput = document.getElementById("seoInput");
       const coverInput = document.getElementById("coverInput");
       const coverBox = document.getElementById("coverBox");
+      const saveDraftBtn = document.getElementById("saveDraft");
+      const publishBtn = document.getElementById("publishBtn");
+      const formatBoldBtn = document.getElementById("formatBoldBtn");
+      const formatItalicBtn = document.getElementById("formatItalicBtn");
+      const insertLinkBtn = document.getElementById("insertLinkBtn");
+      const insertImageShortcutBtn = document.getElementById("insertImageShortcutBtn");
+      const bodyImageUrl = document.getElementById("bodyImageUrl");
+      const bodyImageFile = document.getElementById("bodyImageFile");
+      const bodyImageAlt = document.getElementById("bodyImageAlt");
+      const bodyImageCaption = document.getElementById("bodyImageCaption");
+      const bodyImageLayout = document.getElementById("bodyImageLayout");
+      const insertImageBtn = document.getElementById("insertImageBtn");
+      const resetMediaFieldsBtn = document.getElementById("resetMediaFields");
+      const mediaSelectionHint = document.getElementById("mediaSelectionHint");
 
       let coverData = "";
       let slugTouched = false;
       let editingPost = null;
       let currentManifest = null;
+      let savedBodyRange = null;
+      let selectedMediaBlock = null;
 
       function slugify(text) {
         return text
@@ -359,6 +536,22 @@
 
       function currentStorageKey() {
         return editingSlug ? storageKey + "_edit_" + editingSlug : storageKey;
+      }
+
+      function setEditorMode(mode, post) {
+        const isEditMode = mode === "edit";
+        const slug = String((post && post.slug) || editingSlug || "").trim();
+
+        document.title = isEditMode ? "Zenithy - 编辑文章" : "Zenithy - 发布文章";
+        editorPageTitle.textContent = isEditMode ? "编辑文章" : "发布文章";
+        publishBtn.textContent = isEditMode ? "更新发布" : "发布";
+        saveDraftBtn.title = isEditMode ? "保存编辑草稿" : "保存草稿";
+
+        if (editorModeHint) {
+          editorModeHint.textContent = isEditMode
+            ? "当前正在编辑已发布文章：" + slug + "。本次导出会覆盖 /portal/site/blog/posts/" + slug + "/index.html，并更新同一条 manifest 记录。"
+            : "当前为新建模式，发布后会生成新的文章文件与 manifest 更新包。";
+        }
       }
 
       function editorUrl(slug) {
@@ -404,6 +597,226 @@
         categoryInput.value = category;
       }
 
+      function isRangeInsideBody(range) {
+        if (!range) return false;
+        try {
+          return bodyInput.contains(range.commonAncestorContainer);
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function saveBodySelection() {
+        const selection = window.getSelection();
+        if (!selection || !selection.rangeCount) return false;
+        const range = selection.getRangeAt(0);
+        if (!isRangeInsideBody(range)) return false;
+        savedBodyRange = range.cloneRange();
+        return true;
+      }
+
+      function restoreBodySelection() {
+        if (!savedBodyRange) return false;
+        const selection = window.getSelection();
+        if (!selection) return false;
+        try {
+          selection.removeAllRanges();
+          selection.addRange(savedBodyRange.cloneRange());
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function ensureBodyFocusAtEnd() {
+        bodyInput.focus();
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(bodyInput);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        savedBodyRange = range.cloneRange();
+      }
+
+      function resetBodyImageFields(options = {}) {
+        const keepLayout = options.keepLayout === true;
+        bodyImageUrl.value = "";
+        bodyImageFile.value = "";
+        bodyImageAlt.value = "";
+        bodyImageCaption.value = "";
+        if (!keepLayout) {
+          bodyImageLayout.value = "wide";
+        }
+      }
+
+      function getMediaLayoutFromBlock(block) {
+        if (!block) return "wide";
+        if (block.classList.contains("article-media--center")) return "center";
+        if (block.classList.contains("article-media--left")) return "left";
+        if (block.classList.contains("article-media--right")) return "right";
+        return "wide";
+      }
+
+      function setSelectedMediaBlock(block) {
+        if (selectedMediaBlock && selectedMediaBlock !== block) {
+          selectedMediaBlock.classList.remove("is-selected");
+        }
+        selectedMediaBlock = block || null;
+
+        if (!selectedMediaBlock) {
+          if (mediaSelectionHint) {
+            mediaSelectionHint.textContent = "在当前光标位置插入图片，并选择宽幅、居中、左对齐或右对齐版式。";
+          }
+          insertImageBtn.textContent = "插入正文图片";
+          return;
+        }
+
+        selectedMediaBlock.classList.add("is-selected");
+        const image = selectedMediaBlock.querySelector("img");
+        const caption = selectedMediaBlock.querySelector("figcaption");
+        bodyImageUrl.value = image ? image.getAttribute("src") || "" : "";
+        bodyImageAlt.value = image ? image.getAttribute("alt") || "" : "";
+        bodyImageCaption.value = caption ? caption.textContent.trim() : "";
+        bodyImageLayout.value = getMediaLayoutFromBlock(selectedMediaBlock);
+        bodyImageFile.value = "";
+        if (mediaSelectionHint) {
+          mediaSelectionHint.textContent = "已选中正文中的图片模块。修改右侧字段后点击按钮，会直接更新当前图片。";
+        }
+        insertImageBtn.textContent = "更新当前图片";
+      }
+
+      function clearSelectedMediaBlock() {
+        if (selectedMediaBlock) {
+          selectedMediaBlock.classList.remove("is-selected");
+        }
+        selectedMediaBlock = null;
+        if (mediaSelectionHint) {
+          mediaSelectionHint.textContent = "在当前光标位置插入图片，并选择宽幅、居中、左对齐或右对齐版式。";
+        }
+        insertImageBtn.textContent = "插入正文图片";
+      }
+
+      function updateMediaBlock(block, options) {
+        if (!block) return;
+        const src = escapeHtml(options.src);
+        const alt = escapeHtml(options.alt || options.caption || "Article image");
+        const layout = normaliseImageLayout(options.layout);
+        const caption = String(options.caption || "").trim();
+        const image = block.querySelector("img") || document.createElement("img");
+        let captionNode = block.querySelector("figcaption");
+
+        image.setAttribute("src", src);
+        image.setAttribute("alt", alt);
+        image.setAttribute("loading", "lazy");
+        if (!image.parentNode) {
+          block.appendChild(image);
+        }
+
+        block.className = `article-media article-media--${layout}`;
+
+        if (caption) {
+          if (!captionNode) {
+            captionNode = document.createElement("figcaption");
+            block.appendChild(captionNode);
+          }
+          captionNode.textContent = caption;
+        } else if (captionNode) {
+          captionNode.remove();
+        }
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(new Error("image-read-failed"));
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function normaliseImageLayout(value) {
+        const allowed = new Set(["wide", "center", "left", "right"]);
+        return allowed.has(value) ? value : "wide";
+      }
+
+      function buildArticleImageHtml(options) {
+        const src = escapeHtml(options.src);
+        const alt = escapeHtml(options.alt || options.caption || "Article image");
+        const layout = normaliseImageLayout(options.layout);
+        const caption = String(options.caption || "").trim();
+        const captionHtml = caption ? `<figcaption>${escapeHtml(caption)}</figcaption>` : "";
+        return `<figure class="article-media article-media--${layout}"><img src="${src}" alt="${alt}" loading="lazy" />${captionHtml}</figure><p><br></p>`;
+      }
+
+      function insertHtmlAtSelection(html) {
+        bodyInput.focus();
+        const selection = window.getSelection();
+        if (!restoreBodySelection()) {
+          ensureBodyFocusAtEnd();
+        }
+        if (!selection.rangeCount) {
+          ensureBodyFocusAtEnd();
+        }
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        const template = document.createElement("template");
+        template.innerHTML = html.trim();
+        const fragment = template.content;
+        const lastNode = fragment.lastChild;
+        range.insertNode(fragment);
+        if (lastNode) {
+          const nextRange = document.createRange();
+          nextRange.setStartAfter(lastNode);
+          nextRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(nextRange);
+          savedBodyRange = nextRange.cloneRange();
+        }
+        bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+
+      function applyEditorCommand(command, value) {
+        bodyInput.focus();
+        restoreBodySelection();
+        document.execCommand(command, false, value || null);
+        saveBodySelection();
+      }
+
+      async function insertBodyImage() {
+        const file = bodyImageFile.files && bodyImageFile.files[0];
+        const rawUrl = String(bodyImageUrl.value || "").trim();
+        const src = file ? await readFileAsDataUrl(file) : rawUrl;
+
+        if (!src) {
+          alert("请先选择图片地址或上传图片，再插入正文。");
+          return;
+        }
+
+        const html = buildArticleImageHtml({
+          src,
+          alt: bodyImageAlt.value,
+          caption: bodyImageCaption.value,
+          layout: bodyImageLayout.value,
+        });
+
+        if (selectedMediaBlock) {
+          updateMediaBlock(selectedMediaBlock, {
+            src,
+            alt: bodyImageAlt.value,
+            caption: bodyImageCaption.value,
+            layout: bodyImageLayout.value,
+          });
+          bodyInput.dispatchEvent(new Event("input", { bubbles: true }));
+          resetBodyImageFields({ keepLayout: true });
+          setSelectedMediaBlock(selectedMediaBlock);
+          return;
+        }
+
+        insertHtmlAtSelection(html);
+        resetBodyImageFields({ keepLayout: true });
+      }
+
       titleInput.addEventListener("input", () => {
         if (!slugTouched) {
           slugInput.value = slugify(titleInput.value || "new-blog-post");
@@ -422,6 +835,28 @@
           setCoverPreview(reader.result);
         };
         reader.readAsDataURL(file);
+      });
+
+      ["mouseup", "keyup", "focus", "input"].forEach((eventName) => {
+        bodyInput.addEventListener(eventName, saveBodySelection);
+      });
+
+      bodyInput.addEventListener("click", (event) => {
+        const mediaBlock = event.target.closest(".article-media");
+        if (mediaBlock && bodyInput.contains(mediaBlock)) {
+          setSelectedMediaBlock(mediaBlock);
+          return;
+        }
+        clearSelectedMediaBlock();
+      });
+
+      document.addEventListener("selectionchange", () => {
+        const selection = window.getSelection();
+        if (!selection || !selection.rangeCount) return;
+        const range = selection.getRangeAt(0);
+        if (isRangeInsideBody(range)) {
+          savedBodyRange = range.cloneRange();
+        }
       });
 
       function estimateReadTime(html) {
@@ -451,7 +886,7 @@
 
       function saveDraft() {
         localStorage.setItem(currentStorageKey(), JSON.stringify(collectDraft()));
-        alert("Draft saved to this browser.");
+        alert(editingSlug ? "已保存当前文章的本地编辑草稿。" : "已保存本地草稿。");
       }
 
       function loadDraft() {
@@ -467,6 +902,8 @@
           tagsInput.value = Array.isArray(draft.tags) ? draft.tags.join(", ") : (draft.tags || "");
           seoInput.value = draft.seo || "";
           setCoverPreview(draft.cover || "");
+          setEditorMode(editingSlug ? "edit" : "create", draft);
+          clearSelectedMediaBlock();
         } catch (err) {
           console.warn("Failed to load draft", err);
         }
@@ -474,6 +911,7 @@
 
       function hydrateFromPost(post) {
         editingPost = post || null;
+        setEditorMode(editingSlug ? "edit" : "create", post);
         titleInput.value = (post && post.title) || "";
         subtitleInput.value = (post && (post.excerpt || post.subtitle)) || "";
         slugInput.value = (post && post.slug) || "";
@@ -487,6 +925,7 @@
         tagsInput.value = Array.isArray(post && post.tags) ? post.tags.join(", ") : ((post && post.tags) || "");
         seoInput.value = (post && (post.seo || post.description)) || "";
         setCoverPreview((post && post.cover) || "");
+        clearSelectedMediaBlock();
       }
 
       function parseExistingPostHtml(html, fallbackPost) {
@@ -567,7 +1006,21 @@
     .subtitle{font-size:20px;color:#586064;margin-bottom:28px;}
     .feature{width:min(1200px,92vw);margin:0 auto 48px;border-radius:24px;overflow:hidden;background:#f1f4f6;}
     .feature img{width:100%;display:block;object-fit:cover;}
+    .article{font-size:18px;}
     .article p{line-height:1.8;color:#586064;font-size:18px;margin-bottom:24px;}
+    .article figure{margin:40px 0;}
+    .article img{display:block;max-width:100%;}
+    .article .article-media img{width:100%;border-radius:24px;background:#f1f4f6;}
+    .article .article-media figcaption{margin-top:12px;font-size:14px;line-height:1.6;color:#586064;text-align:center;}
+    .article .article-media--wide{width:100%;}
+    .article .article-media--center{width:min(78%,640px);margin:40px auto;}
+    .article .article-media--left{width:min(68%,520px);margin:40px auto 40px 0;}
+    .article .article-media--right{width:min(68%,520px);margin:40px 0 40px auto;}
+    @media (max-width:760px){
+      .article .article-media--center,
+      .article .article-media--left,
+      .article .article-media--right{width:100%;margin-left:0;margin-right:0;}
+    }
   </style>
 </head>
 <body>
@@ -605,6 +1058,28 @@
         };
       }
 
+      formatBoldBtn.addEventListener("click", () => applyEditorCommand("bold"));
+      formatItalicBtn.addEventListener("click", () => applyEditorCommand("italic"));
+      insertLinkBtn.addEventListener("click", () => {
+        const url = window.prompt("请输入链接地址", "https://");
+        if (!url) return;
+        applyEditorCommand("createLink", url.trim());
+      });
+      insertImageShortcutBtn.addEventListener("click", () => {
+        bodyImageUrl.scrollIntoView({ behavior: "smooth", block: "center" });
+        bodyImageUrl.focus();
+      });
+      insertImageBtn.addEventListener("click", () => {
+        insertBodyImage().catch((error) => {
+          console.error("Failed to insert body image", error);
+          alert("插入图片失败，请检查图片地址或重新选择文件后再试。");
+        });
+      });
+      resetMediaFieldsBtn.addEventListener("click", () => {
+        resetBodyImageFields();
+        clearSelectedMediaBlock();
+      });
+
       document.getElementById("saveDraft").addEventListener("click", saveDraft);
       const previewModal = document.getElementById("previewModal");
       const previewFrame = document.getElementById("previewFrame");
@@ -633,16 +1108,18 @@
       document.getElementById("previewBtn").addEventListener("click", openPreview);
       document.getElementById("previewText").addEventListener("click", openPreview);
       closePreview.addEventListener("click", closePreviewModal);
-      document.getElementById("publishBtn").addEventListener("click", () => {
+      publishBtn.addEventListener("click", () => {
         const draft = collectDraft();
         const slug = slugify(draft.slug || draft.title || "new-post") || "new-post";
         slugInput.value = slug;
         const html = generateHtml();
         const now = new Date().toISOString();
-        const entry = {
+        const existing = editingPost && editingPost.slug === slug ? editingPost : null;
+        const entry = Object.assign({}, existing || {}, {
           title: draft.title || "Untitled Post",
           excerpt: draft.subtitle || "",
-          date: now,
+          subtitle: draft.subtitle || "",
+          date: (existing && existing.date) || now,
           updatedAt: now,
           category: draft.category || "Blog",
           tags: draft.tags,
@@ -653,7 +1130,7 @@
           slug: slug,
           url: postUrl(slug),
           adminEdit: editorUrl(slug),
-        };
+        });
 
         downloadFile("index.html", html);
 
@@ -676,19 +1153,22 @@
           });
 
         alert(
-          "已生成 index.html 和 manifest.json。请把 index.html 放入 /portal/site/blog/posts/" +
+          (editingSlug
+            ? "已生成更新后的 index.html 和 manifest.json。请用新的 index.html 覆盖 /portal/site/blog/posts/"
+            : "已生成 index.html 和 manifest.json。请把 index.html 放入 /portal/site/blog/posts/") +
             slug +
             "/index.html，并用新的 manifest.json 替换 /portal/site/blog/posts/manifest.json，然后在本地 Git 提交并部署。这样云端不会出现未提交文件，避免 git pull 冲突。"
         );
       });
       document.getElementById("clearDraft").addEventListener("click", () => {
         localStorage.removeItem(currentStorageKey());
-        alert("Draft cleared from this browser.");
+        alert(editingSlug ? "已清除当前文章的本地编辑草稿。" : "已清除本地草稿。");
       });
 
       if (editingSlug) {
         loadPublishedPost(editingSlug);
       } else {
+        setEditorMode("create");
         loadDraft();
       }
     </script>
