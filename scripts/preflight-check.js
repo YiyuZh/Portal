@@ -204,6 +204,13 @@ function checkHomepageStructure() {
   if (!html.includes("setupProjectRail") || !html.includes("showcase-grid--rail")) {
     errors.push("[projects rail] horizontal rail controls are missing");
   }
+  if (
+    !html.includes('grid.style.display = "flex"') ||
+    !html.includes('grid.style.flexWrap = "nowrap"') ||
+    !html.includes("#projects-grid.showcase-grid--rail")
+  ) {
+    errors.push("[projects rail] single-row fallback enforcement is missing");
+  }
   if (!html.includes('addEventListener("wheel", handleWheel') || !html.includes("snapToNearestCard")) {
     errors.push("[projects rail] wheel-based horizontal switching is missing");
   }

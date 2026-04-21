@@ -337,6 +337,39 @@
         gap: 18px;
       }
 
+      #projects-scroller {
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+      }
+
+      #projects-grid.showcase-grid--rail {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch;
+        align-content: stretch;
+        gap: 18px;
+        width: max-content;
+        min-width: 100%;
+        grid-template-columns: none !important;
+      }
+
+      #projects-grid.showcase-grid--rail > .showcase-card {
+        flex: 0 0 clamp(430px, 42vw, 620px);
+        width: clamp(430px, 42vw, 620px);
+      }
+
+      #projects-grid.showcase-grid--rail > .showcase-card--small {
+        flex-basis: clamp(410px, 40vw, 560px);
+        width: clamp(410px, 40vw, 560px);
+      }
+
+      #projects-grid.showcase-grid--rail > .showcase-card--large {
+        flex-basis: clamp(500px, 47vw, 700px);
+        width: clamp(500px, 47vw, 700px);
+      }
+
       .showcase-card {
         position: relative;
         display: flex;
@@ -779,6 +812,13 @@
       }
 
       @media (max-width: 820px) {
+        #projects-grid.showcase-grid--rail > .showcase-card,
+        #projects-grid.showcase-grid--rail > .showcase-card--small,
+        #projects-grid.showcase-grid--rail > .showcase-card--large {
+          flex-basis: min(84vw, 560px);
+          width: min(84vw, 560px);
+        }
+
         .topbar {
           grid-template-columns: 1fr auto;
         }
@@ -823,6 +863,13 @@
       }
 
       @media (max-width: 560px) {
+        #projects-grid.showcase-grid--rail > .showcase-card,
+        #projects-grid.showcase-grid--rail > .showcase-card--small,
+        #projects-grid.showcase-grid--rail > .showcase-card--large {
+          flex-basis: min(88vw, 420px);
+          width: min(88vw, 420px);
+        }
+
         .shell {
           width: min(calc(100% - 20px), var(--max-width));
         }
@@ -867,7 +914,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="./home-visual.css" />
+    <link rel="stylesheet" href="./home-visual.css?v=20260421-project-rail-single-row" />
   </head>
   <body>
     <div class="page">
@@ -1500,6 +1547,16 @@
           var dragMoved = false;
           var suppressClickUntil = 0;
 
+          function enforceSingleRowRail() {
+            grid.style.display = "flex";
+            grid.style.flexWrap = "nowrap";
+            grid.style.alignItems = "stretch";
+            grid.style.alignContent = "stretch";
+            grid.style.width = "max-content";
+            grid.style.minWidth = "100%";
+            grid.style.gridTemplateColumns = "none";
+          }
+
           function getCardOffsets() {
             var cards = Array.prototype.slice.call(grid.querySelectorAll(".showcase-card"));
             var scrollerRect = scroller.getBoundingClientRect();
@@ -1698,6 +1755,7 @@
             scroller.dataset.railReady = "true";
           }
 
+          enforceSingleRowRail();
           updateControls();
         }
 
