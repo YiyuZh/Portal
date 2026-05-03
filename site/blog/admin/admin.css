@@ -132,6 +132,30 @@ body.admin-body select {
   padding: clamp(24px, 4vw, 54px);
 }
 
+.admin-site-footer {
+  grid-column: 2 / -1;
+  margin-top: 28px;
+  border-top: 1px solid var(--admin-line);
+  padding: 18px 0 4px;
+  text-align: center;
+}
+
+.admin-site-footer p {
+  margin: 0;
+}
+
+.admin-site-footer .admin-filing-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--admin-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-site-footer .admin-filing-link:hover {
+  color: var(--admin-text);
+}
+
 .admin-page-head,
 .topbar {
   display: flex;

@@ -302,6 +302,16 @@ function validateSiteConfig() {
     requireText(value && value.description, `siteConfig.sections.${section}.description`);
   });
 
+  requireText(data.footer && data.footer.summary, "siteConfig.footer.summary");
+  requireText(data.footer && data.footer.meta, "siteConfig.footer.meta");
+  requireText(data.footer && data.footer.filing && data.footer.filing.number, "siteConfig.footer.filing.number");
+  requireText(data.footer && data.footer.filing && data.footer.filing.url, "siteConfig.footer.filing.url");
+  if (data.footer && data.footer.filing && data.footer.filing.url) {
+    if (!/^https:\/\/beian\.miit\.gov\.cn\/?$/i.test(String(data.footer.filing.url).trim())) {
+      errors.push("[siteConfig] footer.filing.url must point to https://beian.miit.gov.cn/");
+    }
+  }
+
   ["skills", "collab"].forEach((section) => {
     const items = data.sections && data.sections[section] && data.sections[section].items;
     if (!Array.isArray(items) || !items.length) {

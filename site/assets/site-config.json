@@ -136,6 +136,10 @@
     "connectTitle": "Connect",
     "legalTitle": "Legal",
     "meta": "© 2026 Zenithy Archive. All rights reserved.",
+    "filing": {
+      "number": "粤ICP备2026047626号",
+      "url": "https://beian.miit.gov.cn/"
+    },
     "connectLinks": [
       {
         "label": "zenithy.art",

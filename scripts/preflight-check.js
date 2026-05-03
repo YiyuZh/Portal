@@ -9,6 +9,9 @@ const hiremateCaddy = path.resolve(rootDir, "..", "..", "hiremate", "Caddyfile")
 
 const targets = {
   envExample: path.join(rootDir, ".env.example"),
+  projectIndexReadme: path.join(rootDir, "project-index", "README.md"),
+  projectIndexRepoMap: path.join(rootDir, "project-index", "REPO_MAP.md"),
+  projectIndexFileCatalog: path.join(rootDir, "project-index", "FILE_CATALOG.md"),
   index: path.join(siteDir, "index.html"),
   homeVisual: path.join(siteDir, "home-visual.css"),
   homeHero: path.join(siteDir, "home-hero.js"),
@@ -18,6 +21,7 @@ const targets = {
   favicon: path.join(siteDir, "favicon.svg"),
   blogIndex: path.join(siteDir, "blog", "index.html"),
   blogPost: path.join(siteDir, "blog", "post.html"),
+  generatedPost: path.join(siteDir, "blog", "posts", "new-post", "index.html"),
   adminCss: path.join(siteDir, "blog", "admin", "admin.css"),
   blogAdmin: path.join(siteDir, "blog", "admin", "index.html"),
   blogEditor: path.join(siteDir, "blog", "admin", "editor.html"),
@@ -262,6 +266,33 @@ function checkFaviconAndBrandLogo() {
   if (adminCss.includes(".brand-mark")) {
     errors.push("[brand legacy] admin.css should not style .brand-mark; admin pages must use .admin-brand-mark");
   }
+}
+
+function checkIcpFiling() {
+  const filingNumber = "粤ICP备2026047626号";
+  const filingUrl = "https://beian.miit.gov.cn/";
+  const pages = [
+    ["homepage", targets.index],
+    ["404", path.join(siteDir, "404.html")],
+    ["blog index", targets.blogIndex],
+    ["blog post", targets.blogPost],
+    ["generated post", targets.generatedPost],
+    ["blog admin", targets.blogAdmin],
+    ["blog editor", targets.blogEditor],
+    ["projects admin", targets.projectsAdmin],
+    ["messages admin", targets.messagesAdmin],
+  ];
+
+  pages.forEach(([label, filePath]) => {
+    const html = readText(filePath);
+    if (!html) return;
+    if (!html.includes(filingNumber)) {
+      errors.push(`[filing] ${label} is missing ICP filing number ${filingNumber}`);
+    }
+    if (!html.includes(filingUrl)) {
+      errors.push(`[filing] ${label} must link ICP filing to ${filingUrl}`);
+    }
+  });
 }
 
 function checkHomepageMotion() {
@@ -518,6 +549,32 @@ function checkHomepageMotion() {
   compileScriptFile(targets.homeTilt);
   compileScriptFile(targets.homeSkills);
   compileScriptFile(targets.homeCollab);
+}
+
+function checkProjectIndex() {
+  const readme = readText(targets.projectIndexReadme);
+  const repoMap = readText(targets.projectIndexRepoMap);
+  const fileCatalog = readText(targets.projectIndexFileCatalog);
+  if (!readme || !repoMap || !fileCatalog) return;
+
+  if (!readme.includes("Before changing code or content, read this index first.")) {
+    errors.push("[project-index] README must declare the read-before-edit rule");
+  }
+  if (!readme.includes("After changing code or content, update this index")) {
+    errors.push("[project-index] README must declare the update-after-edit rule");
+  }
+  if (!readme.includes("D:/apps/gateway-portal/任务记忆文档.md")) {
+    errors.push("[project-index] README must reference the task memory document");
+  }
+  if (!repoMap.includes("Public gateway/Caddy truth") || !repoMap.includes("D:/apps/HireMate")) {
+    errors.push("[project-index] REPO_MAP must preserve the HireMate gateway source-of-truth boundary");
+  }
+  if (!fileCatalog.includes("site/index.html") || !fileCatalog.includes("site/blog/admin/editor.html")) {
+    errors.push("[project-index] FILE_CATALOG must cover homepage and blog editor entry files");
+  }
+  if (!fileCatalog.includes("scripts/preflight-check.js") || !fileCatalog.includes("api/messages_api.py")) {
+    errors.push("[project-index] FILE_CATALOG must cover scripts and API entrypoints");
+  }
 }
 
 function checkProjects() {
@@ -955,6 +1012,7 @@ function detectUnknownDomains() {
     "admin.interview.zenithy.art",
     "api.interview.zenithy.art",
     "blog.zenithy.art",
+    "beian.miit.gov.cn",
   ]);
   const unknown = Array.from(found).filter((domain) => !known.has(domain));
   if (unknown.length) {
@@ -966,7 +1024,9 @@ function detectUnknownDomains() {
 checkRequiredFiles();
 checkHomepageStructure();
 checkFaviconAndBrandLogo();
+checkIcpFiling();
 checkHomepageMotion();
+checkProjectIndex();
 checkProjects();
 checkSiteConfig();
 checkManifest();

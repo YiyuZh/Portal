@@ -772,6 +772,25 @@
         text-transform: uppercase;
       }
 
+      .footer-compliance {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .filing-link {
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .filing-link:hover {
+        color: var(--accent);
+      }
+
       .status {
         display: inline-flex;
         align-items: center;
@@ -1190,7 +1209,16 @@
 
           <div class="footer-bottom">
             <!-- 由 site-config.json 驱动：footer.meta -->
-            <div id="footer-meta" class="footer-meta">© 2026 Zenithy Archive. All rights reserved.</div>
+            <div class="footer-compliance">
+              <div id="footer-meta" class="footer-meta">© 2026 Zenithy Archive. All rights reserved.</div>
+              <a
+                id="footer-filing"
+                class="filing-link"
+                href="https://beian.miit.gov.cn/"
+                target="_blank"
+                rel="noreferrer noopener"
+              >粤ICP备2026047626号</a>
+            </div>
             <div class="status">
               <span class="status-dot" aria-hidden="true"></span>
               <span>Systems Online</span>
@@ -1909,6 +1937,7 @@
             setText("footer-connect-title", config.footer.connectTitle);
             setText("footer-legal-title", config.footer.legalTitle);
             setText("footer-meta", config.footer.meta);
+            setLink("footer-filing", config.footer.filing && config.footer.filing.number, config.footer.filing && config.footer.filing.url);
 
             if (config.footer.connectLinks) {
               setLink("footer-connect-1", config.footer.connectLinks[0] && config.footer.connectLinks[0].label, config.footer.connectLinks[0] && config.footer.connectLinks[0].url);

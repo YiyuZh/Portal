@@ -462,6 +462,15 @@
           </div>
         </aside>
       </main>
+      <footer class="admin-site-footer">
+        <p class="text-xs text-on-surface-variant/60">© 2026 Zenithy Archive. All rights reserved.</p>
+        <a
+          class="admin-filing-link"
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noreferrer noopener"
+        >粤ICP备2026047626号</a>
+      </footer>
       <div
         id="previewModal"
         class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50"
@@ -1016,6 +1025,8 @@
     .article .article-media--center{width:min(78%,640px);margin:40px auto;}
     .article .article-media--left{width:min(68%,520px);margin:40px auto 40px 0;}
     .article .article-media--right{width:min(68%,520px);margin:40px 0 40px auto;}
+    .filing-footer{padding:24px 0 40px;text-align:center;font-size:12px;color:#586064;}
+    .filing-footer a{color:#586064;text-decoration:none;font-weight:600;}
     @media (max-width:760px){
       .article .article-media--center,
       .article .article-media--left,
@@ -1029,6 +1040,9 @@
     <h1>${escapeHtml(draft.title || "")}</h1>
     <div class="subtitle">${escapeHtml(draft.subtitle || "")}</div>
     <article class="article">${draft.body || ""}</article>
+  </div>
+  <div class="filing-footer">
+    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">粤ICP备2026047626号</a>
   </div>
 </body>
 </html>`;
