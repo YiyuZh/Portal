@@ -18,6 +18,8 @@ const targets = {
   homeTilt: path.join(siteDir, "home-tilt.js"),
   homeSkills: path.join(siteDir, "home-skills.js"),
   homeCollab: path.join(siteDir, "home-collab.js"),
+  techIconsDir: path.join(siteDir, "assets", "tech-icons"),
+  techIconsSource: path.join(siteDir, "assets", "tech-icons", "SOURCE.md"),
   favicon: path.join(siteDir, "favicon.svg"),
   blogIndex: path.join(siteDir, "blog", "index.html"),
   blogPost: path.join(siteDir, "blog", "post.html"),
@@ -41,6 +43,29 @@ const targets = {
 const errors = [];
 const warnings = [];
 const hints = [];
+
+const requiredTechIcons = [
+  "vue.svg",
+  "vite.svg",
+  "pinia.svg",
+  "typescript.svg",
+  "react.svg",
+  "tailwind.svg",
+  "fastapi.svg",
+  "python.svg",
+  "postgresql.svg",
+  "redis.svg",
+  "sqlite.svg",
+  "mysql.svg",
+  "docker.svg",
+  "caddy.svg",
+  "nginx.svg",
+  "openai.svg",
+  "deepseek.svg",
+  "rag.svg",
+  "capacitor.svg",
+  "tauri.svg",
+];
 
 function readText(filePath) {
   try {
@@ -145,6 +170,31 @@ function checkRequiredFiles() {
   });
 }
 
+function checkTechIcons() {
+  if (!exists(targets.techIconsDir)) {
+    errors.push(`[tech icons] missing local icon directory: ${targets.techIconsDir}`);
+    return;
+  }
+  if (!exists(targets.techIconsSource)) {
+    errors.push("[tech icons] SOURCE.md must document local icon sources and maintenance");
+  }
+
+  requiredTechIcons.forEach((fileName) => {
+    const filePath = path.join(targets.techIconsDir, fileName);
+    if (!exists(filePath)) {
+      errors.push(`[tech icons] missing ${fileName}`);
+      return;
+    }
+    const raw = readText(filePath).trim();
+    if (!raw.startsWith("<svg")) {
+      errors.push(`[tech icons] ${fileName} must be a local SVG asset`);
+    }
+    if (/(?:href|src|xlink:href)=["']https?:|url\(\s*https?:/i.test(raw)) {
+      errors.push(`[tech icons] ${fileName} must not load remote runtime assets`);
+    }
+  });
+}
+
 function checkHomepageStructure() {
   const html = readText(targets.index);
   if (!html) return;
@@ -207,6 +257,9 @@ function checkHomepageStructure() {
   }
   if (!html.includes("setupProjectRail") || !html.includes("showcase-grid--rail")) {
     errors.push("[projects rail] horizontal rail controls are missing");
+  }
+  if (!html.includes("updateActiveCard") || !html.includes("is-project-current")) {
+    errors.push("[projects rail] current-card state tracking is missing");
   }
   if (
     !html.includes('grid.style.display = "flex"') ||
@@ -517,6 +570,12 @@ function checkHomepageMotion() {
   if (!css.includes(".skills-focus-board") || !css.includes(".skill-card--featured") || !css.includes(".skills-focus-stack")) {
     errors.push("[skills structure] featured skills board CSS is missing");
   }
+  if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
+    errors.push("[skills universe] spider-web skills universe CSS is missing");
+  }
+  if (!css.includes("stroke-dasharray") || !css.includes("stroke-dashoffset") || !css.includes("is-universe-visible")) {
+    errors.push("[skills universe] SVG web draw animation or visible state is missing");
+  }
   if (!css.includes("skill-card__progress") || !css.includes("is-skills-active")) {
     errors.push("[skills motion] progress line or section active state is missing");
   }
@@ -532,14 +591,39 @@ function checkHomepageMotion() {
   if (!skillsJs.includes("ZenithySkills") || !skillsJs.includes("MutationObserver")) {
     errors.push("[skills motion] dynamic skills mounting is missing");
   }
+  if (!skillsJs.includes("data-skills-universe") || !skillsJs.includes("data-skill-node") || !skillsJs.includes("is-universe-visible")) {
+    errors.push("[skills universe] skills universe mounting or node activation is missing");
+  }
+  if (!skillsJs.includes("--web-x") || !skillsJs.includes("--web-y") || !skillsJs.includes("data-skill-tooltip")) {
+    errors.push("[skills universe] lightweight parallax or tooltip support is missing");
+  }
   if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-card__progress")) {
     errors.push("[skills motion] skills renderer hooks are missing");
   }
   if (!indexHtml.includes("skills-focus-board") || !indexHtml.includes("data-skill-featured") || !indexHtml.includes("skills-focus-stack")) {
     errors.push("[skills structure] skills must render featured module + support stack");
   }
+  if (!indexHtml.includes("data-skills-universe") || !indexHtml.includes('viewBox="0 0 1200 720"') || !indexHtml.includes("data-skills-web-nodes")) {
+    errors.push("[skills universe] renderer must output SVG spider web and node container");
+  }
+  if (!indexHtml.includes("techStackNodes") || !indexHtml.includes("./assets/tech-icons/") || !indexHtml.includes("data-tech-icon")) {
+    errors.push("[skills universe] tech stack nodes must use local tech icon assets");
+  }
+  if (!indexHtml.includes("<img src=\"") || /https?:\/\/(?:cdn|simpleicons|unpkg|jsdelivr)/i.test(indexHtml)) {
+    errors.push("[skills universe] icon nodes must render local <img> assets without runtime CDN links");
+  }
+  if (!css.includes(".skills-web-node img") || !css.includes(".skills-web-node span")) {
+    errors.push("[skills universe] tech icon node image/label styles are missing");
+  }
   if (!indexHtml.includes('card.className = "skill-card skill-card--"')) {
     errors.push("[skills motion] skills must use the dedicated skill-card renderer instead of the generic insight-card model");
+  }
+  if (!css.includes(".showcase-card.is-project-current") || !indexHtml.includes("scheduleActiveCard")) {
+    errors.push("[projects visual] active/current project card state is missing");
+  }
+  const projectStyleBlocks = css.match(/\.showcase(?:-card|-grid|-scroller|-control|-[\w-]+)?[^{}]*\{[^}]*\}/g) || [];
+  if (projectStyleBlocks.some((block) => /backdrop-filter\s*:|filter\s*:\s*blur\(/i.test(block))) {
+    errors.push("[projects visual] project cards must not use backdrop blur or filter blur");
   }
   if (!collabJs.includes("fetch(apiBase() + \"/messages\"") || !collabJs.includes("isEmail")) {
     errors.push("[collab api] POST /api/messages flow or validation is missing");
@@ -1022,6 +1106,7 @@ function detectUnknownDomains() {
 }
 
 checkRequiredFiles();
+checkTechIcons();
 checkHomepageStructure();
 checkFaviconAndBrandLogo();
 checkIcpFiling();

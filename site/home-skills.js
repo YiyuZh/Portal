@@ -2,6 +2,7 @@
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   var mounted = new WeakSet();
+  var mountedUniverses = new WeakSet();
   var animatedMetrics = new WeakSet();
   var sectionActive = false;
   var sectionObserver = null;
@@ -56,7 +57,76 @@
     if (section.classList) {
       section.classList.add("is-skills-active");
     }
+    Array.prototype.slice.call(section.querySelectorAll("[data-skills-universe]")).forEach(activateUniverse);
     Array.prototype.slice.call(section.querySelectorAll("[data-skill-card]")).forEach(activateWithDelay);
+  }
+
+  function activateUniverse(universe) {
+    if (!universe) return;
+    universe.classList.add("is-universe-visible");
+    Array.prototype.slice.call(universe.querySelectorAll("[data-skill-node]")).forEach(function (node, index) {
+      window.setTimeout(function () {
+        node.classList.add("is-node-visible");
+      }, reducedMotion.matches ? 0 : index * 95);
+    });
+  }
+
+  function mountUniverse(universe) {
+    if (!universe || mountedUniverses.has(universe)) return;
+    mountedUniverses.add(universe);
+
+    var stage = universe.querySelector(".skills-universe__stage") || universe;
+    var tooltip = universe.querySelector("[data-skill-tooltip]");
+    var tooltipTitle = tooltip ? tooltip.querySelector("strong") : null;
+    var tooltipDesc = tooltip ? tooltip.querySelector("span") : null;
+    var nodes = Array.prototype.slice.call(universe.querySelectorAll("[data-skill-node]"));
+
+    function showTooltip(node) {
+      if (!tooltip || !tooltipTitle || !tooltipDesc || !node) return;
+      tooltipTitle.textContent = node.getAttribute("data-skill-title") || "";
+      tooltipDesc.textContent = node.getAttribute("data-skill-desc") || "";
+      tooltip.style.setProperty("--tooltip-x", node.style.getPropertyValue("--node-x") || "50%");
+      tooltip.style.setProperty("--tooltip-y", node.style.getPropertyValue("--node-y") || "50%");
+      tooltip.setAttribute("aria-hidden", "false");
+      tooltip.classList.add("is-visible");
+    }
+
+    function hideTooltip() {
+      if (!tooltip) return;
+      tooltip.setAttribute("aria-hidden", "true");
+      tooltip.classList.remove("is-visible");
+    }
+
+    nodes.forEach(function (node) {
+      node.addEventListener("pointerenter", function () {
+        showTooltip(node);
+      });
+      node.addEventListener("focus", function () {
+        showTooltip(node);
+      });
+      node.addEventListener("pointerleave", hideTooltip);
+      node.addEventListener("blur", hideTooltip);
+    });
+
+    if (finePointer.matches && !reducedMotion.matches) {
+      stage.addEventListener("pointermove", function (event) {
+        var rect = stage.getBoundingClientRect();
+        var x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+        var y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+        universe.style.setProperty("--web-x", Math.max(-1, Math.min(1, x)).toFixed(3));
+        universe.style.setProperty("--web-y", Math.max(-1, Math.min(1, y)).toFixed(3));
+      }, { passive: true });
+
+      stage.addEventListener("pointerleave", function () {
+        universe.style.setProperty("--web-x", "0");
+        universe.style.setProperty("--web-y", "0");
+        hideTooltip();
+      });
+    }
+
+    if (sectionActive || reducedMotion.matches) {
+      activateUniverse(universe);
+    }
   }
 
   function mountTilt(card) {
@@ -151,6 +221,10 @@
 
   function refresh(root) {
     var scope = root && root.querySelectorAll ? root : document;
+    if (scope.matches && scope.matches("[data-skills-universe]")) {
+      mountUniverse(scope);
+    }
+    Array.prototype.slice.call(scope.querySelectorAll("[data-skills-universe]")).forEach(mountUniverse);
     if (scope.matches && scope.matches("[data-skill-card]")) {
       mount(scope);
     }

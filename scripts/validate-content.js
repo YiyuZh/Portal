@@ -12,6 +12,8 @@ const targets = {
   homeTilt: path.join(siteDir, "home-tilt.js"),
   homeSkills: path.join(siteDir, "home-skills.js"),
   homeCollab: path.join(siteDir, "home-collab.js"),
+  techIconsDir: path.join(siteDir, "assets", "tech-icons"),
+  techIconsSource: path.join(siteDir, "assets", "tech-icons", "SOURCE.md"),
   projects: path.join(siteDir, "assets", "projects.json"),
   siteConfig: path.join(siteDir, "assets", "site-config.json"),
   manifest: path.join(siteDir, "blog", "posts", "manifest.json"),
@@ -24,6 +26,29 @@ const targets = {
 const errors = [];
 const warnings = [];
 const fixes = [];
+
+const requiredTechIcons = [
+  "vue.svg",
+  "vite.svg",
+  "pinia.svg",
+  "typescript.svg",
+  "react.svg",
+  "tailwind.svg",
+  "fastapi.svg",
+  "python.svg",
+  "postgresql.svg",
+  "redis.svg",
+  "sqlite.svg",
+  "mysql.svg",
+  "docker.svg",
+  "caddy.svg",
+  "nginx.svg",
+  "openai.svg",
+  "deepseek.svg",
+  "rag.svg",
+  "capacitor.svg",
+  "tauri.svg",
+];
 
 function readJson(filePath) {
   try {
@@ -362,6 +387,27 @@ function validateHomepageFiles() {
   });
 }
 
+function validateTechIcons() {
+  if (!fs.existsSync(targets.techIconsDir) || !fs.statSync(targets.techIconsDir).isDirectory()) {
+    errors.push(`[tech icons] missing directory: ${targets.techIconsDir}`);
+    return;
+  }
+
+  ensureFile(targets.techIconsSource, "tech icon SOURCE.md");
+  requiredTechIcons.forEach((fileName) => {
+    const filePath = path.join(targets.techIconsDir, fileName);
+    ensureFile(filePath, `tech icon ${fileName}`);
+    if (!fs.existsSync(filePath)) return;
+    const raw = fs.readFileSync(filePath, "utf8").trim();
+    if (!raw.startsWith("<svg")) {
+      errors.push(`[tech icons] ${fileName} must be a local SVG file`);
+    }
+    if (/(?:href|src|xlink:href)=["']https?:|url\(\s*https?:/i.test(raw)) {
+      errors.push(`[tech icons] ${fileName} must not depend on remote runtime assets`);
+    }
+  });
+}
+
 function validateSecurityFiles() {
   ensureFile(targets.securityPrd, "security PRD");
   ensureFile(targets.securityReadme, "security README");
@@ -369,6 +415,7 @@ function validateSecurityFiles() {
 }
 
 validateHomepageFiles();
+validateTechIcons();
 validateSecurityFiles();
 validateProjects();
 validateManifest();

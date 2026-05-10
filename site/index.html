@@ -1488,10 +1488,12 @@
             var layoutClass = index % 2 === 0 ? "showcase-card--small" : "showcase-card--large";
             article.className = "showcase-card showcase-card--dynamic " + layoutClass;
             article.setAttribute("data-project-id", project.id || "");
+            article.setAttribute("data-project-index", String(index));
             article.setAttribute("data-tilt-card", "project");
-            article.setAttribute("data-tilt-max", "5.8");
+            article.setAttribute("data-tilt-max", "4.8");
 
             var features = Array.isArray(project.features) ? project.features : [];
+            var visibleFeatures = features.slice(0, 3);
             var keywords = Array.isArray(project.keywords) ? project.keywords : [];
             var buttons = [
               [project.primaryLabel, project.primaryUrl],
@@ -1527,7 +1529,7 @@
                   '<div>',
                     '<h3 data-tilt-layer="10">' + escapeHtml(project.title || "") + '</h3>',
                     '<p class="project-summary-long">' + escapeHtml(summary) + '</p>',
-                    features.length ? '<ul class="feature-list">' + features.map(function (item) {
+                    visibleFeatures.length ? '<ul class="feature-list">' + visibleFeatures.map(function (item) {
                       return '<li><span class="feature-dot" aria-hidden="true"></span><span>' + escapeHtml(item) + '</span></li>';
                     }).join("") + '</ul>' : "",
                     keywords.length ? '<div class="keyword-list">' + keywords.map(function (item) {
@@ -1574,6 +1576,7 @@
           var dragStartScrollLeft = 0;
           var dragMoved = false;
           var suppressClickUntil = 0;
+          var activeFrame = 0;
 
           function enforceSingleRowRail() {
             grid.style.display = "flex";
@@ -1602,6 +1605,43 @@
             prevButton.disabled = !hasOverflow || atStart;
             nextButton.disabled = !hasOverflow || atEnd;
             scroller.setAttribute("data-has-overflow", hasOverflow ? "true" : "false");
+            scheduleActiveCard();
+          }
+
+          function updateActiveCard() {
+            activeFrame = 0;
+            var cards = Array.prototype.slice.call(grid.querySelectorAll(".showcase-card"));
+            if (!cards.length) return;
+
+            var scrollerRect = scroller.getBoundingClientRect();
+            var center = scrollerRect.left + scrollerRect.width / 2;
+            var currentCard = cards[0];
+            var currentDistance = Number.POSITIVE_INFINITY;
+
+            cards.forEach(function (card) {
+              var rect = card.getBoundingClientRect();
+              var distance = Math.abs(rect.left + rect.width / 2 - center);
+              if (distance < currentDistance) {
+                currentDistance = distance;
+                currentCard = card;
+              }
+            });
+
+            cards.forEach(function (card, index) {
+              var isCurrent = card === currentCard;
+              card.classList.toggle("is-project-current", isCurrent);
+              if (isCurrent) {
+                card.setAttribute("aria-current", "true");
+                scroller.setAttribute("data-current-index", String(index));
+              } else {
+                card.removeAttribute("aria-current");
+              }
+            });
+          }
+
+          function scheduleActiveCard() {
+            if (activeFrame) return;
+            activeFrame = window.requestAnimationFrame ? window.requestAnimationFrame(updateActiveCard) : window.setTimeout(updateActiveCard, 0);
           }
 
           function snapToNearestCard() {
@@ -1844,6 +1884,85 @@
           var secondaryEntries = normalizedItems.slice(1);
           var stack = document.createElement("div");
           stack.className = "skills-focus-stack";
+          var techStackNodes = [
+            { name: "Python", icon: "./assets/tech-icons/python.svg", x: 50, y: 50, featured: true, desc: "AI-Interview、HireMate、Photography 与同步服务的核心后端语言。" },
+            { name: "FastAPI", icon: "./assets/tech-icons/fastapi.svg", x: 42, y: 39, featured: true, desc: "AI-Interview、智摄、Schedule Sync 等服务的轻量 API 底座。" },
+            { name: "Vue", icon: "./assets/tech-icons/vue.svg", x: 58, y: 38, featured: true, desc: "AI-Interview、Schedule 与移动端界面的主要前端框架。" },
+            { name: "Docker", icon: "./assets/tech-icons/docker.svg", x: 39, y: 61, featured: true, desc: "各项目上线、回滚与服务编排的统一容器化基础。" },
+            { name: "PostgreSQL", icon: "./assets/tech-icons/postgresql.svg", x: 61, y: 61, featured: true, desc: "AI-Interview 与 Schedule Sync 的生产数据库选择。" },
+            { name: "OpenAI", icon: "./assets/tech-icons/openai.svg", x: 50, y: 25, desc: "OpenAI 兼容 SDK 调用层，承接 ChatGPT / OpenAI provider。" },
+            { name: "DeepSeek", icon: "./assets/tech-icons/deepseek.svg", x: 69, y: 28, desc: "多个 AI 应用默认支持的国产大模型服务商。" },
+            { name: "RAG", icon: "./assets/tech-icons/rag.svg", x: 72, y: 50, desc: "面试评估和招聘系统后续的证据化检索增强方向。" },
+            { name: "Vite", icon: "./assets/tech-icons/vite.svg", x: 28, y: 26, desc: "Vue / React 前端项目的开发与构建工具链。" },
+            { name: "Pinia", icon: "./assets/tech-icons/pinia.svg", x: 27, y: 45, desc: "Vue 项目中的轻量状态管理方案。" },
+            { name: "TypeScript", icon: "./assets/tech-icons/typescript.svg", x: 18, y: 62, desc: "Schedule 与移动端项目的类型安全基础。" },
+            { name: "React", icon: "./assets/tech-icons/react.svg", x: 81, y: 37, desc: "HireMate 前端重构后的主要 UI 框架。" },
+            { name: "Tailwind", icon: "./assets/tech-icons/tailwind.svg", x: 86, y: 56, desc: "HireMate 前端样式工程的一部分。" },
+            { name: "Redis", icon: "./assets/tech-icons/redis.svg", x: 53, y: 76, desc: "AI-Interview 的缓存、验证码与异步任务支撑。" },
+            { name: "SQLite", icon: "./assets/tech-icons/sqlite.svg", x: 70, y: 76, desc: "轻量项目、本地数据与静态管理链路的持久化选择。" },
+            { name: "MySQL", icon: "./assets/tech-icons/mysql.svg", x: 82, y: 72, desc: "HireMate 生产数据库后端之一。" },
+            { name: "Caddy", icon: "./assets/tech-icons/caddy.svg", x: 18, y: 30, desc: "Zenithy 多项目统一公网入口与 HTTPS 网关。" },
+            { name: "Nginx", icon: "./assets/tech-icons/nginx.svg", x: 14, y: 48, desc: "前端静态容器和生产资源服务的常用组件。" },
+            { name: "Capacitor", icon: "./assets/tech-icons/capacitor.svg", x: 88, y: 24, desc: "Schedule Mobile 的移动端运行与原生能力桥接。" },
+            { name: "Tauri", icon: "./assets/tech-icons/tauri.svg", x: 24, y: 75, desc: "Schedule 电脑端打包与桌面应用方向。" }
+          ];
+
+          function buildSkillsWeb() {
+            var universe = document.createElement("div");
+            var titleText = (document.getElementById("skills-title") && document.getElementById("skills-title").textContent) || "Skill Universe";
+            var descText = (document.getElementById("skills-desc") && document.getElementById("skills-desc").textContent) || "";
+            universe.className = "skills-universe";
+            universe.setAttribute("data-skills-universe", "true");
+            universe.innerHTML = [
+              '<div class="skills-universe__copy">',
+                '<span class="skills-universe__eyebrow">SKILL UNIVERSE</span>',
+                '<h3>' + escapeHtml(titleText) + '</h3>',
+                '<p>' + escapeHtml(descText) + '</p>',
+              '</div>',
+              '<div class="skills-universe__stage">',
+                '<svg class="skills-web" viewBox="0 0 1200 720" aria-hidden="true" focusable="false">',
+                  '<g class="skills-web__radials">',
+                    '<path pathLength="1" d="M600 360 C470 245 350 175 130 92" />',
+                    '<path pathLength="1" d="M600 360 C612 230 688 128 820 44" />',
+                    '<path pathLength="1" d="M600 360 C780 282 942 242 1110 156" />',
+                    '<path pathLength="1" d="M600 360 C752 455 895 544 1065 646" />',
+                    '<path pathLength="1" d="M600 360 C520 492 422 608 250 672" />',
+                    '<path pathLength="1" d="M600 360 C405 382 268 430 82 518" />',
+                  '</g>',
+                  '<g class="skills-web__rings">',
+                    '<path pathLength="1" d="M360 178 C496 116 660 95 820 128 C935 152 1018 226 1074 326 C1008 430 924 520 778 604 C612 646 444 612 292 525 C198 430 190 306 360 178Z" />',
+                    '<path pathLength="1" d="M444 246 C540 198 650 190 750 218 C836 248 906 298 944 374 C886 446 812 500 708 535 C590 556 488 524 398 460 C338 386 350 304 444 246Z" />',
+                    '<path pathLength="1" d="M506 306 C578 270 654 270 716 300 C764 324 802 370 808 420 C752 464 686 492 612 488 C540 480 488 440 464 388 C464 354 480 326 506 306Z" />',
+                  '</g>',
+                '</svg>',
+                '<div class="skills-web-nodes" data-skills-web-nodes></div>',
+                '<div class="skills-web-tooltip" data-skill-tooltip aria-hidden="true">',
+                  '<strong></strong>',
+                  '<span></span>',
+                '</div>',
+              '</div>',
+            ].join("");
+
+            var nodes = universe.querySelector("[data-skills-web-nodes]");
+            techStackNodes.forEach(function (tech, index) {
+              var node = document.createElement("button");
+              node.type = "button";
+              node.className = "skills-web-node" + (tech.featured ? " skills-web-node--featured" : "");
+              node.setAttribute("data-skill-node", "true");
+              node.setAttribute("data-tech-icon", tech.name);
+              node.setAttribute("data-skill-index", String(index));
+              node.setAttribute("data-skill-title", tech.name);
+              node.setAttribute("data-skill-desc", tech.desc || "");
+              node.style.setProperty("--node-x", Number(tech.x).toFixed(2) + "%");
+              node.style.setProperty("--node-y", Number(tech.y).toFixed(2) + "%");
+              node.style.setProperty("--node-index", index);
+              node.innerHTML = '<img src="' + escapeHtml(tech.icon) + '" alt="" loading="lazy" decoding="async" /><span>' + escapeHtml(tech.name) + '</span>';
+              node.setAttribute("aria-label", tech.name + "：" + (tech.desc || ""));
+              nodes.appendChild(node);
+            });
+
+            return universe;
+          }
 
           function buildSkillCard(entry, index, isFeatured) {
             var item = entry.item || {};
@@ -1876,9 +1995,11 @@
             return card;
           }
 
+          container.appendChild(buildSkillsWeb());
+
           if (featuredEntry) {
             var featuredCard = buildSkillCard(featuredEntry, 0, true);
-            container.appendChild(featuredCard);
+            stack.appendChild(featuredCard);
             if (window.ZenithyReveal) {
               window.ZenithyReveal.observe(featuredCard);
             }
