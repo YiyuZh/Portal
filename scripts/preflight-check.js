@@ -205,6 +205,12 @@ function checkHomepageStructure() {
   ["home-visual.css", "home-hero.js", "home-tilt.js", "home-skills.js", "home-collab.js", "assets/site-config.json", "assets/projects.json"].forEach((needle) => {
     if (!html.includes(needle)) errors.push(`[homepage reference] missing ${needle}`);
   });
+  if (!html.includes("home-visual.css?v=20260511-skills-universe-visible")) {
+    errors.push("[skills universe] home-visual.css cache-busting version must be updated for the visible Skills Universe rollout");
+  }
+  if (!html.includes("home-skills.js?v=20260511-skills-universe-visible")) {
+    errors.push("[skills universe] home-skills.js cache-busting version must be updated for the visible Skills Universe rollout");
+  }
 
   ["projects", "skills", "collab", "about", "contact"].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[section] missing #${id}`);
@@ -212,6 +218,14 @@ function checkHomepageStructure() {
 
   ["projects-grid", "projects-scroller", "projects-prev", "projects-next", "skills-list", "collab-list"].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[data container] missing #${id}`);
+  });
+  if (!html.includes("data-skills-fallback") || !html.includes("skills-universe--fallback")) {
+    errors.push("[skills universe] static fallback must render a visible Skills Universe when config/JS loading is delayed");
+  }
+  ["产品判断", "全栈实现", "AI 应用落地"].forEach((legacySkillFallback) => {
+    if (html.includes(legacySkillFallback)) {
+      errors.push(`[skills universe] legacy static skill-card fallback remains: ${legacySkillFallback}`);
+    }
   });
 
   [
@@ -573,6 +587,9 @@ function checkHomepageMotion() {
   if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
     errors.push("[skills universe] spider-web skills universe CSS is missing");
   }
+  if (!css.includes(".skills-universe--fallback") || !css.includes("rgba(5, 6, 6, 0.92)") || !css.includes("rgba(13, 17, 16, 0.82)")) {
+    errors.push("[skills universe] dark local panel/fallback styles are missing; the web can become invisible on the light homepage");
+  }
   if (!css.includes("stroke-dasharray") || !css.includes("stroke-dashoffset") || !css.includes("is-universe-visible")) {
     errors.push("[skills universe] SVG web draw animation or visible state is missing");
   }
@@ -605,6 +622,9 @@ function checkHomepageMotion() {
   }
   if (!indexHtml.includes("data-skills-universe") || !indexHtml.includes('viewBox="0 0 1200 720"') || !indexHtml.includes("data-skills-web-nodes")) {
     errors.push("[skills universe] renderer must output SVG spider web and node container");
+  }
+  if (!indexHtml.includes("data-skills-fallback") || !indexHtml.includes("skills-universe--fallback is-universe-visible")) {
+    errors.push("[skills universe] homepage must include a visible static Skills Universe fallback before JSON hydration");
   }
   if (!indexHtml.includes("techStackNodes") || !indexHtml.includes("./assets/tech-icons/") || !indexHtml.includes("data-tech-icon")) {
     errors.push("[skills universe] tech stack nodes must use local tech icon assets");

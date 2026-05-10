@@ -914,14 +914,19 @@ body::before {
   position: relative;
   min-height: clamp(520px, 58vw, 720px);
   padding: clamp(24px, 3vw, 38px);
-  border: 1px solid rgba(13, 17, 16, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-card);
   background:
-    radial-gradient(circle at 74% 22%, rgba(255, 255, 255, 0.24), transparent 22%),
-    linear-gradient(135deg, rgba(13, 17, 16, 0.13), rgba(13, 17, 16, 0.045) 58%, rgba(255, 255, 252, 0.18));
-  box-shadow: 0 30px 90px rgba(13, 17, 16, 0.08);
+    radial-gradient(circle at 74% 22%, rgba(255, 255, 255, 0.2), transparent 24%),
+    radial-gradient(circle at 18% 78%, rgba(255, 255, 255, 0.08), transparent 28%),
+    linear-gradient(135deg, rgba(5, 6, 6, 0.92), rgba(13, 17, 16, 0.82) 58%, rgba(35, 38, 35, 0.72));
+  box-shadow: 0 34px 110px rgba(13, 17, 16, 0.18);
   overflow: hidden;
   isolation: isolate;
+}
+
+.skills-universe--fallback {
+  grid-column: 1 / -1;
 }
 
 .skills-universe::before {
@@ -929,7 +934,7 @@ body::before {
   position: absolute;
   inset: 16px;
   z-index: 0;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: calc(var(--radius-card) - 8px);
   pointer-events: none;
 }
@@ -991,7 +996,7 @@ body::before {
 
 .skills-web path {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.58);
+  stroke: rgba(255, 255, 255, 0.66);
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1001,7 +1006,7 @@ body::before {
 }
 
 .skills-web__rings path {
-  stroke: rgba(255, 255, 255, 0.46);
+  stroke: rgba(255, 255, 255, 0.56);
   stroke-width: 2;
   transition-duration: 1.52s;
 }
@@ -1045,7 +1050,7 @@ body::before {
   border: 1px solid rgba(255, 255, 255, 0.36);
   border-radius: 18px;
   color: rgba(255, 255, 255, 0.92);
-  background: rgba(5, 6, 6, 0.2);
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
   cursor: default;
   opacity: 0;
@@ -1098,7 +1103,7 @@ body::before {
   width: 76px;
   height: 76px;
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .skills-web-node--featured img {

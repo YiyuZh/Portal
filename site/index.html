@@ -933,7 +933,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="./home-visual.css?v=20260421-project-rail-single-row" />
+    <link rel="stylesheet" href="./home-visual.css?v=20260511-skills-universe-visible" />
   </head>
   <body>
     <div class="page">
@@ -1061,21 +1061,42 @@
             <p id="skills-desc">这里先作为能力结构占位，后续视觉阶段再强化节奏与表达，不影响现有项目入口。</p>
           </div>
           <div class="skills-focus-board" id="skills-list">
-            <article class="skill-card skill-card--featured">
-              <span>Product</span>
-              <h3>产品判断</h3>
-              <p>从真实使用场景出发，拆解用户路径、核心价值和可持续迭代方向。</p>
-            </article>
-            <article class="skill-card">
-              <span>Engineering</span>
-              <h3>全栈实现</h3>
-              <p>关注静态门户、前后端联动、部署链路和可回滚的生产化交付。</p>
-            </article>
-            <article class="skill-card">
-              <span>AI Application</span>
-              <h3>AI 应用落地</h3>
-              <p>围绕简历解析、智能问答、评估反馈等场景，把模型能力转成可用产品。</p>
-            </article>
+            <div class="skills-universe skills-universe--fallback is-universe-visible" data-skills-universe data-skills-fallback>
+              <div class="skills-universe__copy">
+                <span class="skills-universe__eyebrow">SKILL UNIVERSE</span>
+                <h3>技术栈宇宙</h3>
+                <p>即使配置文件暂时加载失败，这里也会保留可见的技能蜘蛛网骨架。</p>
+              </div>
+              <div class="skills-universe__stage">
+                <svg class="skills-web" viewBox="0 0 1200 720" aria-hidden="true" focusable="false">
+                  <g class="skills-web__radials">
+                    <path pathLength="1" d="M600 360 C470 245 350 175 130 92" />
+                    <path pathLength="1" d="M600 360 C612 230 688 128 820 44" />
+                    <path pathLength="1" d="M600 360 C780 282 942 242 1110 156" />
+                    <path pathLength="1" d="M600 360 C752 455 895 544 1065 646" />
+                    <path pathLength="1" d="M600 360 C520 492 422 608 250 672" />
+                    <path pathLength="1" d="M600 360 C405 382 268 430 82 518" />
+                  </g>
+                  <g class="skills-web__rings">
+                    <path pathLength="1" d="M360 178 C496 116 660 95 820 128 C935 152 1018 226 1074 326 C1008 430 924 520 778 604 C612 646 444 612 292 525 C198 430 190 306 360 178Z" />
+                    <path pathLength="1" d="M444 246 C540 198 650 190 750 218 C836 248 906 298 944 374 C886 446 812 500 708 535 C590 556 488 524 398 460 C338 386 350 304 444 246Z" />
+                    <path pathLength="1" d="M506 306 C578 270 654 270 716 300 C764 324 802 370 808 420 C752 464 686 492 612 488 C540 480 488 440 464 388 C464 354 480 326 506 306Z" />
+                  </g>
+                </svg>
+                <div class="skills-web-nodes" data-skills-web-nodes>
+                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="Python" data-skill-desc="AI 应用与后端服务核心语言。" style="--node-x:50%;--node-y:50%;--node-index:0" aria-label="Python：AI 应用与后端服务核心语言。"><img src="./assets/tech-icons/python.svg" alt="" loading="lazy" decoding="async" /><span>Python</span></button>
+                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="Vue" data-skill-desc="主要前端交互框架之一。" style="--node-x:58%;--node-y:38%;--node-index:1" aria-label="Vue：主要前端交互框架之一。"><img src="./assets/tech-icons/vue.svg" alt="" loading="lazy" decoding="async" /><span>Vue</span></button>
+                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="FastAPI" data-skill-desc="轻量 API 服务底座。" style="--node-x:42%;--node-y:39%;--node-index:2" aria-label="FastAPI：轻量 API 服务底座。"><img src="./assets/tech-icons/fastapi.svg" alt="" loading="lazy" decoding="async" /><span>FastAPI</span></button>
+                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="Docker" data-skill-desc="上线、回滚与服务编排基础。" style="--node-x:39%;--node-y:61%;--node-index:3" aria-label="Docker：上线、回滚与服务编排基础。"><img src="./assets/tech-icons/docker.svg" alt="" loading="lazy" decoding="async" /><span>Docker</span></button>
+                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="OpenAI" data-skill-desc="模型能力接入与 AI 应用能力支撑。" style="--node-x:50%;--node-y:25%;--node-index:4" aria-label="OpenAI：模型能力接入与 AI 应用能力支撑。"><img src="./assets/tech-icons/openai.svg" alt="" loading="lazy" decoding="async" /><span>OpenAI</span></button>
+                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="PostgreSQL" data-skill-desc="生产数据库选择之一。" style="--node-x:61%;--node-y:61%;--node-index:5" aria-label="PostgreSQL：生产数据库选择之一。"><img src="./assets/tech-icons/postgresql.svg" alt="" loading="lazy" decoding="async" /><span>PostgreSQL</span></button>
+                </div>
+                <div class="skills-web-tooltip" data-skill-tooltip aria-hidden="true">
+                  <strong></strong>
+                  <span></span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -2093,7 +2114,7 @@
     </script>
     <script src="./home-hero.js" defer></script>
     <script src="./home-tilt.js" defer></script>
-    <script src="./home-skills.js" defer></script>
+    <script src="./home-skills.js?v=20260511-skills-universe-visible" defer></script>
     <script src="./home-collab.js" defer></script>
   </body>
 </html>
