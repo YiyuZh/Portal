@@ -1061,12 +1061,7 @@
             <p id="skills-desc">这里先作为能力结构占位，后续视觉阶段再强化节奏与表达，不影响现有项目入口。</p>
           </div>
           <div class="skills-focus-board" id="skills-list">
-            <div class="skills-universe skills-universe--fallback is-universe-visible" data-skills-universe data-skills-fallback>
-              <div class="skills-universe__copy">
-                <span class="skills-universe__eyebrow">SKILL UNIVERSE</span>
-                <h3>技术栈宇宙</h3>
-                <p>即使配置文件暂时加载失败，这里也会保留可见的技能蜘蛛网骨架。</p>
-              </div>
+            <div class="skills-universe skills-universe--full skills-universe--fallback is-universe-visible" data-skills-universe data-skills-fallback>
               <div class="skills-universe__stage">
                 <svg class="skills-web" viewBox="0 0 1200 720" aria-hidden="true" focusable="false">
                   <g class="skills-web__radials">
@@ -1076,20 +1071,26 @@
                     <path pathLength="1" d="M600 360 C752 455 895 544 1065 646" />
                     <path pathLength="1" d="M600 360 C520 492 422 608 250 672" />
                     <path pathLength="1" d="M600 360 C405 382 268 430 82 518" />
+                    <path pathLength="1" d="M600 360 C600 198 584 105 566 32" />
+                    <path pathLength="1" d="M600 360 C690 178 790 104 985 66" />
+                    <path pathLength="1" d="M600 360 C720 595 820 662 990 706" />
+                    <path pathLength="1" d="M600 360 C438 552 342 635 158 708" />
                   </g>
                   <g class="skills-web__rings">
                     <path pathLength="1" d="M360 178 C496 116 660 95 820 128 C935 152 1018 226 1074 326 C1008 430 924 520 778 604 C612 646 444 612 292 525 C198 430 190 306 360 178Z" />
                     <path pathLength="1" d="M444 246 C540 198 650 190 750 218 C836 248 906 298 944 374 C886 446 812 500 708 535 C590 556 488 524 398 460 C338 386 350 304 444 246Z" />
                     <path pathLength="1" d="M506 306 C578 270 654 270 716 300 C764 324 802 370 808 420 C752 464 686 492 612 488 C540 480 488 440 464 388 C464 354 480 326 506 306Z" />
+                    <path pathLength="1" d="M300 130 C468 52 700 28 905 94 C1048 142 1146 258 1160 406 C1082 548 926 660 710 708 C482 734 270 650 116 492 C70 338 126 218 300 130Z" />
+                    <path pathLength="1" d="M398 214 C502 166 676 146 810 184 C930 218 1012 304 1016 406 C940 506 824 582 674 616 C510 616 382 548 310 440 C286 342 306 266 398 214Z" />
                   </g>
                 </svg>
                 <div class="skills-web-nodes" data-skills-web-nodes>
-                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="Python" data-skill-desc="AI 应用与后端服务核心语言。" style="--node-x:50%;--node-y:50%;--node-index:0" aria-label="Python：AI 应用与后端服务核心语言。"><img src="./assets/tech-icons/python.svg" alt="" loading="lazy" decoding="async" /><span>Python</span></button>
-                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="Vue" data-skill-desc="主要前端交互框架之一。" style="--node-x:58%;--node-y:38%;--node-index:1" aria-label="Vue：主要前端交互框架之一。"><img src="./assets/tech-icons/vue.svg" alt="" loading="lazy" decoding="async" /><span>Vue</span></button>
-                  <button class="skills-web-node skills-web-node--featured is-node-visible" type="button" data-skill-node data-skill-title="FastAPI" data-skill-desc="轻量 API 服务底座。" style="--node-x:42%;--node-y:39%;--node-index:2" aria-label="FastAPI：轻量 API 服务底座。"><img src="./assets/tech-icons/fastapi.svg" alt="" loading="lazy" decoding="async" /><span>FastAPI</span></button>
-                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="Docker" data-skill-desc="上线、回滚与服务编排基础。" style="--node-x:39%;--node-y:61%;--node-index:3" aria-label="Docker：上线、回滚与服务编排基础。"><img src="./assets/tech-icons/docker.svg" alt="" loading="lazy" decoding="async" /><span>Docker</span></button>
-                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="OpenAI" data-skill-desc="模型能力接入与 AI 应用能力支撑。" style="--node-x:50%;--node-y:25%;--node-index:4" aria-label="OpenAI：模型能力接入与 AI 应用能力支撑。"><img src="./assets/tech-icons/openai.svg" alt="" loading="lazy" decoding="async" /><span>OpenAI</span></button>
-                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-skill-title="PostgreSQL" data-skill-desc="生产数据库选择之一。" style="--node-x:61%;--node-y:61%;--node-index:5" aria-label="PostgreSQL：生产数据库选择之一。"><img src="./assets/tech-icons/postgresql.svg" alt="" loading="lazy" decoding="async" /><span>PostgreSQL</span></button>
+                  <button class="skills-web-node skills-web-node--featured skills-web-node--has-icon is-node-visible" type="button" data-skill-node data-tech="python" data-skill-title="Python" data-skill-desc="AI 应用与后端服务核心语言。" style="--node-x:50%;--node-y:50%;--node-index:0;--skill-brand:#3776AB;--skill-brand-2:#FFD43B;--skill-brand-rgb:55,118,171;--skill-icon-url:url('./assets/tech-icons/python.svg')" aria-label="Python：AI 应用与后端服务核心语言。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">PY</span><span class="skills-web-node__label">Python</span></button>
+                  <button class="skills-web-node skills-web-node--featured skills-web-node--has-icon is-node-visible" type="button" data-skill-node data-tech="react" data-skill-title="React" data-skill-desc="HireMate 前端重构后的主要 UI 框架。" style="--node-x:62%;--node-y:36%;--node-index:1;--skill-brand:#61DAFB;--skill-brand-2:#FFFFFF;--skill-brand-rgb:97,218,251;--skill-icon-url:url('./assets/tech-icons/react.svg')" aria-label="React：HireMate 前端重构后的主要 UI 框架。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">RE</span><span class="skills-web-node__label">React</span></button>
+                  <button class="skills-web-node skills-web-node--featured skills-web-node--has-icon is-node-visible" type="button" data-skill-node data-tech="typescript" data-skill-title="TypeScript" data-skill-desc="移动端与桌面端项目的类型安全基础。" style="--node-x:39%;--node-y:40%;--node-index:2;--skill-brand:#3178C6;--skill-brand-2:#FFFFFF;--skill-brand-rgb:49,120,198;--skill-icon-url:url('./assets/tech-icons/typescript.svg')" aria-label="TypeScript：移动端与桌面端项目的类型安全基础。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">TS</span><span class="skills-web-node__label">TypeScript</span></button>
+                  <button class="skills-web-node skills-web-node--has-icon is-node-visible" type="button" data-skill-node data-tech="docker" data-skill-title="Docker" data-skill-desc="上线、回滚与服务编排基础。" style="--node-x:42%;--node-y:64%;--node-index:3;--skill-brand:#2496ED;--skill-brand-2:#FFFFFF;--skill-brand-rgb:36,150,237;--skill-icon-url:url('./assets/tech-icons/docker.svg')" aria-label="Docker：上线、回滚与服务编排基础。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">DK</span><span class="skills-web-node__label">Docker</span></button>
+                  <button class="skills-web-node skills-web-node--has-icon is-node-visible" type="button" data-skill-node data-tech="postgresql" data-skill-title="PostgreSQL" data-skill-desc="生产数据库选择之一。" style="--node-x:62%;--node-y:64%;--node-index:4;--skill-brand:#4169E1;--skill-brand-2:#FFFFFF;--skill-brand-rgb:65,105,225;--skill-icon-url:url('./assets/tech-icons/postgresql.svg')" aria-label="PostgreSQL：生产数据库选择之一。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">PG</span><span class="skills-web-node__label">PostgreSQL</span></button>
+                  <button class="skills-web-node is-node-visible" type="button" data-skill-node data-tech="javascript" data-skill-title="JavaScript" data-skill-desc="前端交互与静态页面能力基础。" style="--node-x:28%;--node-y:26%;--node-index:5;--skill-brand:#F7DF1E;--skill-brand-2:#111111;--skill-brand-rgb:247,223,30" aria-label="JavaScript：前端交互与静态页面能力基础。"><span class="skills-web-node__icon" aria-hidden="true"></span><span class="skills-web-node__abbr">JS</span><span class="skills-web-node__label">JavaScript</span></button>
                 </div>
                 <div class="skills-web-tooltip" data-skill-tooltip aria-hidden="true">
                   <strong></strong>
@@ -1904,42 +1905,63 @@
           var featuredEntry = normalizedItems[0];
           var secondaryEntries = normalizedItems.slice(1);
           var stack = document.createElement("div");
-          stack.className = "skills-focus-stack";
+          stack.className = "skills-summary-row skills-focus-stack";
+          var TECH_BRAND = {
+            python: { primary: "#3776AB", secondary: "#FFD43B", rgb: "55,118,171" },
+            fastapi: { primary: "#009688", secondary: "#FFFFFF", rgb: "0,150,136" },
+            vue: { primary: "#42B883", secondary: "#35495E", rgb: "66,184,131" },
+            vite: { primary: "#646CFF", secondary: "#FFD62E", rgb: "100,108,255" },
+            pinia: { primary: "#FFD859", secondary: "#42B883", rgb: "255,216,89" },
+            javascript: { primary: "#F7DF1E", secondary: "#111111", rgb: "247,223,30" },
+            typescript: { primary: "#3178C6", secondary: "#FFFFFF", rgb: "49,120,198" },
+            react: { primary: "#61DAFB", secondary: "#FFFFFF", rgb: "97,218,251" },
+            nextjs: { primary: "#FFFFFF", secondary: "#111111", rgb: "255,255,255" },
+            nodejs: { primary: "#339933", secondary: "#FFFFFF", rgb: "51,153,51" },
+            docker: { primary: "#2496ED", secondary: "#FFFFFF", rgb: "36,150,237" },
+            postgresql: { primary: "#4169E1", secondary: "#FFFFFF", rgb: "65,105,225" },
+            mysql: { primary: "#4479A1", secondary: "#F29111", rgb: "68,121,161" },
+            redis: { primary: "#DC382D", secondary: "#FFFFFF", rgb: "220,56,45" },
+            sqlite: { primary: "#003B57", secondary: "#6EC4E8", rgb: "0,59,87" },
+            tailwind: { primary: "#38BDF8", secondary: "#FFFFFF", rgb: "56,189,248" },
+            git: { primary: "#F05032", secondary: "#FFFFFF", rgb: "240,80,50" },
+            github: { primary: "#FFFFFF", secondary: "#111111", rgb: "255,255,255" },
+            caddy: { primary: "#1F88C9", secondary: "#FFFFFF", rgb: "31,136,201" },
+            nginx: { primary: "#009639", secondary: "#FFFFFF", rgb: "0,150,57" },
+            capacitor: { primary: "#119EFF", secondary: "#FFFFFF", rgb: "17,158,255" },
+            tauri: { primary: "#FFC131", secondary: "#24C8DB", rgb: "255,193,49" },
+            rag: { primary: "#A7F3D0", secondary: "#38BDF8", rgb: "167,243,208" }
+          };
           var techStackNodes = [
-            { name: "Python", icon: "./assets/tech-icons/python.svg", x: 50, y: 50, featured: true, desc: "AI-Interview、HireMate、Photography 与同步服务的核心后端语言。" },
-            { name: "FastAPI", icon: "./assets/tech-icons/fastapi.svg", x: 42, y: 39, featured: true, desc: "AI-Interview、智摄、Schedule Sync 等服务的轻量 API 底座。" },
-            { name: "Vue", icon: "./assets/tech-icons/vue.svg", x: 58, y: 38, featured: true, desc: "AI-Interview、Schedule 与移动端界面的主要前端框架。" },
-            { name: "Docker", icon: "./assets/tech-icons/docker.svg", x: 39, y: 61, featured: true, desc: "各项目上线、回滚与服务编排的统一容器化基础。" },
-            { name: "PostgreSQL", icon: "./assets/tech-icons/postgresql.svg", x: 61, y: 61, featured: true, desc: "AI-Interview 与 Schedule Sync 的生产数据库选择。" },
-            { name: "OpenAI", icon: "./assets/tech-icons/openai.svg", x: 50, y: 25, desc: "OpenAI 兼容 SDK 调用层，承接 ChatGPT / OpenAI provider。" },
-            { name: "DeepSeek", icon: "./assets/tech-icons/deepseek.svg", x: 69, y: 28, desc: "多个 AI 应用默认支持的国产大模型服务商。" },
-            { name: "RAG", icon: "./assets/tech-icons/rag.svg", x: 72, y: 50, desc: "面试评估和招聘系统后续的证据化检索增强方向。" },
-            { name: "Vite", icon: "./assets/tech-icons/vite.svg", x: 28, y: 26, desc: "Vue / React 前端项目的开发与构建工具链。" },
-            { name: "Pinia", icon: "./assets/tech-icons/pinia.svg", x: 27, y: 45, desc: "Vue 项目中的轻量状态管理方案。" },
-            { name: "TypeScript", icon: "./assets/tech-icons/typescript.svg", x: 18, y: 62, desc: "Schedule 与移动端项目的类型安全基础。" },
-            { name: "React", icon: "./assets/tech-icons/react.svg", x: 81, y: 37, desc: "HireMate 前端重构后的主要 UI 框架。" },
-            { name: "Tailwind", icon: "./assets/tech-icons/tailwind.svg", x: 86, y: 56, desc: "HireMate 前端样式工程的一部分。" },
-            { name: "Redis", icon: "./assets/tech-icons/redis.svg", x: 53, y: 76, desc: "AI-Interview 的缓存、验证码与异步任务支撑。" },
-            { name: "SQLite", icon: "./assets/tech-icons/sqlite.svg", x: 70, y: 76, desc: "轻量项目、本地数据与静态管理链路的持久化选择。" },
-            { name: "MySQL", icon: "./assets/tech-icons/mysql.svg", x: 82, y: 72, desc: "HireMate 生产数据库后端之一。" },
-            { name: "Caddy", icon: "./assets/tech-icons/caddy.svg", x: 18, y: 30, desc: "Zenithy 多项目统一公网入口与 HTTPS 网关。" },
-            { name: "Nginx", icon: "./assets/tech-icons/nginx.svg", x: 14, y: 48, desc: "前端静态容器和生产资源服务的常用组件。" },
-            { name: "Capacitor", icon: "./assets/tech-icons/capacitor.svg", x: 88, y: 24, desc: "Schedule Mobile 的移动端运行与原生能力桥接。" },
-            { name: "Tauri", icon: "./assets/tech-icons/tauri.svg", x: 24, y: 75, desc: "Schedule 电脑端打包与桌面应用方向。" }
+            { key: "python", name: "Python", abbr: "PY", icon: "./assets/tech-icons/python.svg", x: 50, y: 50, featured: true, desc: "AI 应用、后端服务与自动化脚本的核心语言。" },
+            { key: "fastapi", name: "FastAPI", abbr: "FA", icon: "./assets/tech-icons/fastapi.svg", x: 42, y: 38, featured: true, desc: "AI-Interview、智摄与同步服务的轻量 API 底座。" },
+            { key: "typescript", name: "TypeScript", abbr: "TS", icon: "./assets/tech-icons/typescript.svg", x: 58, y: 38, featured: true, desc: "前端、移动端与桌面端项目的类型安全基础。" },
+            { key: "docker", name: "Docker", abbr: "DK", icon: "./assets/tech-icons/docker.svg", x: 40, y: 62, featured: true, desc: "上线、回滚与服务编排的统一容器化基础。" },
+            { key: "postgresql", name: "PostgreSQL", abbr: "PG", icon: "./assets/tech-icons/postgresql.svg", x: 61, y: 63, featured: true, desc: "AI-Interview 与业务系统的生产数据库选择。" },
+            { key: "react", name: "React", abbr: "RE", icon: "./assets/tech-icons/react.svg", x: 72, y: 28, desc: "HireMate 前端重构后的主要 UI 框架。" },
+            { key: "vue", name: "Vue", abbr: "VU", icon: "./assets/tech-icons/vue.svg", x: 29, y: 31, desc: "AI-Interview、Schedule 与管理界面的主要前端框架。" },
+            { key: "javascript", name: "JavaScript", abbr: "JS", x: 18, y: 50, desc: "静态页面交互、后台工具和前端工程的基础能力。" },
+            { key: "nextjs", name: "Next.js", abbr: "NX", x: 84, y: 40, desc: "作品集与应用前端可继续演进的 React 工程方向。" },
+            { key: "nodejs", name: "Node.js", abbr: "ND", x: 82, y: 60, desc: "内容校验、发布脚本与前端工程工具链运行环境。" },
+            { key: "tailwind", name: "Tailwind CSS", abbr: "TW", icon: "./assets/tech-icons/tailwind.svg", x: 89, y: 23, desc: "HireMate 等前端项目的样式工程能力。" },
+            { key: "vite", name: "Vite", abbr: "VI", icon: "./assets/tech-icons/vite.svg", x: 25, y: 18, desc: "Vue / React 项目的快速开发与构建工具链。" },
+            { key: "pinia", name: "Pinia", abbr: "PI", icon: "./assets/tech-icons/pinia.svg", x: 18, y: 70, desc: "Vue 项目中的轻量状态管理方案。" },
+            { key: "redis", name: "Redis", abbr: "RD", icon: "./assets/tech-icons/redis.svg", x: 52, y: 78, desc: "缓存、验证码与异步任务支撑。" },
+            { key: "mysql", name: "MySQL", abbr: "MY", icon: "./assets/tech-icons/mysql.svg", x: 76, y: 78, desc: "HireMate 生产数据库后端之一。" },
+            { key: "sqlite", name: "SQLite", abbr: "SQ", icon: "./assets/tech-icons/sqlite.svg", x: 66, y: 17, desc: "轻量留言系统与本地数据管理的持久化选择。" },
+            { key: "git", name: "Git", abbr: "GT", x: 34, y: 78, desc: "本地开发、发布记录和多项目迭代的版本管理基础。" },
+            { key: "github", name: "GitHub", abbr: "GH", x: 10, y: 40, desc: "代码托管、协作与上线前变更追踪。" },
+            { key: "caddy", name: "Caddy", abbr: "CY", icon: "./assets/tech-icons/caddy.svg", x: 9, y: 58, desc: "Zenithy 多项目统一公网入口与 HTTPS 网关。" },
+            { key: "nginx", name: "Nginx", abbr: "NX", icon: "./assets/tech-icons/nginx.svg", x: 92, y: 74, desc: "前端静态容器和生产资源服务组件。" },
+            { key: "capacitor", name: "Capacitor", abbr: "CP", icon: "./assets/tech-icons/capacitor.svg", x: 92, y: 52, desc: "Schedule Mobile 的移动端运行与原生能力桥接。" },
+            { key: "tauri", name: "Tauri", abbr: "TR", icon: "./assets/tech-icons/tauri.svg", x: 14, y: 84, desc: "Schedule 桌面端打包与跨平台应用方向。" },
+            { key: "rag", name: "RAG", abbr: "RG", icon: "./assets/tech-icons/rag.svg", x: 50, y: 23, desc: "面试评估和招聘系统的证据化检索增强方向。" }
           ];
 
           function buildSkillsWeb() {
             var universe = document.createElement("div");
-            var titleText = (document.getElementById("skills-title") && document.getElementById("skills-title").textContent) || "Skill Universe";
-            var descText = (document.getElementById("skills-desc") && document.getElementById("skills-desc").textContent) || "";
-            universe.className = "skills-universe";
+            universe.className = "skills-universe skills-universe--full";
             universe.setAttribute("data-skills-universe", "true");
             universe.innerHTML = [
-              '<div class="skills-universe__copy">',
-                '<span class="skills-universe__eyebrow">SKILL UNIVERSE</span>',
-                '<h3>' + escapeHtml(titleText) + '</h3>',
-                '<p>' + escapeHtml(descText) + '</p>',
-              '</div>',
               '<div class="skills-universe__stage">',
                 '<svg class="skills-web" viewBox="0 0 1200 720" aria-hidden="true" focusable="false">',
                   '<g class="skills-web__radials">',
@@ -1949,11 +1971,17 @@
                     '<path pathLength="1" d="M600 360 C752 455 895 544 1065 646" />',
                     '<path pathLength="1" d="M600 360 C520 492 422 608 250 672" />',
                     '<path pathLength="1" d="M600 360 C405 382 268 430 82 518" />',
+                    '<path pathLength="1" d="M600 360 C600 198 584 105 566 32" />',
+                    '<path pathLength="1" d="M600 360 C690 178 790 104 985 66" />',
+                    '<path pathLength="1" d="M600 360 C720 595 820 662 990 706" />',
+                    '<path pathLength="1" d="M600 360 C438 552 342 635 158 708" />',
                   '</g>',
                   '<g class="skills-web__rings">',
                     '<path pathLength="1" d="M360 178 C496 116 660 95 820 128 C935 152 1018 226 1074 326 C1008 430 924 520 778 604 C612 646 444 612 292 525 C198 430 190 306 360 178Z" />',
                     '<path pathLength="1" d="M444 246 C540 198 650 190 750 218 C836 248 906 298 944 374 C886 446 812 500 708 535 C590 556 488 524 398 460 C338 386 350 304 444 246Z" />',
                     '<path pathLength="1" d="M506 306 C578 270 654 270 716 300 C764 324 802 370 808 420 C752 464 686 492 612 488 C540 480 488 440 464 388 C464 354 480 326 506 306Z" />',
+                    '<path pathLength="1" d="M300 130 C468 52 700 28 905 94 C1048 142 1146 258 1160 406 C1082 548 926 660 710 708 C482 734 270 650 116 492 C70 338 126 218 300 130Z" />',
+                    '<path pathLength="1" d="M398 214 C502 166 676 146 810 184 C930 218 1012 304 1016 406 C940 506 824 582 674 616 C510 616 382 548 310 440 C286 342 306 266 398 214Z" />',
                   '</g>',
                 '</svg>',
                 '<div class="skills-web-nodes" data-skills-web-nodes></div>',
@@ -1966,10 +1994,12 @@
 
             var nodes = universe.querySelector("[data-skills-web-nodes]");
             techStackNodes.forEach(function (tech, index) {
+              var brand = TECH_BRAND[tech.key] || { primary: "#FFFFFF", secondary: "#B8C0C4", rgb: "255,255,255" };
               var node = document.createElement("button");
               node.type = "button";
-              node.className = "skills-web-node" + (tech.featured ? " skills-web-node--featured" : "");
+              node.className = "skills-web-node" + (tech.featured ? " skills-web-node--featured" : "") + (tech.icon ? " skills-web-node--has-icon" : "");
               node.setAttribute("data-skill-node", "true");
+              node.setAttribute("data-tech", tech.key);
               node.setAttribute("data-tech-icon", tech.name);
               node.setAttribute("data-skill-index", String(index));
               node.setAttribute("data-skill-title", tech.name);
@@ -1977,7 +2007,17 @@
               node.style.setProperty("--node-x", Number(tech.x).toFixed(2) + "%");
               node.style.setProperty("--node-y", Number(tech.y).toFixed(2) + "%");
               node.style.setProperty("--node-index", index);
-              node.innerHTML = '<img src="' + escapeHtml(tech.icon) + '" alt="" loading="lazy" decoding="async" /><span>' + escapeHtml(tech.name) + '</span>';
+              node.style.setProperty("--skill-brand", brand.primary);
+              node.style.setProperty("--skill-brand-2", brand.secondary || brand.primary);
+              node.style.setProperty("--skill-brand-rgb", brand.rgb || "255,255,255");
+              if (tech.icon) {
+                node.style.setProperty("--skill-icon-url", "url('" + tech.icon + "')");
+              }
+              node.innerHTML = [
+                '<span class="skills-web-node__icon" aria-hidden="true"></span>',
+                '<span class="skills-web-node__abbr">' + escapeHtml(tech.abbr || tech.name.slice(0, 2).toUpperCase()) + '</span>',
+                '<span class="skills-web-node__label">' + escapeHtml(tech.name) + '</span>'
+              ].join("");
               node.setAttribute("aria-label", tech.name + "：" + (tech.desc || ""));
               nodes.appendChild(node);
             });

@@ -43,8 +43,6 @@ const requiredTechIcons = [
   "docker.svg",
   "caddy.svg",
   "nginx.svg",
-  "openai.svg",
-  "deepseek.svg",
   "rag.svg",
   "capacitor.svg",
   "tauri.svg",

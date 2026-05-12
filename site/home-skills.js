@@ -80,9 +80,19 @@
     var tooltipTitle = tooltip ? tooltip.querySelector("strong") : null;
     var tooltipDesc = tooltip ? tooltip.querySelector("span") : null;
     var nodes = Array.prototype.slice.call(universe.querySelectorAll("[data-skill-node]"));
+    var activeNode = null;
 
     function showTooltip(node) {
       if (!tooltip || !tooltipTitle || !tooltipDesc || !node) return;
+      if (activeNode && activeNode !== node) {
+        activeNode.classList.remove("is-tech-active");
+      }
+      activeNode = node;
+      node.classList.add("is-tech-active");
+      universe.classList.add("is-link-active");
+      universe.style.setProperty("--active-brand-rgb", node.style.getPropertyValue("--skill-brand-rgb") || "255,255,255");
+      tooltip.style.setProperty("--tooltip-brand", node.style.getPropertyValue("--skill-brand") || "#fff");
+      tooltip.style.setProperty("--tooltip-brand-2", node.style.getPropertyValue("--skill-brand-2") || node.style.getPropertyValue("--skill-brand") || "#fff");
       tooltipTitle.textContent = node.getAttribute("data-skill-title") || "";
       tooltipDesc.textContent = node.getAttribute("data-skill-desc") || "";
       tooltip.style.setProperty("--tooltip-x", node.style.getPropertyValue("--node-x") || "50%");
@@ -95,6 +105,11 @@
       if (!tooltip) return;
       tooltip.setAttribute("aria-hidden", "true");
       tooltip.classList.remove("is-visible");
+      universe.classList.remove("is-link-active");
+      if (activeNode) {
+        activeNode.classList.remove("is-tech-active");
+        activeNode = null;
+      }
     }
 
     nodes.forEach(function (node) {

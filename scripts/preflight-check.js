@@ -60,8 +60,6 @@ const requiredTechIcons = [
   "docker.svg",
   "caddy.svg",
   "nginx.svg",
-  "openai.svg",
-  "deepseek.svg",
   "rag.svg",
   "capacitor.svg",
   "tauri.svg",
@@ -531,9 +529,9 @@ function checkHomepageMotion() {
   if (css.includes("clamp(48px, 5.8vw, 92px)") || css.includes("clamp(44px, 16vw, 82px)")) {
     errors.push("[hero regression] black reveal orb is using the old small-dot size");
   }
-  ["clamp(180px, 19vw, 340px)", "19vw", "340px"].forEach((legacy) => {
-    if (css.includes(legacy)) errors.push(`[hero regression] black reveal orb is still too large: ${legacy}`);
-  });
+  if (/--hero-orb-size:\s*clamp\(180px,\s*19vw,\s*340px\)/.test(css)) {
+    errors.push("[hero regression] black reveal orb is still using the old large clamp(180px, 19vw, 340px) size");
+  }
   if (!css.includes("--hero-orb-size")) {
     errors.push("[hero] medium black reveal orb variable --hero-orb-size is missing");
   }
@@ -584,10 +582,13 @@ function checkHomepageMotion() {
   if (!css.includes(".skills-focus-board") || !css.includes(".skill-card--featured") || !css.includes(".skills-focus-stack")) {
     errors.push("[skills structure] featured skills board CSS is missing");
   }
+  if (!css.includes(".skills-summary-row") || !css.includes("grid-template-columns: 1fr") || !indexHtml.includes("skills-summary-row skills-focus-stack")) {
+    errors.push("[skills universe] skills layout must be full-width web first, with summary cards below");
+  }
   if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
     errors.push("[skills universe] spider-web skills universe CSS is missing");
   }
-  if (!css.includes(".skills-universe--fallback") || !css.includes("rgba(5, 6, 6, 0.92)") || !css.includes("rgba(13, 17, 16, 0.82)")) {
+  if (!css.includes(".skills-universe--full") || !css.includes(".skills-universe--fallback") || !css.includes("rgba(5, 6, 6, 0.92)") || !css.includes("rgba(13, 17, 16, 0.82)")) {
     errors.push("[skills universe] dark local panel/fallback styles are missing; the web can become invisible on the light homepage");
   }
   if (!css.includes("stroke-dasharray") || !css.includes("stroke-dashoffset") || !css.includes("is-universe-visible")) {
@@ -614,6 +615,9 @@ function checkHomepageMotion() {
   if (!skillsJs.includes("--web-x") || !skillsJs.includes("--web-y") || !skillsJs.includes("data-skill-tooltip")) {
     errors.push("[skills universe] lightweight parallax or tooltip support is missing");
   }
+  if (!skillsJs.includes("is-tech-active") || !skillsJs.includes("--tooltip-brand") || !skillsJs.includes("is-link-active")) {
+    errors.push("[skills universe] brand-color node hover/focus state is missing");
+  }
   if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-card__progress")) {
     errors.push("[skills motion] skills renderer hooks are missing");
   }
@@ -629,11 +633,32 @@ function checkHomepageMotion() {
   if (!indexHtml.includes("techStackNodes") || !indexHtml.includes("./assets/tech-icons/") || !indexHtml.includes("data-tech-icon")) {
     errors.push("[skills universe] tech stack nodes must use local tech icon assets");
   }
-  if (!indexHtml.includes("<img src=\"") || /https?:\/\/(?:cdn|simpleicons|unpkg|jsdelivr)/i.test(indexHtml)) {
-    errors.push("[skills universe] icon nodes must render local <img> assets without runtime CDN links");
+  if (!indexHtml.includes("TECH_BRAND") || !indexHtml.includes("#3776AB") || !indexHtml.includes("#FFD43B") || !indexHtml.includes("#61DAFB") || !indexHtml.includes("#3178C6") || !indexHtml.includes("#4479A1") || !indexHtml.includes("#38BDF8")) {
+    errors.push("[skills universe] required technology brand colors are missing");
   }
-  if (!css.includes(".skills-web-node img") || !css.includes(".skills-web-node span")) {
-    errors.push("[skills universe] tech icon node image/label styles are missing");
+  if (/https?:\/\/(?:cdn|simpleicons|unpkg|jsdelivr)/i.test(indexHtml)) {
+    errors.push("[skills universe] icon nodes must use local assets without runtime CDN links");
+  }
+  if (!css.includes(".skills-web-node__icon") || !css.includes(".skills-web-node__abbr") || !css.includes(".skills-web-node__label")) {
+    errors.push("[skills universe] tech icon node/icon/label styles are missing");
+  }
+  if (!css.includes("--skill-brand") || !css.includes("--skill-brand-2") || !css.includes("--skill-brand-rgb")) {
+    errors.push("[skills universe] node brand color CSS variables are missing");
+  }
+  if (!css.includes("skillsUniverseSweep") || !css.includes("skillsWebBreath") || !css.includes("skillsNodePulse")) {
+    errors.push("[skills universe] lightweight atmosphere/pulse effects are missing");
+  }
+  if (!css.includes(".skills-universe::after") || !css.includes(".skills-web-node::before") || !css.includes("mix-blend-mode: screen")) {
+    errors.push("[skills universe] atmosphere layer or brand pulse hook is missing");
+  }
+  if (!css.includes(".skills-universe.is-link-active .skills-web path") || !css.includes("stroke-width: 2.15")) {
+    errors.push("[skills universe] active brand-color web-line feedback is missing");
+  }
+  if (indexHtml.includes("DeepSeek") || indexHtml.includes("OpenAI")) {
+    errors.push("[skills universe] provider/model nodes must not appear in the spider web");
+  }
+  if (indexHtml.includes("skills-universe__copy") || indexHtml.includes("SKILL UNIVERSE")) {
+    errors.push("[skills universe] internal copy/title must not obstruct the spider web stage");
   }
   if (!indexHtml.includes('card.className = "skill-card skill-card--"')) {
     errors.push("[skills motion] skills must use the dedicated skill-card renderer instead of the generic insight-card model");
