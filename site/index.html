@@ -933,7 +933,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="./home-visual.css?v=20260517-skills-showcase-a11y" />
+    <link rel="stylesheet" href="./home-visual.css?v=20260518-skills-showcase-links" />
   </head>
   <body>
     <div class="page">
@@ -2192,7 +2192,9 @@
                   metricSuffix: "+",
                   metricLabel: "AI 场景",
                   tags: ["RAG 检索", "结构化评估", "流式反馈"],
-                  featured: true
+                  featured: true,
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 },
                 {
                   id: "full-stack-delivery",
@@ -2203,7 +2205,9 @@
                   metric: 5,
                   metricSuffix: "+",
                   metricLabel: "交付链路",
-                  tags: ["前端体验", "API 设计", "部署回滚"]
+                  tags: ["前端体验", "API 设计", "部署回滚"],
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 },
                 {
                   id: "product-sense",
@@ -2214,7 +2218,9 @@
                   metric: 3,
                   metricSuffix: "+",
                   metricLabel: "验证维度",
-                  tags: ["需求判断", "用户路径", "MVP 优先级"]
+                  tags: ["需求判断", "用户路径", "MVP 优先级"],
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 },
                 {
                   id: "rag-evaluation",
@@ -2225,7 +2231,9 @@
                   metric: 6,
                   metricSuffix: "+",
                   metricLabel: "评估动作",
-                  tags: ["证据约束", "拒答策略", "回归测试"]
+                  tags: ["证据约束", "拒答策略", "回归测试"],
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 },
                 {
                   id: "deploy-ops",
@@ -2236,7 +2244,9 @@
                   metric: 4,
                   metricSuffix: "+",
                   metricLabel: "上线系统",
-                  tags: ["Docker", "Caddy", "Git 发布"]
+                  tags: ["Docker", "Caddy", "Git 发布"],
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 },
                 {
                   id: "frontend-experience",
@@ -2247,7 +2257,9 @@
                   metric: 8,
                   metricSuffix: "+",
                   metricLabel: "交互细节",
-                  tags: ["动效反馈", "移动端适配", "可视化管理"]
+                  tags: ["动效反馈", "移动端适配", "可视化管理"],
+                  ctaLabel: "查看下载页",
+                  ctaUrl: ""
                 }
               ]
             };
@@ -2281,6 +2293,21 @@
             return fallback || "Skill";
           }
 
+          function isSafeActionUrl(value) {
+            var url = String(value || "").trim();
+            if (!url || /[\s\u0000-\u001f\u007f]/.test(url)) return false;
+            if (/^https?:\/\//i.test(url)) return true;
+            if (/^\/(?!\/)/.test(url)) return true;
+            if (/^\.{1,2}\//.test(url)) return true;
+            if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return false;
+            return !/^\/\//.test(url);
+          }
+
+          function normalizeActionUrl(value) {
+            var url = String(value || "").trim();
+            return isSafeActionUrl(url) ? url : "";
+          }
+
           function normalizeShowcaseItem(item, index) {
             var source = item || {};
             var metric = Number(source.metric);
@@ -2294,7 +2321,9 @@
               metricSuffix: String(source.metricSuffix || "").trim(),
               metricLabel: String(source.metricLabel || "Metric").trim(),
               tags: splitTags(source.tags || source.highlights),
-              featured: source.featured === true
+              featured: source.featured === true,
+              ctaLabel: String(source.ctaLabel || "查看下载页").trim(),
+              ctaUrl: normalizeActionUrl(source.ctaUrl)
             };
           }
 
@@ -2315,13 +2344,21 @@
           }
 
           function buildShowcaseCard(item, index) {
-            var card = document.createElement("article");
+            var actionUrl = normalizeActionUrl(item.ctaUrl);
+            var card = document.createElement(actionUrl ? "a" : "article");
             var isFeatured = item.featured === true || index === 0;
             var tags = splitTags(item.tags);
             card.className = "skill-showcase-card" + (isFeatured ? " skill-showcase-card--featured" : "");
             card.setAttribute("data-skill-card", "true");
             card.setAttribute("data-skill-featured", isFeatured ? "true" : "false");
             card.setAttribute("data-skill-index", String(index));
+            if (actionUrl) {
+              card.classList.add("skill-showcase-card--linked");
+              card.href = actionUrl;
+              card.target = "_blank";
+              card.rel = "noopener noreferrer";
+              card.setAttribute("aria-label", item.title + "，" + (item.ctaLabel || "查看下载页") + "，新标签页打开");
+            }
             card.style.setProperty("--reveal-delay", index * 90 + "ms");
             card.style.setProperty("--skill-index", index);
             card.innerHTML = [
@@ -2339,6 +2376,7 @@
               tags.length ? '<div class="skill-showcase-tags" data-skill-layer="12">' + tags.map(function (tag) {
                 return '<span>' + escapeHtml(tag) + '</span>';
               }).join("") + '</div>' : "",
+              actionUrl ? '<span class="skill-showcase-cta" data-skill-layer="12"><span>' + escapeHtml(item.ctaLabel || "查看下载页") + '</span><small>新标签页打开</small></span>' : "",
             ].join("");
             return card;
           }
@@ -2453,7 +2491,7 @@
     </script>
     <script src="./home-hero.js" defer></script>
     <script src="./home-tilt.js" defer></script>
-    <script src="./home-skills.js?v=20260517-skills-showcase-a11y" defer></script>
+    <script src="./home-skills.js?v=20260518-skills-showcase-links" defer></script>
     <script src="./home-collab.js" defer></script>
   </body>
 </html>

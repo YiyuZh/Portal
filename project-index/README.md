@@ -53,6 +53,7 @@ After editing:
   - `site/blog/admin/skills.html`
   - `scripts/validate-content.js`
   - `scripts/preflight-check.js`
+  - Showcase cards may define `ctaLabel` and `ctaUrl`; non-empty safe `ctaUrl` makes the whole card open in a new tab.
 
 - Homepage project rail:
   - `site/index.html`

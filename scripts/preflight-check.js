@@ -125,6 +125,16 @@ function isHttpUrl(url) {
   return /^https?:\/\//i.test(url);
 }
 
+function isSafeActionUrl(value) {
+  const url = String(value || "").trim();
+  if (!url || /[\s\u0000-\u001f\u007f]/.test(url)) return false;
+  if (/^https?:\/\//i.test(url)) return true;
+  if (/^\/(?!\/)/.test(url)) return true;
+  if (/^\.{1,2}\//.test(url)) return true;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return false;
+  return !/^\/\//.test(url);
+}
+
 function checkUrl(value, label, options = {}) {
   if (!value) {
     if (options.required !== false) errors.push(`[url missing] ${label}`);
@@ -293,10 +303,10 @@ function checkHomepageStructure() {
   ["home-visual.css", "home-hero.js", "home-tilt.js", "home-skills.js", "home-collab.js", "assets/site-config.json", "assets/projects.json"].forEach((needle) => {
     if (!html.includes(needle)) errors.push(`[homepage reference] missing ${needle}`);
   });
-  if (!html.includes("home-visual.css?v=20260517-skills-showcase-a11y")) {
+  if (!html.includes("home-visual.css?v=20260518-skills-showcase-links")) {
     errors.push("[skills showcase] home-visual.css cache-busting version must be updated for the Skills Showcase accessibility rollout");
   }
-  if (!html.includes("home-skills.js?v=20260517-skills-showcase-a11y")) {
+  if (!html.includes("home-skills.js?v=20260518-skills-showcase-links")) {
     errors.push("[skills showcase] home-skills.js cache-busting version must be updated for the Skills Showcase accessibility rollout");
   }
 
@@ -692,6 +702,9 @@ function checkHomepageMotion() {
   if (!css.includes(".skill-showcase-card--featured") || !css.includes(".skill-showcase-tags") || !indexHtml.includes("skills-showcase")) {
     errors.push("[skills showcase] showcase card structure must exist below the spider web");
   }
+  if (!css.includes(".skill-showcase-card--linked") || !css.includes(".skill-showcase-cta") || !indexHtml.includes("ctaUrl") || !indexHtml.includes("target = \"_blank\"") || !indexHtml.includes("noopener noreferrer")) {
+    errors.push("[skills showcase] linked card CTA support is missing");
+  }
   if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
     errors.push("[skills universe] spider-web skills universe CSS is missing");
   }
@@ -952,6 +965,16 @@ function checkSiteConfig() {
         if (!Array.isArray(item.tags)) {
           errors.push(`[siteConfig] ${label}.tags must be array`);
         }
+        if (item.ctaLabel !== undefined && typeof item.ctaLabel !== "string") {
+          errors.push(`[siteConfig] ${label}.ctaLabel must be string`);
+        }
+        if (item.ctaUrl !== undefined) {
+          if (typeof item.ctaUrl !== "string") {
+            errors.push(`[siteConfig] ${label}.ctaUrl must be string`);
+          } else if (item.ctaUrl.trim() && !isSafeActionUrl(item.ctaUrl)) {
+            errors.push(`[siteConfig] ${label}.ctaUrl must be http(s), /path, or relative path`);
+          }
+        }
       });
     }
   }
@@ -1159,6 +1182,8 @@ function checkBlogAndAdmin() {
     "autoFixState",
     "validateSkills",
     "dragstart",
+    "ctaLabel",
+    "ctaUrl",
     "site-config.json",
     "docker compose up -d --build",
   ].forEach((needle) => {

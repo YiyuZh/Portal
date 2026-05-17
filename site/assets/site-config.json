@@ -103,7 +103,9 @@
               "结构化评估",
               "流式反馈"
             ],
-            "featured": true
+            "featured": true,
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           },
           {
             "id": "full-stack-delivery",
@@ -118,7 +120,9 @@
               "前端体验",
               "API 设计",
               "部署回滚"
-            ]
+            ],
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           },
           {
             "id": "product-sense",
@@ -133,7 +137,9 @@
               "需求判断",
               "用户路径",
               "MVP 优先级"
-            ]
+            ],
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           },
           {
             "id": "rag-evaluation",
@@ -148,7 +154,9 @@
               "证据约束",
               "拒答策略",
               "回归测试"
-            ]
+            ],
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           },
           {
             "id": "deploy-ops",
@@ -163,7 +171,9 @@
               "Docker",
               "Caddy",
               "Git 发布"
-            ]
+            ],
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           },
           {
             "id": "frontend-experience",
@@ -178,7 +188,9 @@
               "动效反馈",
               "移动端适配",
               "可视化管理"
-            ]
+            ],
+            "ctaLabel": "查看下载页",
+            "ctaUrl": ""
           }
         ]
       }

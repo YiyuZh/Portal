@@ -80,6 +80,7 @@
 - 蜘蛛网应是全宽主视觉，不是左侧小卡片。
 - Skills 区块现在是两段式：上方保留技术栈蜘蛛网，下方是常用 Skills Showcase 横向卡片。
 - 常用 Skills Showcase 来自 `site/assets/site-config.json -> sections.skills.showcase`。
+- Showcase 卡片支持可选 `ctaLabel` / `ctaUrl`；`ctaUrl` 有值时整张卡片在新标签页打开跳转页。
 - 技能说明卡在蜘蛛网下方，不挤压右侧，也不能盖住蜘蛛网。
 - 蜘蛛网内部不显示 `SKILL UNIVERSE` 胶囊、大标题或大段说明文字。
 - 节点展示真实技术栈，不展示 DeepSeek / OpenAI 这类模型或服务商 logo。
@@ -144,6 +145,7 @@
   - `#skills-showcase`
   - 横向 rail 卡片
   - 内容来自 `sections.skills.showcase`
+  - 可选整卡点击 CTA 来自 `ctaLabel` / `ctaUrl`
   - 可由 `/blog/admin/skills.html` 编辑、预览、排序并下载 `site-config.json`
 
 ### Blog 与后台

@@ -1773,10 +1773,27 @@ body::before {
     rotateX(var(--skill-tilt-x))
     rotateY(var(--skill-tilt-y));
   transform-style: preserve-3d;
+  color: inherit;
+  text-decoration: none;
   transition:
     transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
     border-color 0.32s ease,
     box-shadow 0.32s ease;
+}
+
+.skill-showcase-card--linked {
+  cursor: pointer;
+}
+
+.skill-showcase-card--linked:focus {
+  outline: none;
+}
+
+.skill-showcase-card--linked:focus-visible {
+  border-color: rgba(3, 104, 126, 0.34);
+  box-shadow:
+    0 0 0 4px rgba(3, 104, 126, 0.16),
+    0 28px 84px rgba(13, 17, 16, 0.12);
 }
 
 .skill-showcase-card--featured {
@@ -1929,6 +1946,34 @@ body::before {
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 850;
+}
+
+.skill-showcase-cta {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border: 1px solid rgba(3, 104, 126, 0.16);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 252, 0.84);
+  color: #03687e;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.skill-showcase-cta small {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.skill-showcase-card--linked:hover .skill-showcase-cta,
+.skill-showcase-card--linked:focus-visible .skill-showcase-cta {
+  border-color: rgba(3, 104, 126, 0.28);
+  background: rgba(241, 250, 255, 0.92);
 }
 
 .contact-card {

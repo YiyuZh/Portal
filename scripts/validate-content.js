@@ -74,6 +74,16 @@ function isHttpUrl(url) {
   return /^https?:\/\//i.test(url);
 }
 
+function isSafeActionUrl(value) {
+  const url = String(value || "").trim();
+  if (!url || /[\s\u0000-\u001f\u007f]/.test(url)) return false;
+  if (/^https?:\/\//i.test(url)) return true;
+  if (/^\/(?!\/)/.test(url)) return true;
+  if (/^\.{1,2}\//.test(url)) return true;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) return false;
+  return !/^\/\//.test(url);
+}
+
 function normalizeArray(value) {
   if (Array.isArray(value)) {
     return value.map((item) => String(item).trim()).filter(Boolean);
@@ -436,6 +446,16 @@ function validateSiteConfig() {
           }
           if (item.featured !== undefined && typeof item.featured !== "boolean") {
             errors.push(`[siteConfig] ${label}.featured must be boolean when provided`);
+          }
+          if (item.ctaLabel !== undefined && typeof item.ctaLabel !== "string") {
+            errors.push(`[siteConfig] ${label}.ctaLabel must be string when provided`);
+          }
+          if (item.ctaUrl !== undefined) {
+            if (typeof item.ctaUrl !== "string") {
+              errors.push(`[siteConfig] ${label}.ctaUrl must be string when provided`);
+            } else if (item.ctaUrl.trim() && !isSafeActionUrl(item.ctaUrl)) {
+              errors.push(`[siteConfig] ${label}.ctaUrl must be http(s), /path, or relative path`);
+            }
           }
         });
       }
