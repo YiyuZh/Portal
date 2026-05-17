@@ -28,6 +28,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
 
 - Defines all repo-local checks:
   - `validate`
+  - `fix:content`
   - `preflight`
   - `check`
   - `test:messages`
@@ -88,6 +89,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
   - `site/blog/posts/manifest.json`
   - `site/blog/messages/manifest.json`
   - security module files
+- Default mode is read-only; automatic JSON normalization is only allowed through `npm run fix:content`
 
 ### `scripts/preflight-check.js`
 
@@ -97,7 +99,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
   - favicon/logo consistency
   - ICP filing link
   - Hero/Skills/Projects/Collab hooks
-  - blog/admin/editor/projects/messages pages
+  - blog/admin/editor/projects/skills/messages pages
   - messages API files
   - project index presence
   - cross-repo Caddy hints

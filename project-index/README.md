@@ -20,6 +20,7 @@ It is a highest-priority maintenance constraint inside the real deploy repo.
 - Published post HTML: `site/blog/posts/<slug>/index.html`
 - Messages API runtime data: SQLite used by `api/messages_api.py`
 - Public gateway/Caddy truth: `D:/apps/HireMate`, not this repo
+- Content validation is read-only by default; use `npm run fix:content` for explicit JSON normalization
 
 ## Mandatory Workflow
 

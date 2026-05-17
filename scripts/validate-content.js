@@ -28,6 +28,7 @@ const targets = {
 const errors = [];
 const warnings = [];
 const fixes = [];
+const fixMode = process.argv.includes("--fix");
 
 const requiredTechIcons = [
   "vue.svg",
@@ -61,7 +62,12 @@ function readJson(filePath) {
 }
 
 function writeJson(filePath, data) {
+  if (!fixMode) {
+    warnings.push(`read-only: would auto-fix ${filePath}; rerun with --fix`);
+    return false;
+  }
   fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  return true;
 }
 
 function isHttpUrl(url) {
@@ -184,8 +190,11 @@ function validateProjects() {
   });
 
   if (changed) {
-    writeJson(targets.projects, data);
-    warnings.push(`auto-fixed ${targets.projects}`);
+    if (writeJson(targets.projects, data)) {
+      warnings.push(`auto-fixed ${targets.projects}`);
+    } else {
+      errors.push(`[fix required] ${targets.projects} has normalizable fields; run npm run fix:content`);
+    }
   }
 }
 
@@ -243,8 +252,11 @@ function validateManifest() {
   });
 
   if (changed) {
-    writeJson(targets.manifest, data);
-    warnings.push(`auto-fixed ${targets.manifest}`);
+    if (writeJson(targets.manifest, data)) {
+      warnings.push(`auto-fixed ${targets.manifest}`);
+    } else {
+      errors.push(`[fix required] ${targets.manifest} has normalizable fields; run npm run fix:content`);
+    }
   }
 }
 
@@ -486,7 +498,7 @@ validateMessagesManifest();
 validateSiteConfig();
 
 if (fixes.length) {
-  console.log("\nAuto fixes:");
+  console.log(fixMode ? "\nAuto fixes:" : "\nAuto fixes available:");
   fixes.forEach((message) => console.log(` - ${message}`));
 }
 

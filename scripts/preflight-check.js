@@ -66,6 +66,38 @@ const requiredTechIcons = [
   "tauri.svg",
 ];
 
+const requiredSkillsUniverseNodes = [
+  { key: "python", title: "Python" },
+  { key: "react", title: "React" },
+  { key: "typescript", title: "TypeScript" },
+  { key: "docker", title: "Docker" },
+  { key: "postgresql", title: "PostgreSQL" },
+  { key: "javascript", title: "JavaScript" },
+];
+
+const expectedAdminNav = [
+  {
+    text: "\u6587\u7ae0\u5217\u8868",
+    hrefs: ["https://blog.zenithy.art/admin/", "https://blog.zenithy.art/admin/index.html", "/blog/admin/", "/blog/admin/index.html"],
+  },
+  {
+    text: "\u53d1\u5e03\u6587\u7ae0",
+    hrefs: ["https://blog.zenithy.art/admin/editor.html", "/blog/admin/editor.html"],
+  },
+  {
+    text: "\u9879\u76ee\u7ba1\u7406",
+    hrefs: ["https://blog.zenithy.art/admin/projects.html", "/blog/admin/projects.html"],
+  },
+  {
+    text: "Skills \u7ba1\u7406",
+    hrefs: ["https://blog.zenithy.art/admin/skills.html", "/blog/admin/skills.html"],
+  },
+  {
+    text: "\u7559\u8a00\u7ba1\u7406",
+    hrefs: ["https://blog.zenithy.art/admin/messages.html", "/blog/admin/messages.html"],
+  },
+];
+
 function readText(filePath) {
   try {
     return fs.readFileSync(filePath, "utf8");
@@ -143,6 +175,63 @@ function checkRefs(html, filePath, label) {
   });
 }
 
+function stripTags(value) {
+  return String(value || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractAdminNavLinks(html) {
+  const navMatch = html.match(/<nav\b[^>]*class=["'][^"']*\badmin-nav\b[^"']*["'][^>]*>([\s\S]*?)<\/nav>/i);
+  if (!navMatch) return [];
+
+  const links = [];
+  const linkRegex = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
+  let match;
+  while ((match = linkRegex.exec(navMatch[1]))) {
+    const attrs = match[1];
+    const hrefMatch = attrs.match(/\bhref=["']([^"']+)["']/i);
+    const classMatch = attrs.match(/\bclass=["']([^"']*)["']/i);
+    links.push({
+      href: hrefMatch ? hrefMatch[1].replace(/&amp;/g, "&").trim() : "",
+      text: stripTags(match[2]),
+      active: classMatch ? classMatch[1].split(/\s+/).includes("is-active") : false,
+    });
+  }
+  return links;
+}
+
+function checkAdminNav(label, html, activeText) {
+  const links = extractAdminNavLinks(html);
+  if (!links.length) {
+    errors.push(`[admin nav] ${label} must render .admin-nav links`);
+    return;
+  }
+
+  expectedAdminNav.forEach((expected, index) => {
+    const link = links[index];
+    if (!link) {
+      errors.push(`[admin nav] ${label} missing nav item ${expected.text}`);
+      return;
+    }
+    if (link.text !== expected.text) {
+      errors.push(`[admin nav] ${label} nav item ${index + 1} text must be ${expected.text}`);
+      return;
+    }
+    if (!expected.hrefs.includes(link.href)) {
+      errors.push(`[admin nav] ${label} ${expected.text} href must be ${expected.hrefs.join(" or ")}`);
+    }
+  });
+
+  const activeLink = links.find((link) => link.active);
+  if (!activeLink || activeLink.text !== activeText) {
+    errors.push(`[admin nav] ${label} active nav should be ${activeText}`);
+  }
+}
+
 function compileInlineScripts(html, filePath) {
   const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
   scripts.forEach((script, index) => {
@@ -204,11 +293,11 @@ function checkHomepageStructure() {
   ["home-visual.css", "home-hero.js", "home-tilt.js", "home-skills.js", "home-collab.js", "assets/site-config.json", "assets/projects.json"].forEach((needle) => {
     if (!html.includes(needle)) errors.push(`[homepage reference] missing ${needle}`);
   });
-  if (!html.includes("home-visual.css?v=20260511-skills-universe-visible")) {
-    errors.push("[skills universe] home-visual.css cache-busting version must be updated for the visible Skills Universe rollout");
+  if (!html.includes("home-visual.css?v=20260517-skills-showcase-a11y")) {
+    errors.push("[skills showcase] home-visual.css cache-busting version must be updated for the Skills Showcase accessibility rollout");
   }
-  if (!html.includes("home-skills.js?v=20260511-skills-universe-visible")) {
-    errors.push("[skills universe] home-skills.js cache-busting version must be updated for the visible Skills Universe rollout");
+  if (!html.includes("home-skills.js?v=20260517-skills-showcase-a11y")) {
+    errors.push("[skills showcase] home-skills.js cache-busting version must be updated for the Skills Showcase accessibility rollout");
   }
 
   ["projects", "skills", "collab", "about", "contact"].forEach((id) => {
@@ -221,12 +310,21 @@ function checkHomepageStructure() {
   if (!html.includes("data-skills-universe")) {
     errors.push("[skills universe] homepage must keep data-skills-universe so the spider web cannot be removed");
   }
-  if (!html.includes("skills-showcase-rail") || !html.includes("我平时喜欢用的 Skills")) {
-    errors.push("[skills showcase] homepage must include the Skills Showcase fallback/renderer hooks");
+  if (!html.includes('id="skills-showcase"') || !html.includes("skills-showcase-rail") || !html.includes("data-skill-featured")) {
+    errors.push("[skills showcase] homepage must include structural Skills Showcase id/class/data hooks");
   }
   if (!html.includes("data-skills-fallback") || !html.includes("skills-universe--fallback")) {
     errors.push("[skills universe] static fallback must render a visible Skills Universe when config/JS loading is delayed");
   }
+  requiredSkillsUniverseNodes.forEach((node) => {
+    if (!html.includes(`data-tech="${node.key}"`) || !html.includes(`data-skill-title="${node.title}"`)) {
+      errors.push(`[skills universe] static fallback missing required spider-web node ${node.title}`);
+    }
+    const rendererPattern = new RegExp(`\\bkey:\\s*["']${node.key}["'][\\s\\S]{0,160}\\bname:\\s*["']${node.title}["']`);
+    if (!rendererPattern.test(html)) {
+      errors.push(`[skills universe] renderer missing required spider-web node ${node.title}`);
+    }
+  });
   ["产品判断", "全栈实现", "AI 应用落地"].forEach((legacySkillFallback) => {
     if (html.includes(legacySkillFallback)) {
       errors.push(`[skills universe] legacy static skill-card fallback remains: ${legacySkillFallback}`);
@@ -312,6 +410,7 @@ function checkFaviconAndBrandLogo() {
     ["blog admin", targets.blogAdmin, "../../favicon.svg", "admin-brand-mark"],
     ["blog editor", targets.blogEditor, "../../favicon.svg", "admin-brand-mark"],
     ["projects admin", targets.projectsAdmin, "../../favicon.svg", "admin-brand-mark"],
+    ["skills admin", targets.skillsAdmin, "../../favicon.svg", "admin-brand-mark"],
     ["messages admin", targets.messagesAdmin, "../../favicon.svg", "admin-brand-mark"],
   ];
 
@@ -352,6 +451,7 @@ function checkIcpFiling() {
     ["blog admin", targets.blogAdmin],
     ["blog editor", targets.blogEditor],
     ["projects admin", targets.projectsAdmin],
+    ["skills admin", targets.skillsAdmin],
     ["messages admin", targets.messagesAdmin],
   ];
 
@@ -692,6 +792,7 @@ function checkProjectIndex() {
   const repoMap = readText(targets.projectIndexRepoMap);
   const fileCatalog = readText(targets.projectIndexFileCatalog);
   if (!readme || !repoMap || !fileCatalog) return;
+  const combined = [readme, repoMap, fileCatalog].join("\n");
 
   if (!readme.includes("Before changing code or content, read this index first.")) {
     errors.push("[project-index] README must declare the read-before-edit rule");
@@ -711,6 +812,23 @@ function checkProjectIndex() {
   if (!fileCatalog.includes("scripts/preflight-check.js") || !fileCatalog.includes("api/messages_api.py")) {
     errors.push("[project-index] FILE_CATALOG must cover scripts and API entrypoints");
   }
+  ["site/blog/admin/skills.html", "sections.skills.showcase", "data-skills-universe"].forEach((needle) => {
+    if (!combined.includes(needle)) {
+      errors.push(`[project-index] index must mention ${needle}`);
+    }
+  });
+  [
+    "site/blog/index.html",
+    "site/blog/admin/index.html",
+    "site/blog/admin/editor.html",
+    "site/blog/admin/projects.html",
+    "site/blog/admin/skills.html",
+    "site/blog/admin/messages.html",
+  ].forEach((needle) => {
+    if (!fileCatalog.includes(needle)) {
+      errors.push("[project-index] FILE_CATALOG must cover Blog/admin/editor/projects/skills/messages pages");
+    }
+  });
 }
 
 function checkProjects() {
@@ -1001,11 +1119,11 @@ function checkBlogAndAdmin() {
   }
 
   const adminPages = [
-    ["blog admin", targets.blogAdmin, "文章列表"],
-    ["blog editor", targets.blogEditor, "发布文章"],
-    ["projects admin", targets.projectsAdmin, "项目管理"],
-    ["skills admin", targets.skillsAdmin, "Skills 管理"],
-    ["messages admin", targets.messagesAdmin, "留言管理"],
+    ["blog admin", targets.blogAdmin, "\u6587\u7ae0\u5217\u8868"],
+    ["blog editor", targets.blogEditor, "\u53d1\u5e03\u6587\u7ae0"],
+    ["projects admin", targets.projectsAdmin, "\u9879\u76ee\u7ba1\u7406"],
+    ["skills admin", targets.skillsAdmin, "Skills \u7ba1\u7406"],
+    ["messages admin", targets.messagesAdmin, "\u7559\u8a00\u7ba1\u7406"],
   ];
   adminPages.forEach(([label, filePath, activeLabel]) => {
     const html = readText(filePath);
@@ -1018,13 +1136,7 @@ function checkBlogAndAdmin() {
     if (!html.includes('src="../../favicon.svg"')) {
       errors.push(`[admin shell] ${label} logo must reuse ../../favicon.svg`);
     }
-    ["文章列表", "发布文章", "项目管理", "Skills 管理", "留言管理"].forEach((navLabel) => {
-      if (!html.includes(navLabel)) errors.push(`[admin shell] ${label} missing nav item ${navLabel}`);
-    });
-    const activePattern = new RegExp(`class="is-active"[^>]*>${activeLabel}<`);
-    if (!activePattern.test(html)) {
-      errors.push(`[admin shell] ${label} active nav should be ${activeLabel}`);
-    }
+    checkAdminNav(label, html, activeLabel);
     ["Alex Rivera", "Chief Editor", "auto_awesome", 'class="brand-mark" aria-hidden="true"'].forEach((legacy) => {
       if (html.includes(legacy)) errors.push(`[admin shell] ${label} still contains legacy shell marker: ${legacy}`);
     });

@@ -1235,6 +1235,7 @@ body::before {
 .skills-web-tooltip {
   --tooltip-brand: #fff;
   --tooltip-brand-2: #d7dddd;
+  --tooltip-offset-x: 20px;
   position: absolute;
   left: var(--tooltip-x, 50%);
   top: var(--tooltip-y, 50%);
@@ -1247,10 +1248,16 @@ body::before {
   color: #fff;
   opacity: 0;
   pointer-events: none;
-  transform: translate(20px, -50%) scale(0.96);
+  transform: translate(var(--tooltip-offset-x), -50%) scale(0.96);
+  transform-origin: left center;
   transition:
     opacity 0.22s ease,
     transform 0.22s ease;
+}
+
+.skills-web-tooltip[data-tooltip-side="left"] {
+  --tooltip-offset-x: calc(-100% - 20px);
+  transform-origin: right center;
 }
 
 .skills-web-tooltip::before {
@@ -1306,7 +1313,7 @@ body::before {
 
 .skills-web-tooltip.is-visible {
   opacity: 1;
-  transform: translate(20px, -50%) scale(1);
+  transform: translate(var(--tooltip-offset-x), -50%) scale(1);
 }
 
 .skills-web-tooltip strong,
@@ -1729,6 +1736,16 @@ body::before {
   scroll-snap-type: x proximity;
   scrollbar-width: thin;
   overscroll-behavior-x: contain;
+}
+
+.skills-showcase-rail:focus {
+  outline: none;
+}
+
+.skills-showcase-rail:focus-visible {
+  border-radius: 20px;
+  outline: 3px solid rgba(3, 104, 126, 0.72);
+  outline-offset: 6px;
 }
 
 .skill-showcase-card {
@@ -2388,17 +2405,31 @@ body::before {
 
   .skills-web,
   .skills-web-nodes,
-  .skills-web-node,
+  .skills-web-node::after,
   .skills-web-node::before,
   .skills-universe::after,
   .skills-web-node__icon,
   .skills-web-node__abbr,
   .skills-web-node__label,
-  .skills-web-node:hover,
-  .skills-web-node:focus-visible,
-  .skills-web-tooltip {
-    transform: none;
+  [data-skill-tooltip] {
     transition: none;
+  }
+
+  .skills-web,
+  .skills-web-nodes,
+  .skills-web-node::before,
+  .skills-web-node:hover::before,
+  .skills-web-node:focus-visible::before,
+  .skills-web-node.is-tech-active::before,
+  .skills-web-node__icon,
+  .skills-web-node:hover .skills-web-node__icon,
+  .skills-web-node:focus-visible .skills-web-node__icon,
+  .skills-web-node.is-tech-active .skills-web-node__icon,
+  .skills-web-node__abbr,
+  .skills-web-node:hover .skills-web-node__abbr,
+  .skills-web-node:focus-visible .skills-web-node__abbr,
+  .skills-web-node.is-tech-active .skills-web-node__abbr {
+    transform: none;
   }
 
   .skills-web path {
@@ -2407,11 +2438,33 @@ body::before {
     transition: none;
   }
 
-  .skills-web-node {
+  .skills-web-node,
+  .skills-web-node:hover,
+  .skills-web-node:focus-visible,
+  .skills-web-node.is-tech-active {
     opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    transition: none;
+  }
+
+  .skills-web-node__label,
+  .skills-web-node:hover .skills-web-node__label,
+  .skills-web-node:focus-visible .skills-web-node__label,
+  .skills-web-node.is-tech-active .skills-web-node__label {
+    transform: translate(-50%, 0);
+    transition: none;
+  }
+
+  [data-skill-tooltip],
+  [data-skill-tooltip].is-visible {
+    transform: translate(var(--tooltip-offset-x), -50%) scale(1);
+    transition: none;
   }
 
   .skills-web-node::before,
+  .skills-web-node:hover::before,
+  .skills-web-node:focus-visible::before,
+  .skills-web-node.is-tech-active::before,
   .skills-universe::after {
     animation: none;
   }

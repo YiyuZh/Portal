@@ -3,6 +3,7 @@
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
   var mounted = new WeakSet();
   var mountedUniverses = new WeakSet();
+  var mountedRails = new WeakSet();
   var animatedMetrics = new WeakSet();
   var sectionActive = false;
   var sectionObserver = null;
@@ -71,6 +72,71 @@
     });
   }
 
+  function getRailScrollStep(rail) {
+    var card = rail.querySelector(".skill-showcase-card");
+    var fallback = Math.max(180, rail.clientWidth * 0.82);
+    if (!card) return fallback;
+
+    var styles = window.getComputedStyle ? window.getComputedStyle(rail) : null;
+    var gap = styles ? parseFloat(styles.columnGap) : 0;
+    if (!Number.isFinite(gap) && styles) {
+      gap = parseFloat(styles.gap);
+    }
+    if (!Number.isFinite(gap)) {
+      gap = 0;
+    }
+
+    return Math.max(180, Math.min(rail.clientWidth * 0.92, card.getBoundingClientRect().width + gap));
+  }
+
+  function mountRail(rail) {
+    if (!rail || mountedRails.has(rail)) return;
+    mountedRails.add(rail);
+
+    if (!rail.hasAttribute("tabindex")) {
+      rail.setAttribute("tabindex", "0");
+    }
+
+    rail.addEventListener("keydown", function (event) {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      event.preventDefault();
+
+      var direction = event.key === "ArrowRight" ? 1 : -1;
+      var amount = direction * getRailScrollStep(rail);
+      if (typeof rail.scrollBy === "function") {
+        rail.scrollBy({
+          left: amount,
+          behavior: reducedMotion.matches ? "auto" : "smooth",
+        });
+      } else {
+        rail.scrollLeft += amount;
+      }
+    });
+  }
+
+  function getNodeX(node) {
+    var raw = node.style.getPropertyValue("--node-x") || "50%";
+    return toNumber(String(raw).replace("%", ""), 50);
+  }
+
+  function getTooltipSide(node, tooltip, stage) {
+    var nodeX = getNodeX(node);
+    var stageWidth = stage && stage.getBoundingClientRect ? stage.getBoundingClientRect().width : 0;
+    var tooltipWidth = tooltip && tooltip.offsetWidth ? tooltip.offsetWidth : 280;
+
+    if (stageWidth > 0) {
+      var x = stageWidth * nodeX / 100;
+      var rightRoom = stageWidth - x;
+      var leftRoom = x;
+      if (rightRoom < tooltipWidth + 28) {
+        return leftRoom >= rightRoom ? "left" : "right";
+      }
+    }
+
+    return nodeX >= 60 ? "left" : "right";
+  }
+
   function mountUniverse(universe) {
     if (!universe || mountedUniverses.has(universe)) return;
     mountedUniverses.add(universe);
@@ -97,6 +163,7 @@
       tooltipDesc.textContent = node.getAttribute("data-skill-desc") || "";
       tooltip.style.setProperty("--tooltip-x", node.style.getPropertyValue("--node-x") || "50%");
       tooltip.style.setProperty("--tooltip-y", node.style.getPropertyValue("--node-y") || "50%");
+      tooltip.setAttribute("data-tooltip-side", getTooltipSide(node, tooltip, stage));
       tooltip.setAttribute("aria-hidden", "false");
       tooltip.classList.add("is-visible");
     }
@@ -240,6 +307,10 @@
       mountUniverse(scope);
     }
     Array.prototype.slice.call(scope.querySelectorAll("[data-skills-universe]")).forEach(mountUniverse);
+    if (scope.matches && scope.matches(".skills-showcase-rail")) {
+      mountRail(scope);
+    }
+    Array.prototype.slice.call(scope.querySelectorAll(".skills-showcase-rail")).forEach(mountRail);
     if (scope.matches && scope.matches("[data-skill-card]")) {
       mount(scope);
     }

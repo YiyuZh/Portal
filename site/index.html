@@ -933,7 +933,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="./home-visual.css?v=20260511-skills-universe-visible" />
+    <link rel="stylesheet" href="./home-visual.css?v=20260517-skills-showcase-a11y" />
   </head>
   <body>
     <div class="page">
@@ -1107,7 +1107,7 @@
                 </div>
                 <p class="skills-showcase-note">希望这些 Skills 能帮助你。</p>
               </div>
-              <div class="skills-showcase-rail" role="list" aria-label="我平时喜欢用的 Skills">
+              <div class="skills-showcase-rail" role="list" tabindex="0" aria-label="我平时喜欢用的 Skills">
                 <article class="skill-showcase-card skill-showcase-card--featured" data-skill-card data-skill-featured="true" data-skill-index="0" role="listitem">
                   <div class="skill-showcase-card__shine" aria-hidden="true"></div>
                   <div class="skill-showcase-card__top" data-skill-layer="10">
@@ -1124,6 +1124,96 @@
                     <span>RAG 检索</span>
                     <span>结构化评估</span>
                     <span>流式反馈</span>
+                  </div>
+                </article>
+                <article class="skill-showcase-card" data-skill-card data-skill-featured="false" data-skill-index="1" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">02 / Full-stack Delivery</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="交付链路 5+">
+                      <strong class="skill-metric-value" data-target="5" data-suffix="+">5+</strong>
+                      <small>交付链路</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">把想法交付成系统</h3>
+                  <p data-skill-layer="5">从前端体验、API 设计、数据结构到部署回滚，把一个想法整理成能稳定运行和继续维护的系统。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>前端体验</span>
+                    <span>API 设计</span>
+                    <span>部署回滚</span>
+                  </div>
+                </article>
+                <article class="skill-showcase-card" data-skill-card data-skill-featured="false" data-skill-index="2" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">03 / Product Sense</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="验证维度 3+">
+                      <strong class="skill-metric-value" data-target="3" data-suffix="+">3+</strong>
+                      <small>验证维度</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">从场景判断价值</h3>
+                  <p data-skill-layer="5">先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级和验证方式。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>需求判断</span>
+                    <span>用户路径</span>
+                    <span>MVP 优先级</span>
+                  </div>
+                </article>
+                <article class="skill-showcase-card" data-skill-card data-skill-featured="false" data-skill-index="3" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">04 / RAG &amp; Evaluation</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="评估动作 6+">
+                      <strong class="skill-metric-value" data-target="6" data-suffix="+">6+</strong>
+                      <small>评估动作</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">让回答变得可验证</h3>
+                  <p data-skill-layer="5">通过证据约束、拒答策略和回归测试，让模型回答能被检查、复现和持续优化。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>证据约束</span>
+                    <span>拒答策略</span>
+                    <span>回归测试</span>
+                  </div>
+                </article>
+                <article class="skill-showcase-card" data-skill-card data-skill-featured="false" data-skill-index="4" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">05 / Deploy &amp; Ops</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="上线系统 4+">
+                      <strong class="skill-metric-value" data-target="4" data-suffix="+">4+</strong>
+                      <small>上线系统</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">稳定上线、回滚和维护</h3>
+                  <p data-skill-layer="5">围绕容器化、网关配置和 Git 发布流程，把上线后的稳定性和可维护性纳入交付范围。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>Docker</span>
+                    <span>Caddy</span>
+                    <span>Git 发布</span>
+                  </div>
+                </article>
+                <article class="skill-showcase-card" data-skill-card data-skill-featured="false" data-skill-index="5" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">06 / Frontend Experience</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="交互细节 8+">
+                      <strong class="skill-metric-value" data-target="8" data-suffix="+">8+</strong>
+                      <small>交互细节</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">把复杂功能做得顺手</h3>
+                  <p data-skill-layer="5">用动效反馈、移动端适配和可视化管理，降低复杂工具的理解成本和操作成本。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>动效反馈</span>
+                    <span>移动端适配</span>
+                    <span>可视化管理</span>
                   </div>
                 </article>
               </div>
@@ -2109,7 +2199,7 @@
                   sequence: "02",
                   category: "Full-stack Delivery",
                   title: "把想法交付成系统",
-                  description: "从前端体验、后端接口、数据结构到部署回滚，优先保证能稳定上线和继续维护。",
+                  description: "从前端体验、API 设计、数据结构到部署回滚，把一个想法整理成能稳定运行和继续维护的系统。",
                   metric: 5,
                   metricSuffix: "+",
                   metricLabel: "交付链路",
@@ -2120,7 +2210,7 @@
                   sequence: "03",
                   category: "Product Sense",
                   title: "从场景判断价值",
-                  description: "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。",
+                  description: "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级和验证方式。",
                   metric: 3,
                   metricSuffix: "+",
                   metricLabel: "验证维度",
@@ -2131,7 +2221,7 @@
                   sequence: "04",
                   category: "RAG & Evaluation",
                   title: "让回答变得可验证",
-                  description: "通过证据约束、拒答策略和回归测试，让模型输出能被检查、复现和持续改进。",
+                  description: "通过证据约束、拒答策略和回归测试，让模型回答能被检查、复现和持续优化。",
                   metric: 6,
                   metricSuffix: "+",
                   metricLabel: "评估动作",
@@ -2142,7 +2232,7 @@
                   sequence: "05",
                   category: "Deploy & Ops",
                   title: "稳定上线、回滚和维护",
-                  description: "围绕容器化、网关配置和发布流程，把功能上线后的稳定性也纳入交付范围。",
+                  description: "围绕容器化、网关配置和 Git 发布流程，把上线后的稳定性和可维护性纳入交付范围。",
                   metric: 4,
                   metricSuffix: "+",
                   metricLabel: "上线系统",
@@ -2153,7 +2243,7 @@
                   sequence: "06",
                   category: "Frontend Experience",
                   title: "把复杂功能做得顺手",
-                  description: "用动效反馈、移动端适配和可视化管理，降低复杂工具的理解和操作成本。",
+                  description: "用动效反馈、移动端适配和可视化管理，降低复杂工具的理解成本和操作成本。",
                   metric: 8,
                   metricSuffix: "+",
                   metricLabel: "交互细节",
@@ -2268,7 +2358,7 @@
                 '</div>',
                 '<p class="skills-showcase-note">' + escapeHtml(data.note) + '</p>',
               '</div>',
-              '<div class="skills-showcase-rail" role="list" aria-label="' + escapeHtml(data.title) + '"></div>'
+              '<div class="skills-showcase-rail" role="list" tabindex="0" aria-label="' + escapeHtml(data.title) + '"></div>'
             ].join("");
             var rail = section.querySelector(".skills-showcase-rail");
             data.items.forEach(function (item, index) {
@@ -2363,7 +2453,7 @@
     </script>
     <script src="./home-hero.js" defer></script>
     <script src="./home-tilt.js" defer></script>
-    <script src="./home-skills.js?v=20260511-skills-universe-visible" defer></script>
+    <script src="./home-skills.js?v=20260517-skills-showcase-a11y" defer></script>
     <script src="./home-collab.js" defer></script>
   </body>
 </html>

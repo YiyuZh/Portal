@@ -190,6 +190,7 @@
 
 - `package.json` 已定义：
   - `npm run validate`
+  - `npm run fix:content`
   - `npm run preflight`
   - `npm run check`
   - `npm run test:messages`
@@ -202,14 +203,16 @@
   - messages manifest
   - security 文件
   - tech icons
+  - 默认只读；只有 `npm run fix:content` / `--fix` 才允许写回 JSON 自动修复
 - `preflight-check.js` 校验：
   - 首页结构
   - favicon/logo
   - ICP 备案
   - Hero 防回退
   - Skills Universe 防回退
+  - 必需蜘蛛网节点 Python / React / TypeScript / Docker / PostgreSQL / JavaScript
   - Projects rail 防回退
-  - Blog/admin/editor/projects/skills/messages 页面
+  - Blog/admin/editor/projects/skills/messages 页面与五个后台导航 href
   - Messages API
   - security
   - project-index
@@ -424,6 +427,7 @@
 
 ```powershell
 npm run validate
+npm run fix:content
 npm run preflight
 npm run check
 npm run test:messages

@@ -93,7 +93,7 @@
             </p>
             <h1 class="mt-2 text-3xl font-bold font-headline">Skills Showcase 管理</h1>
             <p class="mt-2 max-w-3xl text-sm leading-7 text-on-surface-variant">
-              这里只编辑首页 Skills 区块下方的常用 Skills 展示卡，保存路径是 site-config.json -> sections.skills.showcase。上方技术栈蜘蛛网仍由首页代码维护，不在这里改动。
+              本页只编辑 site-config.json -> sections.skills.title、sections.skills.description 和 sections.skills.showcase；不会编辑技术栈蜘蛛网节点（sections.skills.items）。
             </p>
             <div id="errorPanel" class="mt-4 hidden rounded-2xl border border-error/20 bg-red-50/70 p-4 text-sm text-red-700">
               <div class="flex items-center justify-between gap-3">
@@ -165,6 +165,9 @@
             <li>服务器进入仓库后执行 <code>git pull</code>。</li>
             <li>执行 <code>docker compose up -d --build</code> 完成重建。</li>
           </ol>
+          <p class="mt-3">
+            点击下载前会再次确认：导出会自动修正 sequence、tags、metric、featured、id，不是原样导出当前表单值。
+          </p>
           <p class="mt-3 font-semibold text-on-surface">
             本页面不会直接写服务器文件，也不会修改技术栈蜘蛛网、HireMate、Caddyfile 或 shared_gateway。
           </p>
@@ -198,12 +201,25 @@
       const errorToggle = document.getElementById("errorToggle");
 
       let siteConfig = null;
+      let configLoaded = false;
+      let configLoadError = "";
       let errorsCollapsed = false;
       let skillsState = {
         title: "把产品、工程与 AI 应用串起来",
         description: "这里保留我的技术栈结构，同时补充我平时更高频使用的 Skills，希望能够帮助你更快判断合作方向。",
         showcase: defaultShowcase(),
       };
+
+      function setPublishButtonState() {
+        const disabled = !configLoaded || Boolean(configLoadError);
+        publishBtn.disabled = disabled;
+        publishBtn.setAttribute("aria-disabled", String(disabled));
+        publishBtn.classList.toggle("cursor-not-allowed", disabled);
+        publishBtn.classList.toggle("opacity-50", disabled);
+        publishBtn.title = configLoadError || (configLoaded ? "" : "正在读取 /assets/site-config.json");
+      }
+
+      setPublishButtonState();
 
       function defaultShowcase() {
         return {
@@ -321,13 +337,32 @@
         return slug || fallback;
       }
 
+      function isPlainObject(value) {
+        return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+      }
+
+      function parseLegacyLabel(label, index) {
+        const fallbackSequence = String(index + 1).padStart(2, "0");
+        const text = String(label || "").trim();
+        if (!text) return { sequence: fallbackSequence, category: "" };
+        const parts = text.split("/");
+        const sequenceMatch = parts[0].trim().match(/\d+/);
+        return {
+          sequence: sequenceMatch ? sequenceMatch[0].padStart(2, "0") : fallbackSequence,
+          category: parts.length > 1 ? parts.slice(1).join("/").trim() : "",
+        };
+      }
+
       function normalizeItem(item, index) {
         const source = item || {};
+        const legacy = parseLegacyLabel(source.label, index);
         const metric = Number(source.metric);
+        const sequence = String(source.sequence || legacy.sequence || String(index + 1).padStart(2, "0")).trim();
+        const category = String(source.category || legacy.category || "").trim();
         return {
           id: String(source.id || "").trim(),
-          sequence: String(source.sequence || String(index + 1).padStart(2, "0")).trim(),
-          category: String(source.category || "").trim(),
+          sequence,
+          category,
           title: String(source.title || "").trim(),
           description: String(source.description || "").trim(),
           metric: Number.isFinite(metric) ? metric : source.metric,
@@ -336,6 +371,44 @@
           tags: splitTags(source.tags || source.highlights),
           featured: source.featured === true,
         };
+      }
+
+      function buildShowcase(skills) {
+        const source = skills || {};
+        const fallback = defaultShowcase();
+        const showcase = isPlainObject(source.showcase) ? source.showcase : {};
+        const showcaseItems = Array.isArray(showcase.items) && showcase.items.length ? showcase.items : null;
+        const legacyItems = Array.isArray(source.items) && source.items.length ? source.items : null;
+        const items = showcaseItems || legacyItems || fallback.items;
+        return {
+          title: showcase.title || fallback.title,
+          description: showcase.description || fallback.description,
+          note: showcase.note || fallback.note,
+          items: items.map(normalizeItem),
+        };
+      }
+
+      function validateLoadedSiteConfig() {
+        const errors = [];
+        if (!configLoaded || configLoadError) {
+          errors.push("site-config.json 尚未成功加载，已禁止下载。请修复 /assets/site-config.json 后刷新页面。");
+          return errors;
+        }
+        if (!isPlainObject(siteConfig)) {
+          errors.push("site-config.json 不是完整 JSON 对象，已禁止下载。");
+          return errors;
+        }
+        ["hero", "nav", "sections", "footer"].forEach((key) => {
+          if (!isPlainObject(siteConfig[key])) {
+            errors.push(`site-config.json 缺少顶层对象：${key}`);
+          }
+        });
+        return errors;
+      }
+
+      function formatConfigLoadError(error) {
+        const detail = error && error.message ? `（${error.message}）` : "";
+        return `读取 /assets/site-config.json 失败${detail}，已禁用“下载 site-config.json”。请确认文件存在、JSON 有效且当前页面能访问该路径。`;
       }
 
       function collect() {
@@ -366,8 +439,10 @@
         });
       }
 
-      function autoFixState() {
-        collect();
+      function autoFixState(options = {}) {
+        if (options.collect !== false) {
+          collect();
+        }
         const items = skillsState.showcase.items;
         items.forEach((item, index) => {
           item.sequence = String(index + 1).padStart(2, "0");
@@ -412,7 +487,12 @@
       }
 
       function renderErrors(errors) {
-        if (!errors.length) {
+        const allErrors = [];
+        if (configLoadError) allErrors.push(configLoadError);
+        (errors || []).forEach((error) => {
+          if (error && !allErrors.includes(error)) allErrors.push(error);
+        });
+        if (!allErrors.length) {
           errorPanel.classList.add("hidden");
           errorList.innerHTML = "";
           return;
@@ -420,7 +500,7 @@
         errorPanel.classList.remove("hidden");
         errorList.innerHTML = errorsCollapsed
           ? ""
-          : "<ul class='list-disc space-y-1 pl-5'>" + errors.map((error) => `<li>${escapeHtml(error)}</li>`).join("") + "</ul>";
+          : "<ul class='list-disc space-y-1 pl-5'>" + allErrors.map((error) => `<li>${escapeHtml(error)}</li>`).join("") + "</ul>";
         errorToggle.textContent = errorsCollapsed ? "展开" : "收起";
       }
 
@@ -547,15 +627,32 @@
       }
 
       function exportConfig() {
+        const configErrors = validateLoadedSiteConfig();
+        if (configErrors.length) {
+          renderErrors(configErrors);
+          alert("下载已取消：\n\n" + configErrors.join("\n"));
+          return;
+        }
+        const confirmed = confirm(
+          "下载前会自动修正以下字段，不是原样导出当前表单值：\n\n" +
+            "1. sequence：按当前卡片顺序重新编号。\n" +
+            "2. tags：规范为数组并移除空标签。\n" +
+            "3. metric：转换为数字。\n" +
+            "4. featured：如果没有精选项，会默认选中第一项。\n" +
+            "5. id：为空时会根据 category 或 title 自动生成。\n\n" +
+            "确认继续下载 site-config.json？"
+        );
+        if (!confirmed) return;
+
         autoFixState();
         render();
-        const errors = validateSkills();
+        const errors = validateLoadedSiteConfig().concat(validateSkills());
         renderErrors(errors);
         if (errors.length) {
           alert("发布前发现以下问题：\n\n" + errors.join("\n"));
           return;
         }
-        const nextConfig = JSON.parse(JSON.stringify(siteConfig || {}));
+        const nextConfig = JSON.parse(JSON.stringify(siteConfig));
         nextConfig.sections = nextConfig.sections || {};
         nextConfig.sections.skills = nextConfig.sections.skills || {};
         nextConfig.sections.skills.title = skillsState.title;
@@ -579,7 +676,7 @@
         };
         downloadFile("site-config.json", JSON.stringify(nextConfig, null, 2));
         alert(
-          "已生成 site-config.json（UTF-8）。\n\n" +
+          "已生成 site-config.json（UTF-8），并已自动修正 sequence、tags、metric、featured、id。\n\n" +
             "1. 用下载的 site-config.json 替换 portal/site/assets/site-config.json。\n" +
             "2. Git 提交并推送。\n" +
             "3. 服务器执行 git pull。\n" +
@@ -679,33 +776,35 @@
       });
 
       fetch(dataUrl, { cache: "no-store" })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
         .then((data) => {
-          siteConfig = data || {};
-          const skills = (siteConfig.sections && siteConfig.sections.skills) || {};
-          const fallback = defaultShowcase();
-          const showcase = skills.showcase || fallback;
+          if (!isPlainObject(data)) throw new Error("响应不是 JSON 对象");
+          siteConfig = data;
+          configLoaded = true;
+          configLoadError = "";
+          setPublishButtonState();
+          const skills = (isPlainObject(siteConfig.sections) && isPlainObject(siteConfig.sections.skills)) ? siteConfig.sections.skills : {};
+          const showcase = buildShowcase(skills);
           skillsState = {
             title: skills.title || "把产品、工程与 AI 应用串起来",
             description: skills.description || "这里保留我的技术栈结构，同时补充我平时更高频使用的 Skills，希望能够帮助你更快判断合作方向。",
-            showcase: {
-              title: showcase.title || fallback.title,
-              description: showcase.description || fallback.description,
-              note: showcase.note || fallback.note,
-              items: Array.isArray(showcase.items) && showcase.items.length
-                ? showcase.items.map(normalizeItem)
-                : fallback.items.map(normalizeItem),
-            },
+            showcase,
           };
-          autoFixState();
+          autoFixState({ collect: false });
           render();
-          renderErrors(validateSkills());
+          renderErrors(validateLoadedSiteConfig().concat(validateSkills()));
         })
-        .catch(() => {
-          siteConfig = { sections: { skills: {} } };
+        .catch((error) => {
+          siteConfig = null;
+          configLoaded = false;
+          configLoadError = formatConfigLoadError(error);
+          setPublishButtonState();
           skillsState.showcase = defaultShowcase();
           render();
-          renderErrors(["读取 /assets/site-config.json 失败，当前显示默认 Skills Showcase。"]);
+          renderErrors(["当前显示默认 Skills Showcase，仅供查看和编辑草稿。"]);
         });
     </script>
   </body>

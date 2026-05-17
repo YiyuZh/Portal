@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "validate": "node scripts/validate-content.js",
+    "fix:content": "node scripts/validate-content.js --fix",
     "preflight": "node scripts/preflight-check.js",
     "check": "node scripts/validate-content.js && node scripts/preflight-check.js",
     "test:messages": "node scripts/test-messages-api.js",
