@@ -34,8 +34,8 @@
     },
     "skills": {
       "kicker": "Skills",
-      "title": "把模糊需求变成可上线系统",
-      "description": "Skills 不是技术名词堆叠，而是围绕产品判断、工程交付和 AI 应用落地形成的一套工作方式。",
+      "title": "把产品、工程与 AI 应用串起来",
+      "description": "这里保留我的技术栈结构，同时补充我平时更高频使用的 Skills，希望能够帮助你更快判断合作方向。",
       "items": [
         {
           "label": "03 / Product Sense",
@@ -83,7 +83,105 @@
           "priority": 1,
           "featured": true
         }
-      ]
+      ],
+      "showcase": {
+        "title": "我平时喜欢用的 Skills",
+        "description": "这些能力来自我在 Zenithy、HireMate、AI-Interview 和日常产品构建里的高频实践，希望能帮助你更快判断我能一起推进什么。",
+        "note": "希望这些 Skills 能帮助你。",
+        "items": [
+          {
+            "id": "ai-application",
+            "sequence": "01",
+            "category": "AI Application",
+            "title": "让模型进入业务闭环",
+            "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可验证的产品能力。",
+            "metric": 4,
+            "metricSuffix": "+",
+            "metricLabel": "AI 场景",
+            "tags": [
+              "RAG 检索",
+              "结构化评估",
+              "流式反馈"
+            ],
+            "featured": true
+          },
+          {
+            "id": "full-stack-delivery",
+            "sequence": "02",
+            "category": "Full-stack Delivery",
+            "title": "把想法交付成系统",
+            "description": "从前端体验、API 设计、数据结构到部署回滚，把一个想法整理成能稳定运行和继续维护的系统。",
+            "metric": 5,
+            "metricSuffix": "+",
+            "metricLabel": "交付链路",
+            "tags": [
+              "前端体验",
+              "API 设计",
+              "部署回滚"
+            ]
+          },
+          {
+            "id": "product-sense",
+            "sequence": "03",
+            "category": "Product Sense",
+            "title": "从场景判断价值",
+            "description": "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级和验证方式。",
+            "metric": 3,
+            "metricSuffix": "+",
+            "metricLabel": "验证维度",
+            "tags": [
+              "需求判断",
+              "用户路径",
+              "MVP 优先级"
+            ]
+          },
+          {
+            "id": "rag-evaluation",
+            "sequence": "04",
+            "category": "RAG & Evaluation",
+            "title": "让回答变得可验证",
+            "description": "通过证据约束、拒答策略和回归测试，让模型回答能被检查、复现和持续优化。",
+            "metric": 6,
+            "metricSuffix": "+",
+            "metricLabel": "评估动作",
+            "tags": [
+              "证据约束",
+              "拒答策略",
+              "回归测试"
+            ]
+          },
+          {
+            "id": "deploy-ops",
+            "sequence": "05",
+            "category": "Deploy & Ops",
+            "title": "稳定上线、回滚和维护",
+            "description": "围绕容器化、网关配置和 Git 发布流程，把上线后的稳定性和可维护性纳入交付范围。",
+            "metric": 4,
+            "metricSuffix": "+",
+            "metricLabel": "上线系统",
+            "tags": [
+              "Docker",
+              "Caddy",
+              "Git 发布"
+            ]
+          },
+          {
+            "id": "frontend-experience",
+            "sequence": "06",
+            "category": "Frontend Experience",
+            "title": "把复杂功能做得顺手",
+            "description": "用动效反馈、移动端适配和可视化管理，降低复杂工具的理解成本和操作成本。",
+            "metric": 8,
+            "metricSuffix": "+",
+            "metricLabel": "交互细节",
+            "tags": [
+              "动效反馈",
+              "移动端适配",
+              "可视化管理"
+            ]
+          }
+        ]
+      }
     },
     "collab": {
       "kicker": "Collab",

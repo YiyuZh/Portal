@@ -18,6 +18,8 @@ const targets = {
   siteConfig: path.join(siteDir, "assets", "site-config.json"),
   manifest: path.join(siteDir, "blog", "posts", "manifest.json"),
   messagesManifest: path.join(siteDir, "blog", "messages", "manifest.json"),
+  blogAdmin: path.join(siteDir, "blog", "admin", "index.html"),
+  skillsAdmin: path.join(siteDir, "blog", "admin", "skills.html"),
   securityPrd: path.join(rootDir, "security", "PRD.md"),
   securityReadme: path.join(rootDir, "security", "README.md"),
   securityModule: path.join(rootDir, "security", "guards.py"),
@@ -377,12 +379,75 @@ function validateSiteConfig() {
       }
     });
   });
+
+  const skills = data.sections && data.sections.skills;
+  if (!skills || typeof skills !== "object") {
+    errors.push("[siteConfig] sections.skills must exist");
+  } else {
+    const showcase = skills.showcase;
+    if (!showcase || typeof showcase !== "object") {
+      errors.push("[siteConfig] sections.skills.showcase must exist");
+    } else {
+      requireText(showcase.title, "siteConfig.sections.skills.showcase.title");
+      requireText(showcase.description, "siteConfig.sections.skills.showcase.description");
+      requireText(showcase.note, "siteConfig.sections.skills.showcase.note");
+      if (!Array.isArray(showcase.items) || !showcase.items.length) {
+        errors.push("[siteConfig] sections.skills.showcase.items must be a non-empty array");
+      } else {
+        const ids = new Set();
+        showcase.items.forEach((item, index) => {
+          const label = `siteConfig.sections.skills.showcase.items[${index}]`;
+          requireText(item.id, `${label}.id`);
+          requireText(item.sequence, `${label}.sequence`);
+          requireText(item.category, `${label}.category`);
+          requireText(item.title, `${label}.title`);
+          requireText(item.description, `${label}.description`);
+          requireText(item.metricLabel, `${label}.metricLabel`);
+          if (item.id) {
+            if (ids.has(item.id)) errors.push(`[duplicate id] ${label}.id = ${item.id}`);
+            ids.add(item.id);
+          }
+          if (typeof item.metric !== "number" || !Number.isFinite(item.metric)) {
+            errors.push(`[siteConfig] ${label}.metric must be number`);
+          }
+          if (item.metricSuffix !== undefined && typeof item.metricSuffix !== "string") {
+            errors.push(`[siteConfig] ${label}.metricSuffix must be string when provided`);
+          }
+          if (!Array.isArray(item.tags)) {
+            errors.push(`[siteConfig] ${label}.tags must be array`);
+          } else {
+            item.tags.forEach((tag, tagIndex) => {
+              if (typeof tag !== "string" || !tag.trim()) {
+                errors.push(`[siteConfig] ${label}.tags[${tagIndex}] must be non-empty string`);
+              }
+            });
+          }
+          if (item.featured !== undefined && typeof item.featured !== "boolean") {
+            errors.push(`[siteConfig] ${label}.featured must be boolean when provided`);
+          }
+        });
+      }
+    }
+  }
 }
 
 function validateHomepageFiles() {
   [targets.index, targets.homeVisual, targets.homeHero, targets.homeTilt, targets.homeSkills, targets.homeCollab].forEach((filePath) => {
     ensureFile(filePath, path.basename(filePath));
   });
+  ensureFile(targets.blogAdmin, "admin/index.html");
+  ensureFile(targets.skillsAdmin, "admin/skills.html");
+  const indexHtml = fs.existsSync(targets.index) ? fs.readFileSync(targets.index, "utf8") : "";
+  const adminIndex = fs.existsSync(targets.blogAdmin) ? fs.readFileSync(targets.blogAdmin, "utf8") : "";
+  if (indexHtml && !indexHtml.includes("data-skills-universe")) {
+    errors.push("[skills universe] homepage must keep data-skills-universe");
+  }
+  if (indexHtml && !indexHtml.includes("skills-showcase")) {
+    errors.push("[skills showcase] homepage must render #skills-showcase");
+  }
+  if (adminIndex && (!adminIndex.includes("skills.html") || !adminIndex.includes("Skills 管理"))) {
+    errors.push("[skills admin] admin/index.html must include Skills 管理 entry");
+  }
 }
 
 function validateTechIcons() {

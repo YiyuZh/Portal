@@ -1098,6 +1098,36 @@
                 </div>
               </div>
             </div>
+            <section class="skills-showcase" id="skills-showcase" data-skills-showcase-fallback aria-labelledby="skills-showcase-title">
+              <div class="skills-showcase-head">
+                <div>
+                  <span class="skills-showcase-kicker">Favorite Skills</span>
+                  <h3 id="skills-showcase-title">我平时喜欢用的 Skills</h3>
+                  <p>这些能力来自我在 Zenithy、HireMate、AI-Interview 和日常产品构建里的高频实践，希望能帮助你更快判断我能一起推进什么。</p>
+                </div>
+                <p class="skills-showcase-note">希望这些 Skills 能帮助你。</p>
+              </div>
+              <div class="skills-showcase-rail" role="list" aria-label="我平时喜欢用的 Skills">
+                <article class="skill-showcase-card skill-showcase-card--featured" data-skill-card data-skill-featured="true" data-skill-index="0" role="listitem">
+                  <div class="skill-showcase-card__shine" aria-hidden="true"></div>
+                  <div class="skill-showcase-card__top" data-skill-layer="10">
+                    <span class="skill-showcase-card__eyebrow">01 / AI Application</span>
+                    <div class="skill-metric skill-showcase-card__metric" aria-label="AI 场景 4+">
+                      <strong class="skill-metric-value" data-target="4" data-suffix="+">4+</strong>
+                      <small>AI 场景</small>
+                    </div>
+                  </div>
+                  <div class="skill-showcase-card__rule" aria-hidden="true"></div>
+                  <h3 data-skill-layer="8">让模型进入业务闭环</h3>
+                  <p data-skill-layer="5">围绕解析、问答、评估、自动化流程等场景，把模型能力变成可验证的产品能力。</p>
+                  <div class="skill-showcase-tags" data-skill-layer="12">
+                    <span>RAG 检索</span>
+                    <span>结构化评估</span>
+                    <span>流式反馈</span>
+                  </div>
+                </article>
+              </div>
+            </section>
           </div>
         </section>
 
@@ -1883,12 +1913,12 @@
           });
         }
 
-        function renderSkillsList(containerId, items) {
+        function renderSkillsList(containerId, items, showcase) {
           var container = document.getElementById(containerId);
-          if (!container || !Array.isArray(items) || !items.length) return;
+          if (!container) return;
           container.innerHTML = "";
 
-          var normalizedItems = items.map(function (item, index) {
+          var normalizedItems = (Array.isArray(items) ? items : []).map(function (item, index) {
             var priority = Number(item.priority);
             return {
               item: item,
@@ -2056,32 +2086,207 @@
             return card;
           }
 
-          container.appendChild(buildSkillsWeb());
-
-          if (featuredEntry) {
-            var featuredCard = buildSkillCard(featuredEntry, 0, true);
-            stack.appendChild(featuredCard);
-            if (window.ZenithyReveal) {
-              window.ZenithyReveal.observe(featuredCard);
-            }
-            if (window.ZenithySkills) {
-              window.ZenithySkills.refresh(featuredCard);
-            }
+          function defaultSkillsShowcase() {
+            return {
+              title: "我平时喜欢用的 Skills",
+              description: "这些能力来自我在 Zenithy、HireMate、AI-Interview 和日常产品构建里的高频实践，希望能帮助你更快判断我能一起推进什么。",
+              note: "希望这些 Skills 能帮助你。",
+              items: [
+                {
+                  id: "ai-application",
+                  sequence: "01",
+                  category: "AI Application",
+                  title: "让模型进入业务闭环",
+                  description: "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可验证的产品能力。",
+                  metric: 4,
+                  metricSuffix: "+",
+                  metricLabel: "AI 场景",
+                  tags: ["RAG 检索", "结构化评估", "流式反馈"],
+                  featured: true
+                },
+                {
+                  id: "full-stack-delivery",
+                  sequence: "02",
+                  category: "Full-stack Delivery",
+                  title: "把想法交付成系统",
+                  description: "从前端体验、后端接口、数据结构到部署回滚，优先保证能稳定上线和继续维护。",
+                  metric: 5,
+                  metricSuffix: "+",
+                  metricLabel: "交付链路",
+                  tags: ["前端体验", "API 设计", "部署回滚"]
+                },
+                {
+                  id: "product-sense",
+                  sequence: "03",
+                  category: "Product Sense",
+                  title: "从场景判断价值",
+                  description: "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级。",
+                  metric: 3,
+                  metricSuffix: "+",
+                  metricLabel: "验证维度",
+                  tags: ["需求判断", "用户路径", "MVP 优先级"]
+                },
+                {
+                  id: "rag-evaluation",
+                  sequence: "04",
+                  category: "RAG & Evaluation",
+                  title: "让回答变得可验证",
+                  description: "通过证据约束、拒答策略和回归测试，让模型输出能被检查、复现和持续改进。",
+                  metric: 6,
+                  metricSuffix: "+",
+                  metricLabel: "评估动作",
+                  tags: ["证据约束", "拒答策略", "回归测试"]
+                },
+                {
+                  id: "deploy-ops",
+                  sequence: "05",
+                  category: "Deploy & Ops",
+                  title: "稳定上线、回滚和维护",
+                  description: "围绕容器化、网关配置和发布流程，把功能上线后的稳定性也纳入交付范围。",
+                  metric: 4,
+                  metricSuffix: "+",
+                  metricLabel: "上线系统",
+                  tags: ["Docker", "Caddy", "Git 发布"]
+                },
+                {
+                  id: "frontend-experience",
+                  sequence: "06",
+                  category: "Frontend Experience",
+                  title: "把复杂功能做得顺手",
+                  description: "用动效反馈、移动端适配和可视化管理，降低复杂工具的理解和操作成本。",
+                  metric: 8,
+                  metricSuffix: "+",
+                  metricLabel: "交互细节",
+                  tags: ["动效反馈", "移动端适配", "可视化管理"]
+                }
+              ]
+            };
           }
 
-          secondaryEntries.forEach(function (entry, index) {
-            var card = buildSkillCard(entry, index + 1, false);
-            stack.appendChild(card);
-            if (window.ZenithyReveal) {
-              window.ZenithyReveal.observe(card);
+          function splitTags(value) {
+            if (Array.isArray(value)) {
+              return value.map(function (tag) {
+                return String(tag || "").trim();
+              }).filter(Boolean);
             }
-            if (window.ZenithySkills) {
-              window.ZenithySkills.refresh(card);
+            if (typeof value === "string") {
+              return value.split(/[\n,，/]+/).map(function (tag) {
+                return tag.trim();
+              }).filter(Boolean);
             }
-          });
+            return [];
+          }
 
-          if (secondaryEntries.length) {
-            container.appendChild(stack);
+          function sequenceFromLabel(label, fallback) {
+            var text = String(label || "").trim();
+            var match = text.match(/^(\d{1,2})\s*\//);
+            if (match) return match[1].padStart(2, "0");
+            return String(fallback + 1).padStart(2, "0");
+          }
+
+          function categoryFromLabel(label, fallback) {
+            var text = String(label || "").trim();
+            var parts = text.split("/");
+            if (parts.length > 1 && parts[1].trim()) return parts[1].trim();
+            return fallback || "Skill";
+          }
+
+          function normalizeShowcaseItem(item, index) {
+            var source = item || {};
+            var metric = Number(source.metric);
+            return {
+              id: String(source.id || source.title || "skill-" + (index + 1)).trim(),
+              sequence: String(source.sequence || sequenceFromLabel(source.label, index)).trim(),
+              category: String(source.category || categoryFromLabel(source.label, source.label)).trim() || "Skill",
+              title: String(source.title || "未命名 Skill").trim(),
+              description: String(source.description || "").trim(),
+              metric: Number.isFinite(metric) ? metric : 0,
+              metricSuffix: String(source.metricSuffix || "").trim(),
+              metricLabel: String(source.metricLabel || "Metric").trim(),
+              tags: splitTags(source.tags || source.highlights),
+              featured: source.featured === true
+            };
+          }
+
+          function normalizeShowcase(showcaseConfig) {
+            var fallback = defaultSkillsShowcase();
+            var source = showcaseConfig && typeof showcaseConfig === "object" ? showcaseConfig : {};
+            var sourceItems = Array.isArray(source.items) && source.items.length ? source.items : fallback.items;
+            var normalizedItems = sourceItems.map(normalizeShowcaseItem);
+            if (!normalizedItems.some(function (item) { return item.featured; }) && normalizedItems[0]) {
+              normalizedItems[0].featured = true;
+            }
+            return {
+              title: source.title || fallback.title,
+              description: source.description || fallback.description,
+              note: source.note || fallback.note,
+              items: normalizedItems
+            };
+          }
+
+          function buildShowcaseCard(item, index) {
+            var card = document.createElement("article");
+            var isFeatured = item.featured === true || index === 0;
+            var tags = splitTags(item.tags);
+            card.className = "skill-showcase-card" + (isFeatured ? " skill-showcase-card--featured" : "");
+            card.setAttribute("data-skill-card", "true");
+            card.setAttribute("data-skill-featured", isFeatured ? "true" : "false");
+            card.setAttribute("data-skill-index", String(index));
+            card.style.setProperty("--reveal-delay", index * 90 + "ms");
+            card.style.setProperty("--skill-index", index);
+            card.innerHTML = [
+              '<div class="skill-showcase-card__shine" aria-hidden="true"></div>',
+              '<div class="skill-showcase-card__top" data-skill-layer="10">',
+                '<span class="skill-showcase-card__eyebrow">' + escapeHtml(item.sequence) + ' / ' + escapeHtml(item.category) + '</span>',
+                '<div class="skill-metric skill-showcase-card__metric" aria-label="' + escapeHtml(item.metricLabel + " " + item.metric + item.metricSuffix) + '">',
+                  '<strong class="skill-metric-value" data-target="' + escapeHtml(item.metric) + '" data-suffix="' + escapeHtml(item.metricSuffix) + '">0</strong>',
+                  '<small>' + escapeHtml(item.metricLabel) + '</small>',
+                '</div>',
+              '</div>',
+              '<div class="skill-showcase-card__rule" aria-hidden="true"></div>',
+              '<h3 data-skill-layer="8">' + escapeHtml(item.title) + '</h3>',
+              '<p data-skill-layer="5">' + escapeHtml(item.description) + '</p>',
+              tags.length ? '<div class="skill-showcase-tags" data-skill-layer="12">' + tags.map(function (tag) {
+                return '<span>' + escapeHtml(tag) + '</span>';
+              }).join("") + '</div>' : "",
+            ].join("");
+            return card;
+          }
+
+          function buildSkillsShowcase(showcaseConfig) {
+            var data = normalizeShowcase(showcaseConfig);
+            var section = document.createElement("section");
+            section.className = "skills-showcase";
+            section.id = "skills-showcase";
+            section.setAttribute("aria-labelledby", "skills-showcase-title");
+            section.innerHTML = [
+              '<div class="skills-showcase-head">',
+                '<div>',
+                  '<span class="skills-showcase-kicker">Favorite Skills</span>',
+                  '<h3 id="skills-showcase-title">' + escapeHtml(data.title) + '</h3>',
+                  '<p>' + escapeHtml(data.description) + '</p>',
+                '</div>',
+                '<p class="skills-showcase-note">' + escapeHtml(data.note) + '</p>',
+              '</div>',
+              '<div class="skills-showcase-rail" role="list" aria-label="' + escapeHtml(data.title) + '"></div>'
+            ].join("");
+            var rail = section.querySelector(".skills-showcase-rail");
+            data.items.forEach(function (item, index) {
+              var card = buildShowcaseCard(item, index);
+              card.setAttribute("role", "listitem");
+              rail.appendChild(card);
+              if (window.ZenithyReveal) {
+                window.ZenithyReveal.observe(card);
+              }
+            });
+            return section;
+          }
+
+          container.appendChild(buildSkillsWeb());
+          container.appendChild(buildSkillsShowcase(showcase));
+
+          if (window.ZenithySkills && window.ZenithySkills.refresh) {
+            window.ZenithySkills.refresh(document.getElementById("skills"));
           }
         }
 
@@ -2104,7 +2309,11 @@
             applySection("about", config.sections.about);
             applySection("about-note", config.sections.aboutNote);
             applySection("contact", config.sections.contact);
-            renderSkillsList("skills-list", config.sections.skills && config.sections.skills.items);
+            renderSkillsList(
+              "skills-list",
+              config.sections.skills && config.sections.skills.items,
+              config.sections.skills && config.sections.skills.showcase
+            );
             renderInsightList("collab-list", config.sections.collab && config.sections.collab.items);
             if (config.sections.contact && config.sections.contact.primaryCta) {
               setLink("contact-primary", config.sections.contact.primaryCta.label, config.sections.contact.primaryCta.url);

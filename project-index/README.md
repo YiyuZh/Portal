@@ -44,6 +44,15 @@ After editing:
   - `site/assets/site-config.json`
   - `scripts/preflight-check.js`
 
+- Homepage Skills Universe / Showcase:
+  - `site/index.html`
+  - `site/home-visual.css`
+  - `site/home-skills.js`
+  - `site/assets/site-config.json`
+  - `site/blog/admin/skills.html`
+  - `scripts/validate-content.js`
+  - `scripts/preflight-check.js`
+
 - Homepage project rail:
   - `site/index.html`
   - `site/home-visual.css`

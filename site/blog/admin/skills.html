@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zenithy - Skills 管理</title>
+    <meta name="theme-color" content="#f8f9fa" />
+    <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+    <link rel="alternate icon" href="../../favicon.svg" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+            },
+            colors: {
+              surface: "#f8f9fa",
+              "surface-container-low": "#f1f4f6",
+              "surface-container-lowest": "#ffffff",
+              "on-surface": "#2b3437",
+              "on-surface-variant": "#586064",
+              tertiary: "#03687e",
+              "on-tertiary": "#f1faff",
+              "outline-variant": "#abb3b7",
+              error: "#9f403d",
+            },
+            borderRadius: {
+              xl: "1.5rem",
+              "2xl": "2rem",
+              "3xl": "3rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Manrope", sans-serif;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      .skill-preview-card {
+        background:
+          linear-gradient(rgba(13, 17, 16, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(13, 17, 16, 0.028) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(255, 255, 252, 1), rgba(247, 248, 245, 0.88));
+        background-size: 24px 24px, 24px 24px, auto;
+      }
+    </style>
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body class="admin-body admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img class="admin-brand-mark" src="../../favicon.svg" alt="Zenithy" />
+        <div>
+          <strong>Zenithy</strong>
+          <small>Blog Admin</small>
+        </div>
+      </div>
+      <nav class="admin-nav" aria-label="后台导航">
+        <a class="" href="https://blog.zenithy.art/admin/">文章列表</a>
+        <a class="" href="https://blog.zenithy.art/admin/editor.html">发布文章</a>
+        <a class="" href="https://blog.zenithy.art/admin/projects.html">项目管理</a>
+        <a class="is-active" href="https://blog.zenithy.art/admin/skills.html">Skills 管理</a>
+        <a class="" href="https://blog.zenithy.art/admin/messages.html">留言管理</a>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="mx-auto max-w-6xl p-8">
+        <div class="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-on-surface-variant">
+              Homepage Content
+            </p>
+            <h1 class="mt-2 text-3xl font-bold font-headline">Skills Showcase 管理</h1>
+            <p class="mt-2 max-w-3xl text-sm leading-7 text-on-surface-variant">
+              这里只编辑首页 Skills 区块下方的常用 Skills 展示卡，保存路径是 site-config.json -> sections.skills.showcase。上方技术栈蜘蛛网仍由首页代码维护，不在这里改动。
+            </p>
+            <div id="errorPanel" class="mt-4 hidden rounded-2xl border border-error/20 bg-red-50/70 p-4 text-sm text-red-700">
+              <div class="flex items-center justify-between gap-3">
+                <strong>发布前检查未通过</strong>
+                <button id="errorToggle" class="text-xs text-red-700/80 hover:text-red-900" type="button">
+                  收起
+                </button>
+              </div>
+              <div id="errorList" class="mt-2"></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              id="autoFixBtn"
+              class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
+              type="button"
+            >
+              自动修正
+            </button>
+            <button
+              id="addSkillBtn"
+              class="rounded-full border border-outline-variant/40 px-5 py-2 text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low"
+              type="button"
+            >
+              新增 Skill
+            </button>
+            <button
+              id="publishBtn"
+              class="rounded-full bg-tertiary px-5 py-2 text-sm font-semibold text-on-tertiary"
+              type="button"
+            >
+              下载 site-config.json
+            </button>
+          </div>
+        </div>
+
+        <section class="mb-8 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            <label class="text-sm font-semibold text-on-surface-variant">
+              Skills 区块总标题
+              <input id="sectionTitle" class="input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-on-surface" />
+            </label>
+            <label class="text-sm font-semibold text-on-surface-variant">
+              Showcase 标题
+              <input id="showcaseTitle" class="input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-on-surface" />
+            </label>
+            <label class="text-sm font-semibold text-on-surface-variant lg:col-span-2">
+              Skills 区块总描述
+              <textarea id="sectionDescription" class="input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-on-surface" rows="2"></textarea>
+            </label>
+            <label class="text-sm font-semibold text-on-surface-variant lg:col-span-2">
+              Showcase 描述
+              <textarea id="showcaseDescription" class="input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-on-surface" rows="3"></textarea>
+            </label>
+            <label class="text-sm font-semibold text-on-surface-variant lg:col-span-2">
+              Showcase note
+              <input id="showcaseNote" class="input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-on-surface" />
+            </label>
+          </div>
+        </section>
+
+        <section id="skillList" class="space-y-6"></section>
+
+        <section class="mt-8 rounded-2xl border border-slate-100 bg-white p-6 text-sm leading-7 text-on-surface-variant">
+          <h2 class="text-lg font-bold text-on-surface">下载后上线流程</h2>
+          <ol class="mt-3 list-decimal space-y-1 pl-5">
+            <li>用下载的 <code>site-config.json</code> 替换 <code>portal/site/assets/site-config.json</code>。</li>
+            <li>执行 <code>git add portal/site/assets/site-config.json</code>，然后 Git 提交并推送。</li>
+            <li>服务器进入仓库后执行 <code>git pull</code>。</li>
+            <li>执行 <code>docker compose up -d --build</code> 完成重建。</li>
+          </ol>
+          <p class="mt-3 font-semibold text-on-surface">
+            本页面不会直接写服务器文件，也不会修改技术栈蜘蛛网、HireMate、Caddyfile 或 shared_gateway。
+          </p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="admin-site-footer">
+      <p class="text-xs text-on-surface-variant/60">© 2026 Zenithy Archive. All rights reserved.</p>
+      <a
+        class="admin-filing-link"
+        href="https://beian.miit.gov.cn/"
+        target="_blank"
+        rel="noreferrer noopener"
+      >粤ICP备2026047626号</a>
+    </footer>
+
+    <script>
+      const dataUrl = "/assets/site-config.json";
+      const skillList = document.getElementById("skillList");
+      const sectionTitle = document.getElementById("sectionTitle");
+      const sectionDescription = document.getElementById("sectionDescription");
+      const showcaseTitle = document.getElementById("showcaseTitle");
+      const showcaseDescription = document.getElementById("showcaseDescription");
+      const showcaseNote = document.getElementById("showcaseNote");
+      const addSkillBtn = document.getElementById("addSkillBtn");
+      const autoFixBtn = document.getElementById("autoFixBtn");
+      const publishBtn = document.getElementById("publishBtn");
+      const errorPanel = document.getElementById("errorPanel");
+      const errorList = document.getElementById("errorList");
+      const errorToggle = document.getElementById("errorToggle");
+
+      let siteConfig = null;
+      let errorsCollapsed = false;
+      let skillsState = {
+        title: "把产品、工程与 AI 应用串起来",
+        description: "这里保留我的技术栈结构，同时补充我平时更高频使用的 Skills，希望能够帮助你更快判断合作方向。",
+        showcase: defaultShowcase(),
+      };
+
+      function defaultShowcase() {
+        return {
+          title: "我平时喜欢用的 Skills",
+          description: "这些能力来自我在 Zenithy、HireMate、AI-Interview 和日常产品构建里的高频实践，希望能帮助你更快判断我能一起推进什么。",
+          note: "希望这些 Skills 能帮助你。",
+          items: [
+            {
+              id: "ai-application",
+              sequence: "01",
+              category: "AI Application",
+              title: "让模型进入业务闭环",
+              description: "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可验证的产品能力。",
+              metric: 4,
+              metricSuffix: "+",
+              metricLabel: "AI 场景",
+              tags: ["RAG 检索", "结构化评估", "流式反馈"],
+              featured: true,
+            },
+            {
+              id: "full-stack-delivery",
+              sequence: "02",
+              category: "Full-stack Delivery",
+              title: "把想法交付成系统",
+              description: "从前端体验、API 设计、数据结构到部署回滚，把一个想法整理成能稳定运行和继续维护的系统。",
+              metric: 5,
+              metricSuffix: "+",
+              metricLabel: "交付链路",
+              tags: ["前端体验", "API 设计", "部署回滚"],
+            },
+            {
+              id: "product-sense",
+              sequence: "03",
+              category: "Product Sense",
+              title: "从场景判断价值",
+              description: "先判断问题是否真实、路径是否清晰、用户是否愿意持续使用，再决定功能优先级和验证方式。",
+              metric: 3,
+              metricSuffix: "+",
+              metricLabel: "验证维度",
+              tags: ["需求判断", "用户路径", "MVP 优先级"],
+            },
+            {
+              id: "rag-evaluation",
+              sequence: "04",
+              category: "RAG & Evaluation",
+              title: "让回答变得可验证",
+              description: "通过证据约束、拒答策略和回归测试，让模型回答能被检查、复现和持续优化。",
+              metric: 6,
+              metricSuffix: "+",
+              metricLabel: "评估动作",
+              tags: ["证据约束", "拒答策略", "回归测试"],
+            },
+            {
+              id: "deploy-ops",
+              sequence: "05",
+              category: "Deploy & Ops",
+              title: "稳定上线、回滚和维护",
+              description: "围绕容器化、网关配置和 Git 发布流程，把上线后的稳定性和可维护性纳入交付范围。",
+              metric: 4,
+              metricSuffix: "+",
+              metricLabel: "上线系统",
+              tags: ["Docker", "Caddy", "Git 发布"],
+            },
+            {
+              id: "frontend-experience",
+              sequence: "06",
+              category: "Frontend Experience",
+              title: "把复杂功能做得顺手",
+              description: "用动效反馈、移动端适配和可视化管理，降低复杂工具的理解成本和操作成本。",
+              metric: 8,
+              metricSuffix: "+",
+              metricLabel: "交互细节",
+              tags: ["动效反馈", "移动端适配", "可视化管理"],
+            },
+          ],
+        };
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/"/g, "&quot;");
+      }
+
+      function escapeTextarea(value) {
+        return escapeHtml(value);
+      }
+
+      function splitTags(value) {
+        if (Array.isArray(value)) {
+          return value.map((tag) => String(tag || "").trim()).filter(Boolean);
+        }
+        if (typeof value === "string") {
+          return value
+            .split(/[\n,，/]+/)
+            .map((tag) => tag.trim())
+            .filter(Boolean);
+        }
+        return [];
+      }
+
+      function slugify(value, fallback) {
+        const text = String(value || "").trim().toLowerCase();
+        const slug = text
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/&/g, " and ")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+        return slug || fallback;
+      }
+
+      function normalizeItem(item, index) {
+        const source = item || {};
+        const metric = Number(source.metric);
+        return {
+          id: String(source.id || "").trim(),
+          sequence: String(source.sequence || String(index + 1).padStart(2, "0")).trim(),
+          category: String(source.category || "").trim(),
+          title: String(source.title || "").trim(),
+          description: String(source.description || "").trim(),
+          metric: Number.isFinite(metric) ? metric : source.metric,
+          metricSuffix: String(source.metricSuffix || "").trim(),
+          metricLabel: String(source.metricLabel || "").trim(),
+          tags: splitTags(source.tags || source.highlights),
+          featured: source.featured === true,
+        };
+      }
+
+      function collect() {
+        skillsState.title = sectionTitle.value.trim();
+        skillsState.description = sectionDescription.value.trim();
+        skillsState.showcase.title = showcaseTitle.value.trim();
+        skillsState.showcase.description = showcaseDescription.value.trim();
+        skillsState.showcase.note = showcaseNote.value.trim();
+
+        document.querySelectorAll(".skill-input").forEach((input) => {
+          const index = Number(input.dataset.index);
+          const field = input.dataset.field;
+          if (!skillsState.showcase.items[index]) return;
+          if (field === "featured") {
+            skillsState.showcase.items[index].featured = input.checked;
+            return;
+          }
+          if (field === "tags") {
+            skillsState.showcase.items[index].tags = splitTags(input.value);
+            return;
+          }
+          if (field === "metric") {
+            const value = input.value.trim();
+            skillsState.showcase.items[index].metric = value === "" ? "" : Number(value);
+            return;
+          }
+          skillsState.showcase.items[index][field] = input.value.trim();
+        });
+      }
+
+      function autoFixState() {
+        collect();
+        const items = skillsState.showcase.items;
+        items.forEach((item, index) => {
+          item.sequence = String(index + 1).padStart(2, "0");
+          item.tags = splitTags(item.tags);
+          const metric = Number(item.metric);
+          if (Number.isFinite(metric)) item.metric = metric;
+          if (!item.id) item.id = slugify(item.category || item.title, "skill-" + item.sequence);
+        });
+        if (items.length && !items.some((item) => item.featured === true)) {
+          items[0].featured = true;
+        }
+      }
+
+      function validateSkills() {
+        const errors = [];
+        const ids = new Set();
+        if (!skillsState.title) errors.push("Skills 区块总标题为空");
+        if (!skillsState.description) errors.push("Skills 区块总描述为空");
+        if (!skillsState.showcase.title) errors.push("Showcase 标题为空");
+        if (!skillsState.showcase.description) errors.push("Showcase 描述为空");
+        if (!Array.isArray(skillsState.showcase.items) || !skillsState.showcase.items.length) {
+          errors.push("Showcase items 不能为空");
+          return errors;
+        }
+        skillsState.showcase.items.forEach((item, index) => {
+          const label = `第 ${index + 1} 张卡片`;
+          if (!item.id) errors.push(`${label} id 为空`);
+          if (item.id) {
+            if (ids.has(item.id)) errors.push(`${label} id 重复：${item.id}`);
+            ids.add(item.id);
+          }
+          if (!item.title) errors.push(`${label} title 为空`);
+          if (!item.category) errors.push(`${label} category 为空`);
+          if (typeof item.metric !== "number" || !Number.isFinite(item.metric)) {
+            errors.push(`${label} metric 非数字`);
+          }
+          if (!Array.isArray(item.tags) || item.tags.some((tag) => typeof tag !== "string" || !tag.trim())) {
+            errors.push(`${label} tags 格式错误，请使用逗号或换行分隔`);
+          }
+        });
+        return errors;
+      }
+
+      function renderErrors(errors) {
+        if (!errors.length) {
+          errorPanel.classList.add("hidden");
+          errorList.innerHTML = "";
+          return;
+        }
+        errorPanel.classList.remove("hidden");
+        errorList.innerHTML = errorsCollapsed
+          ? ""
+          : "<ul class='list-disc space-y-1 pl-5'>" + errors.map((error) => `<li>${escapeHtml(error)}</li>`).join("") + "</ul>";
+        errorToggle.textContent = errorsCollapsed ? "展开" : "收起";
+      }
+
+      function previewTags(tags) {
+        const normalized = splitTags(tags);
+        return normalized.length
+          ? normalized.map((tag) => `<span class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600">${escapeHtml(tag)}</span>`).join("")
+          : '<span class="text-xs text-on-surface-variant">暂无 tags</span>';
+      }
+
+      function render() {
+        sectionTitle.value = skillsState.title || "";
+        sectionDescription.value = skillsState.description || "";
+        showcaseTitle.value = skillsState.showcase.title || "";
+        showcaseDescription.value = skillsState.showcase.description || "";
+        showcaseNote.value = skillsState.showcase.note || "";
+
+        skillList.innerHTML = "";
+        if (!skillsState.showcase.items.length) {
+          skillList.innerHTML = '<div class="rounded-2xl border border-slate-100 bg-white p-6 text-on-surface-variant">暂无 Skills Showcase 卡片。</div>';
+          return;
+        }
+
+        skillsState.showcase.items.forEach((item, index) => {
+          const card = document.createElement("article");
+          card.className = "skill-editor-card rounded-2xl border border-slate-100 bg-white p-6 shadow-sm";
+          card.setAttribute("draggable", "true");
+          card.dataset.index = String(index);
+          const tagsText = splitTags(item.tags).join("\n");
+          card.innerHTML = `
+            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.24em] text-on-surface-variant">${escapeHtml(item.sequence || "")} / ${escapeHtml(item.category || "Skill")}</p>
+                <h2 class="mt-1 text-xl font-bold">${escapeHtml(item.title || "未命名 Skill")}</h2>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="inline-flex items-center gap-1 rounded-full border border-outline-variant/40 px-3 py-1 text-xs text-on-surface-variant">
+                  <span class="material-symbols-outlined text-[18px]">drag_indicator</span>
+                  拖拽排序
+                </span>
+                <button class="delete-btn text-sm font-semibold text-red-500" data-index="${index}" type="button">删除</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+              <div class="skill-preview-card rounded-2xl border border-slate-100 p-5">
+                <div class="flex items-start justify-between gap-4">
+                  <span class="rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-bold text-slate-600" data-preview="meta">${escapeHtml(item.sequence || "")} / ${escapeHtml(item.category || "")}</span>
+                  <div class="text-right">
+                    <strong class="block text-4xl font-black leading-none tracking-[-0.08em]" data-preview="metric">${escapeHtml(item.metric || 0)}${escapeHtml(item.metricSuffix || "")}</strong>
+                    <small class="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500" data-preview="metricLabel">${escapeHtml(item.metricLabel || "Metric")}</small>
+                  </div>
+                </div>
+                <div class="my-7 h-px bg-gradient-to-r from-slate-300 via-slate-100 to-transparent"></div>
+                <h3 class="text-3xl font-black leading-none tracking-[-0.06em]" data-preview="title">${escapeHtml(item.title || "")}</h3>
+                <p class="mt-4 text-sm leading-7 text-on-surface-variant" data-preview="description">${escapeHtml(item.description || "")}</p>
+                <div class="mt-7 flex flex-wrap gap-2" data-preview="tags">${previewTags(item.tags)}</div>
+              </div>
+              <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <label class="text-sm font-semibold text-on-surface-variant">id
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="id" data-index="${index}" value="${escapeAttr(item.id)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">sequence
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="sequence" data-index="${index}" value="${escapeAttr(item.sequence)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">category
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="category" data-index="${index}" value="${escapeAttr(item.category)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">title
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="title" data-index="${index}" value="${escapeAttr(item.title)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">metric
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="metric" data-index="${index}" type="number" value="${escapeAttr(item.metric)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">metricSuffix
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="metricSuffix" data-index="${index}" value="${escapeAttr(item.metricSuffix)}" />
+                  </label>
+                  <label class="text-sm font-semibold text-on-surface-variant">metricLabel
+                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="metricLabel" data-index="${index}" value="${escapeAttr(item.metricLabel)}" />
+                  </label>
+                  <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-on-surface-variant">
+                    <input class="skill-input h-4 w-4" data-field="featured" data-index="${index}" type="checkbox" ${item.featured ? "checked" : ""} />
+                    featured
+                  </label>
+                </div>
+                <label class="block text-sm font-semibold text-on-surface-variant">description
+                  <textarea class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="description" data-index="${index}" rows="3">${escapeTextarea(item.description)}</textarea>
+                </label>
+                <label class="block text-sm font-semibold text-on-surface-variant">tags（逗号或每行一个）
+                  <textarea class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="tags" data-index="${index}" rows="3">${escapeTextarea(tagsText)}</textarea>
+                </label>
+              </div>
+            </div>
+          `;
+          skillList.appendChild(card);
+        });
+      }
+
+      function updatePreview(index) {
+        const item = skillsState.showcase.items[index];
+        const card = skillList.querySelector(`.skill-editor-card[data-index="${index}"]`);
+        if (!item || !card) return;
+        const meta = card.querySelector('[data-preview="meta"]');
+        const metric = card.querySelector('[data-preview="metric"]');
+        const metricLabel = card.querySelector('[data-preview="metricLabel"]');
+        const title = card.querySelector('[data-preview="title"]');
+        const description = card.querySelector('[data-preview="description"]');
+        const tags = card.querySelector('[data-preview="tags"]');
+        if (meta) meta.textContent = `${item.sequence || ""} / ${item.category || ""}`;
+        if (metric) metric.textContent = `${item.metric || 0}${item.metricSuffix || ""}`;
+        if (metricLabel) metricLabel.textContent = item.metricLabel || "Metric";
+        if (title) title.textContent = item.title || "";
+        if (description) description.textContent = item.description || "";
+        if (tags) tags.innerHTML = previewTags(item.tags);
+      }
+
+      function downloadFile(name, content) {
+        const blob = new Blob(["\ufeff" + content], { type: "application/json;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = name;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      function exportConfig() {
+        autoFixState();
+        render();
+        const errors = validateSkills();
+        renderErrors(errors);
+        if (errors.length) {
+          alert("发布前发现以下问题：\n\n" + errors.join("\n"));
+          return;
+        }
+        const nextConfig = JSON.parse(JSON.stringify(siteConfig || {}));
+        nextConfig.sections = nextConfig.sections || {};
+        nextConfig.sections.skills = nextConfig.sections.skills || {};
+        nextConfig.sections.skills.title = skillsState.title;
+        nextConfig.sections.skills.description = skillsState.description;
+        nextConfig.sections.skills.showcase = {
+          title: skillsState.showcase.title,
+          description: skillsState.showcase.description,
+          note: skillsState.showcase.note,
+          items: skillsState.showcase.items.map((item) => ({
+            id: item.id,
+            sequence: item.sequence,
+            category: item.category,
+            title: item.title,
+            description: item.description,
+            metric: item.metric,
+            metricSuffix: item.metricSuffix,
+            metricLabel: item.metricLabel,
+            tags: splitTags(item.tags),
+            featured: item.featured === true,
+          })),
+        };
+        downloadFile("site-config.json", JSON.stringify(nextConfig, null, 2));
+        alert(
+          "已生成 site-config.json（UTF-8）。\n\n" +
+            "1. 用下载的 site-config.json 替换 portal/site/assets/site-config.json。\n" +
+            "2. Git 提交并推送。\n" +
+            "3. 服务器执行 git pull。\n" +
+            "4. 执行 docker compose up -d --build。"
+        );
+      }
+
+      addSkillBtn.addEventListener("click", () => {
+        collect();
+        const nextIndex = skillsState.showcase.items.length + 1;
+        skillsState.showcase.items.push({
+          id: "new-skill-" + String(nextIndex).padStart(2, "0"),
+          sequence: String(nextIndex).padStart(2, "0"),
+          category: "New Skill",
+          title: "新的 Skill",
+          description: "在这里填写这张 Skills Showcase 卡片的说明。",
+          metric: 1,
+          metricSuffix: "+",
+          metricLabel: "指标",
+          tags: ["标签一", "标签二"],
+          featured: false,
+        });
+        render();
+        renderErrors(validateSkills());
+      });
+
+      autoFixBtn.addEventListener("click", () => {
+        autoFixState();
+        render();
+        renderErrors(validateSkills());
+      });
+
+      publishBtn.addEventListener("click", exportConfig);
+
+      errorToggle.addEventListener("click", () => {
+        errorsCollapsed = !errorsCollapsed;
+        renderErrors(validateSkills());
+      });
+
+      skillList.addEventListener("input", (event) => {
+        const input = event.target.closest(".skill-input");
+        if (!input) return;
+        collect();
+        updatePreview(Number(input.dataset.index));
+        renderErrors(validateSkills());
+      });
+
+      skillList.addEventListener("change", (event) => {
+        if (!event.target.closest(".skill-input")) return;
+        collect();
+        render();
+        renderErrors(validateSkills());
+      });
+
+      skillList.addEventListener("click", (event) => {
+        const button = event.target.closest(".delete-btn");
+        if (!button) return;
+        collect();
+        const index = Number(button.dataset.index);
+        skillsState.showcase.items.splice(index, 1);
+        autoFixState();
+        render();
+        renderErrors(validateSkills());
+      });
+
+      let dragIndex = null;
+      skillList.addEventListener("dragstart", (event) => {
+        const card = event.target.closest(".skill-editor-card");
+        if (!card) return;
+        collect();
+        dragIndex = Number(card.dataset.index);
+        event.dataTransfer.effectAllowed = "move";
+        card.classList.add("ring-2", "ring-tertiary");
+      });
+
+      skillList.addEventListener("dragend", (event) => {
+        const card = event.target.closest(".skill-editor-card");
+        if (card) card.classList.remove("ring-2", "ring-tertiary");
+        dragIndex = null;
+      });
+
+      skillList.addEventListener("dragover", (event) => {
+        if (dragIndex === null) return;
+        event.preventDefault();
+      });
+
+      skillList.addEventListener("drop", (event) => {
+        const card = event.target.closest(".skill-editor-card");
+        if (!card || dragIndex === null) return;
+        const dropIndex = Number(card.dataset.index);
+        if (Number.isNaN(dropIndex) || dropIndex === dragIndex) return;
+        const moving = skillsState.showcase.items.splice(dragIndex, 1)[0];
+        skillsState.showcase.items.splice(dropIndex, 0, moving);
+        autoFixState();
+        render();
+        renderErrors(validateSkills());
+      });
+
+      fetch(dataUrl, { cache: "no-store" })
+        .then((res) => res.json())
+        .then((data) => {
+          siteConfig = data || {};
+          const skills = (siteConfig.sections && siteConfig.sections.skills) || {};
+          const fallback = defaultShowcase();
+          const showcase = skills.showcase || fallback;
+          skillsState = {
+            title: skills.title || "把产品、工程与 AI 应用串起来",
+            description: skills.description || "这里保留我的技术栈结构，同时补充我平时更高频使用的 Skills，希望能够帮助你更快判断合作方向。",
+            showcase: {
+              title: showcase.title || fallback.title,
+              description: showcase.description || fallback.description,
+              note: showcase.note || fallback.note,
+              items: Array.isArray(showcase.items) && showcase.items.length
+                ? showcase.items.map(normalizeItem)
+                : fallback.items.map(normalizeItem),
+            },
+          };
+          autoFixState();
+          render();
+          renderErrors(validateSkills());
+        })
+        .catch(() => {
+          siteConfig = { sections: { skills: {} } };
+          skillsState.showcase = defaultShowcase();
+          render();
+          renderErrors(["读取 /assets/site-config.json 失败，当前显示默认 Skills Showcase。"]);
+        });
+    </script>
+  </body>
+</html>

@@ -28,6 +28,7 @@ const targets = {
   blogAdmin: path.join(siteDir, "blog", "admin", "index.html"),
   blogEditor: path.join(siteDir, "blog", "admin", "editor.html"),
   projectsAdmin: path.join(siteDir, "blog", "admin", "projects.html"),
+  skillsAdmin: path.join(siteDir, "blog", "admin", "skills.html"),
   messagesAdmin: path.join(siteDir, "blog", "admin", "messages.html"),
   projects: path.join(siteDir, "assets", "projects.json"),
   siteConfig: path.join(siteDir, "assets", "site-config.json"),
@@ -214,9 +215,15 @@ function checkHomepageStructure() {
     if (!html.includes(`id="${id}"`)) errors.push(`[section] missing #${id}`);
   });
 
-  ["projects-grid", "projects-scroller", "projects-prev", "projects-next", "skills-list", "collab-list"].forEach((id) => {
+  ["projects-grid", "projects-scroller", "projects-prev", "projects-next", "skills-list", "skills-showcase", "collab-list"].forEach((id) => {
     if (!html.includes(`id="${id}"`)) errors.push(`[data container] missing #${id}`);
   });
+  if (!html.includes("data-skills-universe")) {
+    errors.push("[skills universe] homepage must keep data-skills-universe so the spider web cannot be removed");
+  }
+  if (!html.includes("skills-showcase-rail") || !html.includes("我平时喜欢用的 Skills")) {
+    errors.push("[skills showcase] homepage must include the Skills Showcase fallback/renderer hooks");
+  }
   if (!html.includes("data-skills-fallback") || !html.includes("skills-universe--fallback")) {
     errors.push("[skills universe] static fallback must render a visible Skills Universe when config/JS loading is delayed");
   }
@@ -579,11 +586,11 @@ function checkHomepageMotion() {
   if (!css.includes("--skill-tilt-x") || !css.includes(".skill-highlight") || !css.includes("skillHeadingFlow")) {
     errors.push("[skills motion] skill card motion CSS is missing");
   }
-  if (!css.includes(".skills-focus-board") || !css.includes(".skill-card--featured") || !css.includes(".skills-focus-stack")) {
-    errors.push("[skills structure] featured skills board CSS is missing");
+  if (!css.includes(".skills-focus-board") || !css.includes(".skills-showcase") || !css.includes(".skills-showcase-rail") || !css.includes(".skill-showcase-card")) {
+    errors.push("[skills structure] Skills Showcase board CSS is missing");
   }
-  if (!css.includes(".skills-summary-row") || !css.includes("grid-template-columns: 1fr") || !indexHtml.includes("skills-summary-row skills-focus-stack")) {
-    errors.push("[skills universe] skills layout must be full-width web first, with summary cards below");
+  if (!css.includes(".skill-showcase-card--featured") || !css.includes(".skill-showcase-tags") || !indexHtml.includes("skills-showcase")) {
+    errors.push("[skills showcase] showcase card structure must exist below the spider web");
   }
   if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
     errors.push("[skills universe] spider-web skills universe CSS is missing");
@@ -618,11 +625,11 @@ function checkHomepageMotion() {
   if (!skillsJs.includes("is-tech-active") || !skillsJs.includes("--tooltip-brand") || !skillsJs.includes("is-link-active")) {
     errors.push("[skills universe] brand-color node hover/focus state is missing");
   }
-  if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-card__progress")) {
+  if (!indexHtml.includes("renderSkillsList") || !indexHtml.includes("data-skill-card") || !indexHtml.includes("skill-showcase-card")) {
     errors.push("[skills motion] skills renderer hooks are missing");
   }
-  if (!indexHtml.includes("skills-focus-board") || !indexHtml.includes("data-skill-featured") || !indexHtml.includes("skills-focus-stack")) {
-    errors.push("[skills structure] skills must render featured module + support stack");
+  if (!indexHtml.includes("skills-focus-board") || !indexHtml.includes("data-skill-featured") || !indexHtml.includes("skills-showcase-rail")) {
+    errors.push("[skills structure] skills must render spider web plus Skills Showcase rail");
   }
   if (!indexHtml.includes("data-skills-universe") || !indexHtml.includes('viewBox="0 0 1200 720"') || !indexHtml.includes("data-skills-web-nodes")) {
     errors.push("[skills universe] renderer must output SVG spider web and node container");
@@ -660,8 +667,8 @@ function checkHomepageMotion() {
   if (indexHtml.includes("skills-universe__copy") || indexHtml.includes("SKILL UNIVERSE")) {
     errors.push("[skills universe] internal copy/title must not obstruct the spider web stage");
   }
-  if (!indexHtml.includes('card.className = "skill-card skill-card--"')) {
-    errors.push("[skills motion] skills must use the dedicated skill-card renderer instead of the generic insight-card model");
+  if (!indexHtml.includes('card.className = "skill-showcase-card"')) {
+    errors.push("[skills motion] Skills Showcase must use the dedicated skill-showcase-card renderer");
   }
   if (!css.includes(".showcase-card.is-project-current") || !indexHtml.includes("scheduleActiveCard")) {
     errors.push("[projects visual] active/current project card state is missing");
@@ -800,6 +807,36 @@ function checkSiteConfig() {
       }
     }
   });
+
+  const skills = data.sections && data.sections.skills;
+  if (!skills || typeof skills !== "object") {
+    errors.push("[siteConfig] sections.skills missing");
+  } else {
+    const showcase = skills.showcase;
+    if (!showcase || typeof showcase !== "object") {
+      errors.push("[siteConfig] sections.skills.showcase missing");
+    } else if (!Array.isArray(showcase.items) || !showcase.items.length) {
+      errors.push("[siteConfig] sections.skills.showcase.items must be array");
+    } else {
+      const ids = new Set();
+      showcase.items.forEach((item, index) => {
+        const label = `sections.skills.showcase.items[${index}]`;
+        if (!item.id) errors.push(`[siteConfig] ${label}.id missing`);
+        if (item.id) {
+          if (ids.has(item.id)) errors.push(`[siteConfig] duplicate ${label}.id ${item.id}`);
+          ids.add(item.id);
+        }
+        if (!item.title) errors.push(`[siteConfig] ${label}.title missing`);
+        if (!item.category) errors.push(`[siteConfig] ${label}.category missing`);
+        if (typeof item.metric !== "number" || !Number.isFinite(item.metric)) {
+          errors.push(`[siteConfig] ${label}.metric must be number`);
+        }
+        if (!Array.isArray(item.tags)) {
+          errors.push(`[siteConfig] ${label}.tags must be array`);
+        }
+      });
+    }
+  }
 }
 
 function checkManifest() {
@@ -881,6 +918,7 @@ function checkBlogAndAdmin() {
     ["blog admin", targets.blogAdmin],
     ["blog editor", targets.blogEditor],
     ["projects admin", targets.projectsAdmin],
+    ["skills admin", targets.skillsAdmin],
     ["messages admin", targets.messagesAdmin],
   ].forEach(([label, filePath]) => {
     const html = readText(filePath);
@@ -966,6 +1004,7 @@ function checkBlogAndAdmin() {
     ["blog admin", targets.blogAdmin, "文章列表"],
     ["blog editor", targets.blogEditor, "发布文章"],
     ["projects admin", targets.projectsAdmin, "项目管理"],
+    ["skills admin", targets.skillsAdmin, "Skills 管理"],
     ["messages admin", targets.messagesAdmin, "留言管理"],
   ];
   adminPages.forEach(([label, filePath, activeLabel]) => {
@@ -979,7 +1018,7 @@ function checkBlogAndAdmin() {
     if (!html.includes('src="../../favicon.svg"')) {
       errors.push(`[admin shell] ${label} logo must reuse ../../favicon.svg`);
     }
-    ["文章列表", "发布文章", "项目管理", "留言管理"].forEach((navLabel) => {
+    ["文章列表", "发布文章", "项目管理", "Skills 管理", "留言管理"].forEach((navLabel) => {
       if (!html.includes(navLabel)) errors.push(`[admin shell] ${label} missing nav item ${navLabel}`);
     });
     const activePattern = new RegExp(`class="is-active"[^>]*>${activeLabel}<`);
@@ -998,6 +1037,21 @@ function checkBlogAndAdmin() {
   if (!projectsAdmin.includes("summaryLong") || !projectsAdmin.includes("keywords")) {
     errors.push("[projects admin] summaryLong/keywords support is missing");
   }
+
+  const skillsAdmin = readText(targets.skillsAdmin);
+  if (!skillsAdmin.includes('const dataUrl = "/assets/site-config.json"')) {
+    errors.push("[skills admin] dataUrl must be /assets/site-config.json");
+  }
+  [
+    "sections.skills.showcase",
+    "autoFixState",
+    "validateSkills",
+    "dragstart",
+    "site-config.json",
+    "docker compose up -d --build",
+  ].forEach((needle) => {
+    if (!skillsAdmin.includes(needle)) errors.push(`[skills admin] skills.html missing ${needle}`);
+  });
 
   const messagesAdmin = readText(targets.messagesAdmin);
   if (!messagesAdmin.includes("/admin/messages")) {

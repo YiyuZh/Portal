@@ -61,6 +61,7 @@ portal/
 - `/blog/admin/index.html` -> article manager
 - `/blog/admin/editor.html` -> post editor
 - `/blog/admin/projects.html` -> homepage project manager
+- `/blog/admin/skills.html` -> homepage Skills Showcase manager
 - `/blog/admin/messages.html` -> messages manager
 
 ### API routes
@@ -84,6 +85,9 @@ portal/
   - `site/home-tilt.js`
   - `site/home-skills.js`
   - `site/home-collab.js`
+- Skills section is two-part:
+  - top spider web: `.skills-universe` / `data-skills-universe`
+  - bottom showcase cards: `site/assets/site-config.json -> sections.skills.showcase`
 
 ### Blog
 
@@ -97,6 +101,12 @@ portal/
 
 - Homepage renders: `site/assets/projects.json`
 - Project admin reads and exports: `site/assets/projects.json`
+
+### Skills Showcase
+
+- Homepage renders: `site/assets/site-config.json -> sections.skills.showcase`
+- Skills admin reads `/assets/site-config.json` and exports a replacement `site-config.json`
+- Skills admin must not edit or remove the spider web technology nodes
 
 ### Messages
 

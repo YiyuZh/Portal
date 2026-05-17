@@ -116,12 +116,12 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
 
 - Homepage shell
 - Reads `assets/site-config.json` and `assets/projects.json`
-- Contains controlled scroll, active nav, section reveal, project rendering, project rail, footer filing binding
+- Contains controlled scroll, active nav, section reveal, project rendering, project rail, Skills Universe, Skills Showcase, footer filing binding
 
 ### `site/home-visual.css`
 
 - Main homepage visual system
-- Covers Hero, project rail, Skills, Collab, footer, responsive behavior
+- Covers Hero, project rail, Skills Universe, Skills Showcase, Collab, footer, responsive behavior
 
 ### `site/home-hero.js`
 
@@ -134,7 +134,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
 
 ### `site/home-skills.js`
 
-- Skills section activation, metric count-up, and skill-card tilt
+- Skills section activation, metric count-up, spider-web mounting, node tooltip, and `data-skill-card` tilt
 
 ### `site/home-collab.js`
 
@@ -182,6 +182,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
 
 - Homepage content source of truth
 - Owns Hero, nav, sections, contact, footer, and ICP filing config
+- `sections.skills.showcase` owns the common Skills Showcase cards below the spider web
 
 ### `site/assets/projects.json`
 
@@ -237,6 +238,14 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
 - Homepage project manager
 - Reads `/assets/projects.json`
 - Supports edit, preview, validation, drag sort, and JSON export
+
+### `site/blog/admin/skills.html`
+
+- Homepage Skills Showcase manager
+- Reads `/assets/site-config.json`
+- Edits `sections.skills.title`, `sections.skills.description`, and `sections.skills.showcase`
+- Supports card preview, validation, auto-fix, drag sort, and replacement `site-config.json` export
+- Must not edit the Skills Universe spider-web technology nodes
 
 ### `site/blog/admin/messages.html`
 
