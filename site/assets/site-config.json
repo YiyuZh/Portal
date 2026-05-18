@@ -1,4 +1,4 @@
-{
+﻿{
   "hero": {
     "title": "HELLO, I'M Zenithy",
     "titleLeading": "HELLO, I'M",
@@ -90,22 +90,22 @@
         "note": "希望这些 Skills 能帮助你。",
         "items": [
           {
-            "id": "ai-application",
+            "id": "helper-paper",
             "sequence": "01",
-            "category": "AI Application",
-            "title": "让模型进入业务闭环",
+            "category": "Helper-paper",
+            "title": "论文阅读助手",
             "description": "围绕解析、问答、评估、自动化流程等场景，把模型能力变成可验证的产品能力。",
-            "metric": 4,
+            "metric": 5,
             "metricSuffix": "+",
-            "metricLabel": "AI 场景",
+            "metricLabel": "",
             "tags": [
-              "RAG 检索",
-              "结构化评估",
-              "流式反馈"
+              "自动搜索",
+              "中英翻译",
+              "智能指导"
             ],
             "featured": true,
             "ctaLabel": "查看下载页",
-            "ctaUrl": ""
+            "ctaUrl": "https://github.com/YiyuZh/helper-paper"
           },
           {
             "id": "full-stack-delivery",
@@ -121,6 +121,7 @@
               "API 设计",
               "部署回滚"
             ],
+            "featured": false,
             "ctaLabel": "查看下载页",
             "ctaUrl": ""
           },
@@ -138,6 +139,7 @@
               "用户路径",
               "MVP 优先级"
             ],
+            "featured": false,
             "ctaLabel": "查看下载页",
             "ctaUrl": ""
           },
@@ -155,6 +157,7 @@
               "拒答策略",
               "回归测试"
             ],
+            "featured": false,
             "ctaLabel": "查看下载页",
             "ctaUrl": ""
           },
@@ -172,6 +175,7 @@
               "Caddy",
               "Git 发布"
             ],
+            "featured": false,
             "ctaLabel": "查看下载页",
             "ctaUrl": ""
           },
@@ -189,6 +193,7 @@
               "移动端适配",
               "可视化管理"
             ],
+            "featured": false,
             "ctaLabel": "查看下载页",
             "ctaUrl": ""
           }
