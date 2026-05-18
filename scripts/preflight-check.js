@@ -702,8 +702,8 @@ function checkHomepageMotion() {
   if (!css.includes(".skill-showcase-card--featured") || !css.includes(".skill-showcase-tags") || !indexHtml.includes("skills-showcase")) {
     errors.push("[skills showcase] showcase card structure must exist below the spider web");
   }
-  if (!css.includes(".skill-showcase-card--linked") || !css.includes(".skill-showcase-cta") || !indexHtml.includes("ctaUrl") || !indexHtml.includes("target = \"_blank\"") || !indexHtml.includes("noopener noreferrer")) {
-    errors.push("[skills showcase] linked card CTA support is missing");
+  if (!css.includes(".skill-showcase-card--linked") || !indexHtml.includes("ctaUrl") || !indexHtml.includes("target = \"_blank\"") || !indexHtml.includes("noopener noreferrer")) {
+    errors.push("[skills showcase] linked card support is missing");
   }
   if (!css.includes(".skills-universe") || !css.includes(".skills-web") || !css.includes(".skills-web-node")) {
     errors.push("[skills universe] spider-web skills universe CSS is missing");
@@ -965,9 +965,6 @@ function checkSiteConfig() {
         if (!Array.isArray(item.tags)) {
           errors.push(`[siteConfig] ${label}.tags must be array`);
         }
-        if (item.ctaLabel !== undefined && typeof item.ctaLabel !== "string") {
-          errors.push(`[siteConfig] ${label}.ctaLabel must be string`);
-        }
         if (item.ctaUrl !== undefined) {
           if (typeof item.ctaUrl !== "string") {
             errors.push(`[siteConfig] ${label}.ctaUrl must be string`);
@@ -1182,7 +1179,6 @@ function checkBlogAndAdmin() {
     "autoFixState",
     "validateSkills",
     "dragstart",
-    "ctaLabel",
     "ctaUrl",
     "site-config.json",
     "docker compose up -d --build",

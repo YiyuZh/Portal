@@ -166,7 +166,7 @@
             <li>执行 <code>docker compose up -d --build</code> 完成重建。</li>
           </ol>
           <p class="mt-3">
-            点击下载前会再次确认：导出会自动修正 sequence、tags、metric、featured、id、ctaLabel，不是原样导出当前表单值。
+            点击下载前会再次确认：导出会自动修正 sequence、tags、metric、featured、id，不是原样导出当前表单值。
           </p>
           <p class="mt-3 font-semibold text-on-surface">
             本页面不会直接写服务器文件，也不会修改技术栈蜘蛛网、HireMate、Caddyfile 或 shared_gateway。
@@ -238,7 +238,6 @@
               metricLabel: "AI 场景",
               tags: ["RAG 检索", "结构化评估", "流式反馈"],
               featured: true,
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
             {
@@ -251,7 +250,6 @@
               metricSuffix: "+",
               metricLabel: "交付链路",
               tags: ["前端体验", "API 设计", "部署回滚"],
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
             {
@@ -264,7 +262,6 @@
               metricSuffix: "+",
               metricLabel: "验证维度",
               tags: ["需求判断", "用户路径", "MVP 优先级"],
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
             {
@@ -277,7 +274,6 @@
               metricSuffix: "+",
               metricLabel: "评估动作",
               tags: ["证据约束", "拒答策略", "回归测试"],
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
             {
@@ -290,7 +286,6 @@
               metricSuffix: "+",
               metricLabel: "上线系统",
               tags: ["Docker", "Caddy", "Git 发布"],
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
             {
@@ -303,7 +298,6 @@
               metricSuffix: "+",
               metricLabel: "交互细节",
               tags: ["动效反馈", "移动端适配", "可视化管理"],
-              ctaLabel: "查看下载页",
               ctaUrl: "",
             },
           ],
@@ -392,7 +386,6 @@
           metricLabel: String(source.metricLabel || "").trim(),
           tags: splitTags(source.tags || source.highlights),
           featured: source.featured === true,
-          ctaLabel: String(source.ctaLabel || "").trim(),
           ctaUrl: String(source.ctaUrl || "").trim(),
         };
       }
@@ -475,8 +468,6 @@
           if (Number.isFinite(metric)) item.metric = metric;
           if (!item.id) item.id = slugify(item.category || item.title, "skill-" + item.sequence);
           item.ctaUrl = String(item.ctaUrl || "").trim();
-          item.ctaLabel = String(item.ctaLabel || "").trim();
-          if (item.ctaUrl && !item.ctaLabel) item.ctaLabel = "查看下载页";
         });
         if (items.length && !items.some((item) => item.featured === true)) {
           items[0].featured = true;
@@ -541,13 +532,6 @@
           : '<span class="text-xs text-on-surface-variant">暂无 tags</span>';
       }
 
-      function previewCta(item) {
-        if (!item.ctaUrl) {
-          return '<span class="mt-5 inline-flex rounded-full border border-dashed border-slate-200 px-3 py-2 text-xs font-semibold text-on-surface-variant">未设置跳转链接</span>';
-        }
-        return `<span class="mt-5 inline-flex items-center gap-2 rounded-full border border-cyan-100 bg-cyan-50/70 px-3 py-2 text-xs font-bold text-tertiary">${escapeHtml(item.ctaLabel || "查看下载页")}<small class="text-[10px] text-on-surface-variant">新标签页打开</small></span>`;
-      }
-
       function render() {
         sectionTitle.value = skillsState.title || "";
         sectionDescription.value = skillsState.description || "";
@@ -594,7 +578,6 @@
                 <h3 class="text-3xl font-black leading-none tracking-[-0.06em]" data-preview="title">${escapeHtml(item.title || "")}</h3>
                 <p class="mt-4 text-sm leading-7 text-on-surface-variant" data-preview="description">${escapeHtml(item.description || "")}</p>
                 <div class="mt-7 flex flex-wrap gap-2" data-preview="tags">${previewTags(item.tags)}</div>
-                <div data-preview="cta">${previewCta(item)}</div>
               </div>
               <div class="space-y-4">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -618,9 +601,6 @@
                   </label>
                   <label class="text-sm font-semibold text-on-surface-variant">metricLabel
                     <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="metricLabel" data-index="${index}" value="${escapeAttr(item.metricLabel)}" />
-                  </label>
-                  <label class="text-sm font-semibold text-on-surface-variant">ctaLabel
-                    <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="ctaLabel" data-index="${index}" placeholder="查看下载页" value="${escapeAttr(item.ctaLabel)}" />
                   </label>
                   <label class="text-sm font-semibold text-on-surface-variant md:col-span-2">ctaUrl（整卡跳转链接）
                     <input class="skill-input mt-2 w-full rounded-xl border border-slate-200 px-4 py-3" data-field="ctaUrl" data-index="${index}" placeholder="https://example.com/download 或 /downloads/file.zip" value="${escapeAttr(item.ctaUrl)}" />
@@ -653,14 +633,12 @@
         const title = card.querySelector('[data-preview="title"]');
         const description = card.querySelector('[data-preview="description"]');
         const tags = card.querySelector('[data-preview="tags"]');
-        const cta = card.querySelector('[data-preview="cta"]');
         if (meta) meta.textContent = `${item.sequence || ""} / ${item.category || ""}`;
         if (metric) metric.textContent = `${item.metric || 0}${item.metricSuffix || ""}`;
         if (metricLabel) metricLabel.textContent = item.metricLabel || "Metric";
         if (title) title.textContent = item.title || "";
         if (description) description.textContent = item.description || "";
         if (tags) tags.innerHTML = previewTags(item.tags);
-        if (cta) cta.innerHTML = previewCta(item);
       }
 
       function downloadFile(name, content) {
@@ -685,8 +663,7 @@
             "2. tags：规范为数组并移除空标签。\n" +
             "3. metric：转换为数字。\n" +
             "4. featured：如果没有精选项，会默认选中第一项。\n" +
-            "5. id：为空时会根据 category 或 title 自动生成。\n" +
-            "6. ctaLabel：ctaUrl 有值但 ctaLabel 为空时补为“查看下载页”。\n\n" +
+            "5. id：为空时会根据 category 或 title 自动生成。\n\n" +
             "确认继续下载 site-config.json？"
         );
         if (!confirmed) return;
@@ -719,13 +696,12 @@
             metricLabel: item.metricLabel,
             tags: splitTags(item.tags),
             featured: item.featured === true,
-            ctaLabel: item.ctaLabel,
             ctaUrl: item.ctaUrl,
           })),
         };
         downloadFile("site-config.json", JSON.stringify(nextConfig, null, 2));
         alert(
-          "已生成 site-config.json（UTF-8），并已自动修正 sequence、tags、metric、featured、id、ctaLabel。\n\n" +
+          "已生成 site-config.json（UTF-8），并已自动修正 sequence、tags、metric、featured、id。\n\n" +
             "1. 用下载的 site-config.json 替换 portal/site/assets/site-config.json。\n" +
             "2. Git 提交并推送。\n" +
             "3. 服务器执行 git pull。\n" +
@@ -747,7 +723,6 @@
           metricLabel: "指标",
           tags: ["标签一", "标签二"],
           featured: false,
-          ctaLabel: "查看下载页",
           ctaUrl: "",
         });
         render();

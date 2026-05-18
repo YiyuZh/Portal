@@ -2193,7 +2193,6 @@
                   metricLabel: "AI 场景",
                   tags: ["RAG 检索", "结构化评估", "流式反馈"],
                   featured: true,
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 },
                 {
@@ -2206,7 +2205,6 @@
                   metricSuffix: "+",
                   metricLabel: "交付链路",
                   tags: ["前端体验", "API 设计", "部署回滚"],
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 },
                 {
@@ -2219,7 +2217,6 @@
                   metricSuffix: "+",
                   metricLabel: "验证维度",
                   tags: ["需求判断", "用户路径", "MVP 优先级"],
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 },
                 {
@@ -2232,7 +2229,6 @@
                   metricSuffix: "+",
                   metricLabel: "评估动作",
                   tags: ["证据约束", "拒答策略", "回归测试"],
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 },
                 {
@@ -2245,7 +2241,6 @@
                   metricSuffix: "+",
                   metricLabel: "上线系统",
                   tags: ["Docker", "Caddy", "Git 发布"],
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 },
                 {
@@ -2258,7 +2253,6 @@
                   metricSuffix: "+",
                   metricLabel: "交互细节",
                   tags: ["动效反馈", "移动端适配", "可视化管理"],
-                  ctaLabel: "查看下载页",
                   ctaUrl: ""
                 }
               ]
@@ -2322,7 +2316,6 @@
               metricLabel: String(source.metricLabel || "Metric").trim(),
               tags: splitTags(source.tags || source.highlights),
               featured: source.featured === true,
-              ctaLabel: String(source.ctaLabel || "查看下载页").trim(),
               ctaUrl: normalizeActionUrl(source.ctaUrl)
             };
           }
@@ -2357,7 +2350,7 @@
               card.href = actionUrl;
               card.target = "_blank";
               card.rel = "noopener noreferrer";
-              card.setAttribute("aria-label", item.title + "，" + (item.ctaLabel || "查看下载页") + "，新标签页打开");
+              card.setAttribute("aria-label", item.title);
             }
             card.style.setProperty("--reveal-delay", index * 90 + "ms");
             card.style.setProperty("--skill-index", index);
@@ -2376,7 +2369,6 @@
               tags.length ? '<div class="skill-showcase-tags" data-skill-layer="12">' + tags.map(function (tag) {
                 return '<span>' + escapeHtml(tag) + '</span>';
               }).join("") + '</div>' : "",
-              actionUrl ? '<span class="skill-showcase-cta" data-skill-layer="12"><span>' + escapeHtml(item.ctaLabel || "查看下载页") + '</span><small>新标签页打开</small></span>' : "",
             ].join("");
             return card;
           }

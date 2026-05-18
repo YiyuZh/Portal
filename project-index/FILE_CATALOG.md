@@ -89,7 +89,7 @@ This catalog describes the current files in `D:/apps/gateway-portal/portal`.
   - `site/blog/posts/manifest.json`
   - `site/blog/messages/manifest.json`
   - security module files
-- Validates Skills Showcase optional `ctaLabel` / `ctaUrl`; `ctaUrl` must be http(s), `/path`, or relative path.
+- Validates Skills Showcase optional `ctaUrl`; `ctaUrl` must be http(s), `/path`, or relative path.
 - Default mode is read-only; automatic JSON normalization is only allowed through `npm run fix:content`
 
 ### `scripts/preflight-check.js`
